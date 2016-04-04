@@ -86,7 +86,7 @@
 Cinder Client Method(click to zoom in)
 
 ![alt text][cinder]
-[cinder]: https://raw.githubusercontent.com/ntk148v/CALresearch/master/cinderclient.png
+[cinder]: https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/cinderclient.png
 
 
 ### IV. Summary
