@@ -94,7 +94,7 @@
 #### Ref:
 
 ![alt text][swift]
-[swift]: https://raw.githubusercontent.com/ntk148v/CALresearch/master/storage_kiennt/swiftclient.png 
+[swift]: https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/swiftclient.png
 
 ## III. CDMI.
 
@@ -114,4 +114,4 @@
 - Compare Swift, S3 & CDMI Object Model.
 
 ![alt text][compare]
-[compare]: https://raw.githubusercontent.com/ntk148v/CALresearch/master/storage_kiennt/s3swiftcdmi_model.png
+[compare]: https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/s3swiftcdmi_model.png
