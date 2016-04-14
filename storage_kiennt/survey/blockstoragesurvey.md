@@ -68,6 +68,8 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 
 1. OpenStack Cinder. [6]
 
+Cinder là code-name của một dự án trong OpenStack, có nhiệm vụ lưu trữ dữ liệu trên các volume, cũng như đóng vai trò backup, tạo snapshot cho hệ thống máy ảo VMs.
+
 2. Amazon EBS Volume. [7]
 
     Amazon EBS Volume có 3 kiểu Volume chính: 
@@ -162,6 +164,10 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 ## Challenges & Future work
 
 ## Conclusion.
+
+Chúng tôi đã giới thiệu về hướng tiếp cận mới cho việc phát triển và triển khai dịch vụ trên nền tảng đa đám mây. Cốt lõi của phương pháp này là một lớp trừu tượng cấp cao - CAL, cung cấp các phương thức trừu tượng hóa chung nhất các chức năng cơ bản của đa đám mây. Dựa trên lớp này, quá trình phát triển và triển khai dịch vụ sẽ trở nên dễ dàng hơn: nhà phát triển sẽ xây dựng dịch vụ của họ, bằng cách kế thừa các phương thức hiện có của CAL, không phải sử dụng thêm bất kỳ các API trung gian cũng như không phải kết nối trực tiếp đến từng máy ảo VM. Người dùng có thể triển khai ứng dụng, dịch vụ trên nhiều đám mây khác nhau, mà không phải phụ thuộc vào nền tảng đám mây bên dưới.
+
+Ngoài ra, trong tài liệu này, chúng tôi cũng trình bày về quá trình tìm hiểu và nghiên cứu về các phương thức của dịch vụ lưu trữ khối ở nhiều đám mây khác nhau(cụ thể là Amazon EBS Volume, OpenStack Cinder, Rackspace Cloud Block Storage). Từ đó, định nghĩa được các phương thức sẽ có trong lớp trừu tương CAL liên quan đến dịch vụ lưu trữ khối(block storage).
 
 ## Refs.
 

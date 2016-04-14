@@ -137,6 +137,8 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 
 2. OpenStack Swift. [6]
 
+    Swift là một dự án trong OpenStack, là thành phần chịu trách nhiệm quản lý việc lưu trữ theo đối tượng, cho phép người dùng có thể lưu trữ và lấy ra một lượng lớn dữ liệu bằng bộ API đơn giản. Dự án này được xây dựng nhằm mục đích dễ mở rộng và tối ưu hóa cho khả năng bền vững, khả dụng và tính đồng thời của toàn bộ bộ dữ liệu. Swift hỗ trợ tốt cho việc lưu trữ dữ liệu không cấu trúc, liên tục cập nhật và gia tăng về kích thước.
+
     ** Method **
     - head_account()
     - get_account(marker, limit, prefix, end_marker, full_listing)
@@ -160,6 +162,10 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 ## Challenges & Future work
 
 ## Conclusion.
+
+Chúng tôi đã giới thiệu về hướng tiếp cận mới cho việc phát triển và triển khai dịch vụ trên nền tảng đa đám mây. Cốt lõi của phương pháp này là một lớp trừu tượng cấp cao - CAL, cung cấp các phương thức trừu tượng hóa chung nhất các chức năng cơ bản của đa đám mây. Dựa trên lớp này, quá trình phát triển và triển khai dịch vụ sẽ trở nên dễ dàng hơn: nhà phát triển sẽ xây dựng dịch vụ của họ, bằng cách kế thừa các phương thức hiện có của CAL, không phải sử dụng thêm bất kỳ các API trung gian cũng như không phải kết nối trực tiếp đến từng máy ảo VM. Người dùng có thể triển khai ứng dụng, dịch vụ trên nhiều đám mây khác nhau, mà không phải phụ thuộc vào nền tảng đám mây bên dưới.
+
+Ngoài ra, trong tài liệu này, chúng tôi cũng trình bày về quá trình tìm hiểu và nghiên cứu về các phương thức của dịch vụ lưu trữ đối tượng ở nhiều đám mây khác nhau(cụ thể là Amazon EC2, OpenStack Swift, CDMI). Từ đó, định nghĩa được các phương thức sẽ có trong lớp trừu tương CAL liên quan đến dịch vụ lưu trữ đám mây.
 
 ## Refs.
 
