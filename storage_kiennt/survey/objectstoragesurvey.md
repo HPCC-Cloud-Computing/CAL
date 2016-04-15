@@ -51,6 +51,8 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 2. Dịch chuyển ứng dụng giữa các nền tảng đám mây.
 
 	Lấy ví dụ đơn giản, tôi triển khai một hệ thống bán hành online trên private cloud như OpenStack. Trong trường hợp bình thường, tài nguyên hệ thống và băng thông mạng là đủ, không vấn đề. Tuy nhiên, trong những dịp giảm giá, khi lượt truy cập vào hệ thống tăng đột biến, tôi muốn chuyển hệ thống của tôi sang public cloud tại thời điểm đó. Sau đó, có thể đưa ứng dụng quay trở lại private cloud.
+    
+    ![alt text](https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/survey/pic/scaleout.jpg)
 
 3. Chuyển dịch dữ liệu giữa các nền tảng đám mây.
 
@@ -58,19 +60,35 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 
 4. Mở rộng khả năng lưu trữ bằng cách sử dụng nhiều dịch vụ lưu trữ của đa nền tảng.
 
+5. Use cases của riêng dịch vụ lưu trữ đối tượng (Object Storage)
+    
+    Những use case chính của Object Storage:
+    - Lưu trữ dữ liệu phi cấu trúc như nhạc, ảnh,...
+    - Lưu trữ file backup database dumps và file log.
+    - Tập dữ liệu kích thước lớn.
+    - Lưu trữ file vào ổ đĩa từ cục bộ.
+    
+
 ### High Level Design.
 
 ### Detail Design.
 
 ## Detail.
 
+Trong phạm vi tài liệu, chúng tôi sẽ chỉ tiến hành tìm hiểu và nghiên cứu về phương thức của 3 dịch vụ lưu trữ theo đối tượng tiêu biểu:
+- Amazon S3.
+- OpenStack Swift.
+- Cloud Data Management Interface - CDMI.
+
 ### Listed.
 
-1. Amazon EC2. [7]
-
-    Dựa trên CLI API của EC2 và documentation của Boto 3 [9], chúng tôi đã liệt kê ra được những phương thức như sau:
+1. Amazon S3. [7]
     
-    ** Method **
+    Amazon S3 cung cấp cho người dùng dịch vụ lưu trữ bền vững, bảo mật và dễ dàng mở rộng. Amazon S3 lưu trữ đối tượng với một giao diện web đơn giản, nhằm lưu trữ và lấy ra dữ liệu tại mọi nơi. 
+
+    Dựa trên CLI API của S3 và documentation của Boto 3 [9], chúng tôi đã liệt kê ra được những phương thức như sau:
+    
+    **Method**
     - abort_multipart_upload(bucket, key, uploadid, request_player)
     - can_paginate(operation_name)
     - complete_multipart_upload(bucket, key, multipart_upload, uploadid, request_payer)
@@ -138,8 +156,12 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 2. OpenStack Swift. [6]
 
     Swift là một dự án trong OpenStack, là thành phần chịu trách nhiệm quản lý việc lưu trữ theo đối tượng, cho phép người dùng có thể lưu trữ và lấy ra một lượng lớn dữ liệu bằng bộ API đơn giản. Dự án này được xây dựng nhằm mục đích dễ mở rộng và tối ưu hóa cho khả năng bền vững, khả dụng và tính đồng thời của toàn bộ bộ dữ liệu. Swift hỗ trợ tốt cho việc lưu trữ dữ liệu không cấu trúc, liên tục cập nhật và gia tăng về kích thước.
-
-    ** Method **
+    
+    Biểu đồ lớp bóc tách từ package python-swiftclient(Ấn vào để phóng to):
+    
+    ![alt text](https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/survey/pic/swiftclient.png)
+    
+    **Method**
     - head_account()
     - get_account(marker, limit, prefix, end_marker, full_listing)
     - post_account(headers, response_dict, query_string, data)
@@ -154,10 +176,37 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
     - post_object(container, obj, headers, response_dict)
     - delete_object(container, obj, query_string, response_dict)
     - get_capabilities(url)
-
+    
 3. CDMI. [8]
 
+    Cloud Data Management Interface định nghĩa nên các interface chức năng mà ứng dụng sẽ sử dụng để khởi tạo, tải về, cập nhật và xóa dữ liệu trên môi trường đám mây.
+    
+    Phía Client sẽ được phép sử dụng CDMI nằm truy cập các chức năng mà dịch vụ lưu trữ đám mây cung cấp, đồng thời cũng để quản lý các container và dữ liệu được đặt trong đấy. Ngoài ra, metadata cũng được đặt trong container.
+
 ### Summary.
+
+1. So sánh Object Model của Swift, S3 & CDMI.
+
+    ![alt text](https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/survey/pic/s3swiftcdmi_model.png)
+    
+2. Bảng so sánh và tổng kết:
+
+|                                                                                   |                                                      OpenStack Swift                                                      |                                                                                                                                                                                       Amazon S3                                                                                                                                                                                      | Rackspace Cloud Object Storage | CDMI |
+|:---------------------------------------------------------------------------------:|:-------------------------------------------------------------------------------------------------------------------------:|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:------------------------------:|------|
+|                                                                                   | head_account()                                                                                                            |                                                                                                                                                                                                                                                                                                                                                                                      |                                |      |
+|                                                                                   | get_account(marker, limit, prefix, end_marker, full_listing)                                                              |                                                                                                                                                                                                                                                                                                                                                                                      |                                |      |
+|                                                                                   | post_account(headers, response_dict, query_string, data)                                                                  |                                                                                                                                                                                                                                                                                                                                                                                      |                                |      |
+|                                                                                   | head_container(container, headers)                                                                                        | head_bucket(bucket)                                                                                                                                                                                                                                                                                                                                                                  |                                |      |
+| get_container(container, path)                                                    | get_container(container, marker, limit, prefix, delimiter, end_marker, path, full_listing, headers)                       | get_bucket(bucket)                                                                                                                                                                                                                                                                                                                                                                   |                                |      |
+| put_container(container)                                                          | put_container(container, headers, response_dict)                                                                          | create_bucket(acl, bucket, create_bucket_configuration, grant_full_control, grant_read, grant_read_acp, grant_write, grant_write_acp)                                                                                                                                                                                                                                                |                                |      |
+|                                                                                   | post_container(container, headers, response_dict)                                                                         |                                                                                                                                                                                                                                                                                                                                                                                      |                                |      |
+| delete_container(container)                                                       | delete_container(container, headers, response_dict)                                                                       | delete_bucket(bucket)                                                                                                                                                                                                                                                                                                                                                                |                                |      |
+| head_object(container, obj)                                                       | head_object(container, obj, headers)                                                                                      | head_object(bucket, if_match, if_modified_since, if_none_match, if_unmodified_since, key, range, version_id, sse_customer_algorithm, sse_customer_key, request_payer)                                                                                                                                                                                                                |                                |      |
+| get_object(container, obj, resp_chunk_size, query_string)                         | get_object(container, obj, resp_chunk_size, query_string, response_dict, headers)                                         | get_object(bucket, if_match, if_modified_since, if_none_match, if_unmodified_since, key, range, response_content_disposition, response_content_encoding, response_content_type, response_content_language, response_expires, version_id, sse_customer_algorithm, sse_customer_key, request_payer)                                                                                    |                                |      |
+| put_object(container, obj, contents, content_length, content_type, query_string,) | put_object(container, obj, contents, content_length, etag, chunk_sie, content_type, headers, query_string, response_dict) | put_object(acl, body, bucket, cache_control, content_disposition, content_encoding, content_language, content_length, content_md5, content_type, expries, grant_full_control, grant_read, grant_read_acp, grant_write_acp, key, metadata, server_side_encryption, storage_class, website_redirect_location, sse_customer_algorithm, sse_customer_key, sse_kms_key_id, request_payer) |                                |      |
+|                                                                                   | post_object(container, obj, headers, response_dict)                                                                       |                                                                                                                                                                                                                                                                                                                                                                                      |                                |      |
+| delete(container, obj)                                                            | delete_object(container, obj, query_string, response_dict)                                                                | delete_object(bucket, key, mfa, version_id, request_payer)                                                                                                                                                                                                                                                                                                                           |                                |      |
+|                                                                                   | get_capabilities(url)                                                                                                     |                                                                                                                                                                                                                                                                                                                                                                                      |                                |      |
 
 ## Challenges & Future work
 
@@ -165,7 +214,7 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 
 Chúng tôi đã giới thiệu về hướng tiếp cận mới cho việc phát triển và triển khai dịch vụ trên nền tảng đa đám mây. Cốt lõi của phương pháp này là một lớp trừu tượng cấp cao - CAL, cung cấp các phương thức trừu tượng hóa chung nhất các chức năng cơ bản của đa đám mây. Dựa trên lớp này, quá trình phát triển và triển khai dịch vụ sẽ trở nên dễ dàng hơn: nhà phát triển sẽ xây dựng dịch vụ của họ, bằng cách kế thừa các phương thức hiện có của CAL, không phải sử dụng thêm bất kỳ các API trung gian cũng như không phải kết nối trực tiếp đến từng máy ảo VM. Người dùng có thể triển khai ứng dụng, dịch vụ trên nhiều đám mây khác nhau, mà không phải phụ thuộc vào nền tảng đám mây bên dưới.
 
-Ngoài ra, trong tài liệu này, chúng tôi cũng trình bày về quá trình tìm hiểu và nghiên cứu về các phương thức của dịch vụ lưu trữ đối tượng ở nhiều đám mây khác nhau(cụ thể là Amazon EC2, OpenStack Swift, CDMI). Từ đó, định nghĩa được các phương thức sẽ có trong lớp trừu tương CAL liên quan đến dịch vụ lưu trữ đám mây.
+Ngoài ra, trong tài liệu này, chúng tôi cũng trình bày về quá trình tìm hiểu và nghiên cứu về các phương thức của dịch vụ lưu trữ đối tượng ở nhiều đám mây khác nhau(cụ thể là Amazon S3, OpenStack Swift, CDMI). Từ đó, định nghĩa được các phương thức sẽ có trong lớp trừu tương CAL liên quan đến dịch vụ lưu trữ đám mây.
 
 ## Refs.
 
@@ -175,6 +224,7 @@ Ngoài ra, trong tài liệu này, chúng tôi cũng trình bày về quá trìn
 4. [jCloud](https://jclouds.apache.org/)
 5. [OVF](https://en.wikipedia.org/wiki/Open_Virtualization_Format)
 6. [OpenStack Swift](http://docs.openstack.org/developer/swift/)
-7. [Amazon EC2](https://aws.amazon.com/ec2/)
+7. [Amazon S3](https://aws.amazon.com/s3/)
 8. [CDMI](http://www.snia.org/cdmi)
 9. [Boto 3](https://boto3.readthedocs.org/en/latest/)
+10. [Implement A Standard API](http://events.linuxfoundation.org/sites/events/files/slides/ImplementingAStandardAPI.pdf)

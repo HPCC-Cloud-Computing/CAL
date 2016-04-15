@@ -51,6 +51,8 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 2. Dịch chuyển ứng dụng giữa các nền tảng đám mây.
 
 	Lấy ví dụ đơn giản, tôi triển khai một hệ thống bán hành online trên private cloud như OpenStack. Trong trường hợp bình thường, tài nguyên hệ thống và băng thông mạng là đủ, không vấn đề. Tuy nhiên, trong những dịp giảm giá, khi lượt truy cập vào hệ thống tăng đột biến, tôi muốn chuyển hệ thống của tôi sang public cloud tại thời điểm đó. Sau đó, có thể đưa ứng dụng quay trở lại private cloud.
+    
+    ![alt text](https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/survey/pic/scaleout.jpg)
 
 3. Chuyển dịch dữ liệu giữa các nền tảng đám mây.
 
@@ -58,17 +60,70 @@ Bảng so sánh CAL và những giải pháp đã được triển khai
 
 4. Mở rộng khả năng lưu trữ bằng cách sử dụng nhiều dịch vụ lưu trữ của đa nền tảng.
 
+5. Use cases của dịch vụ lưu trữ khối (Block Storage).
+
+    Những use case chính của block-storage:
+    - Block Storage phù hợp cho các cơ sở dữ liệu vì cơ sở dữ liệu đòi hỏi hiệu năng I/O nhất quán và kết nối với độ trễ thấp.
+    - Sử dụng Block Storage cho RAID Volume - kết hợp nhiều ổ đĩa được tổ chức thông qua stripping và mirroring.
+    - Các ứng dụng yêu cầu xử lý phía dịch vụ (service side processing) như Java, PHP và .NET.
+    - Ứng dụng quan trọng như Oracle, SAP, Microsoft Exchange & Microsoft SharePoint.
+
 ### High Level Design.
 
 ### Detail Design.
 
 ## Detail.
 
+Trong phạm vi tài liệu, chúng tôi sẽ chỉ tiến hành tìm hiểu và nghiên cứu về phương thức của 3 dịch vụ lưu trữ theo khối(block-storage):
+- OpenStack Cinder.
+- Amazon EBS Volume.
+- Rackspace Cloud Block Storage.
+
 ### Listed & Comprasion.
 
 1. OpenStack Cinder. [6]
 
-Cinder là code-name của một dự án trong OpenStack, có nhiệm vụ lưu trữ dữ liệu trên các volume, cũng như đóng vai trò backup, tạo snapshot cho hệ thống máy ảo VMs.
+    Cinder là code-name của một dự án trong OpenStack, có nhiệm vụ lưu trữ dữ liệu trên các volume, cũng như đóng vai trò backup, tạo snapshot cho hệ thống máy ảo VMs.
+    
+    Biểu đồ lớp bóc tách từ package python-cinderclient(Ấn vào để phóng to):
+    
+    ![alt text](https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/storage_kiennt/survey/pic/cinderclient.png)    
+    
+    **Method**
+    
+    - get(volume_id)
+    - list(detailed, search_opts, marker, limit, sort_key, sort_dir, sort)
+    - delete(volume. cascade)
+    - update(volume)
+    - attach(volume, instance_uuid, mountpoint, mode, hostname)
+    - detach(volume, attachment_uuid)
+    - reserve(volume)
+    - unreserve(volume)
+    - begin_detaching(volume)
+    - roll_detaching(volume)
+    - initialize_connection(volume, connector)
+    - terminate_connection(volume, connector)
+    - set_metadata(volume, metadata)
+    - delete_metadata(volume, keys)
+    - delete_image_metadata(volume, keys)
+    - set_image_metadata(volume, metadata)
+    - show_image_metadata(volume)
+    - upload_to_image(volume, force, image_name, container_format, disk_format)
+    - force_delete(volume)
+    - reset_state(volume, state, attach_status, migration_status)
+    - extend(volume, new_size)
+    - get_encrytion_metadata(volume_id)
+    - migrate_volume(volume, host, force_host_copy, lock_volume)
+    - migrate_volume_completion(old_volume, new_volume, error)
+    - update_all_metadata(volume, metadata)
+    - update_readonly_flag(volume, flag)
+    - retype(volume, volume_type, policy)
+    - set_bootable(volume, flag)
+    - manage(host, ref, name, description, volume_type, availability-zone, metadata, bootable)
+    - unmange(volume)
+    - promote(volume)
+    - reenable(volume)
+    - get_pools(detail)
 
 2. Amazon EBS Volume. [7]
 
@@ -78,7 +133,7 @@ Cinder là code-name của một dự án trong OpenStack, có nhiệm vụ lưu
     - standard = Magnetic volumes. 
     Dựa trên CLI API của EBS và documentation của Boto3 [9], chúng tôi đã liệt kê được những phương thức của Amazon EBS Volume như sau:
     
-    ** Methods **
+    **Method**
 
     - create/restore volume from snapshot(dry_run, volume_type, size, availability_zone, encrypted, disk_offering_id, snapshot_id, iops, kms_key_id)
     - attach_to_instance(dry_run, volume_id, instance_id, device)
@@ -93,7 +148,7 @@ Cinder là code-name của một dự án trong OpenStack, có nhiệm vụ lưu
     - modify_attribute(dry_run, auto_enable_io): modify a volume attribute
     - reload()
 
-    ** Args **
+    **Args**
 
     - dry-run(boolean): Checks whether you have the required permissions for the action, without actually making the request, and provides an error response. If you have the required permissions, the error response is DryRunOperation . Otherwise, it is UnauthorizedOperation.
     - volume_type(string): The volume type. This can be gp2 for General Purpose (SSD) volumes, io1 for Provisioned IOPS (SSD) volumes, or standard for Magnetic volumes. Default = standard.
@@ -133,7 +188,7 @@ Cinder là code-name của một dự án trong OpenStack, có nhiệm vụ lưu
     - SSD: SSD volumes deliver even higher performance for databases and other I/O-intensive applications.
     - SATA: SATA volumes work well for your everyday file system needs. This is the default volume type.
 
-    ** Methods **
+    **Method**
 
     - create/restore volume from snapshot(dry_run, volume_type, size, availability_zone, encrypted, disk_offering_id, snapshot_id, iops, kms_key_id)
     - attach_to_instance(dry_run, volume_id, instance_id, device)
