@@ -68,6 +68,8 @@ target/
 
 # IPython Notebook
 /WSGITest
+/example
+/leans
 .ipynb_checkpoints
 
 # pyenv
