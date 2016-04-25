@@ -71,11 +71,11 @@ Cả hai đoạn code trên ta để trong cùng một file là basics.py
 
 1. Khi resource Basics được sử dụng nó tương đương với các url sau:
 
-o GET /basics       => basics.index()
-o POST /basics      => basics.create()
-o PUT /basic/1      => basics.update(id)
-o DELETE /basic/1   => basics.delete(id)
-o GET /basic/1      => basics.show(id)
+- GET /basics       => basics.index()
+- POST /basics      => basics.create()
+- PUT /basic/1      => basics.update(id)
+- DELETE /basic/1   => basics.delete(id)
+- GET /basic/1      => basics.show(id)
 
 2. Giải thích class Controller:
 
