@@ -71,42 +71,42 @@ Cả hai đoạn code trên ta để trong cùng một file là basics.py
 
 1. Khi resource Basics được sử dụng nó tương đương với các url sau:
 
-- GET /basics       => basics.index()
-- POST /basics      => basics.create()
-- PUT /basic/1      => basics.update(id)
-- DELETE /basic/1   => basics.delete(id)
-- GET /basic/1      => basics.show(id)
+    - GET /basics       => basics.index()
+    - POST /basics      => basics.create()
+    - PUT /basic/1      => basics.update(id)
+    - DELETE /basic/1   => basics.delete(id)
+    - GET /basic/1      => basics.show(id)
 
 2. Giải thích class Controller:
 
-Các hàm được khai báo trong class Controller tương ứng với một action.
-Các hàm này khi code chỉ cần return 1 biến kiểu dict.
+    Các hàm được khai báo trong class Controller tương ứng với một action.
+    Các hàm này khi code chỉ cần return 1 biến kiểu dict.
 
 3. Giải thích các thuộc tính trong class Basics:
 
-collection_name: là tên của resource
-member_name: là tên của member resource, ví dụ resource basics thì có member_name là basic.
-controller: là đối tượng controller.
-parent_resource: chỉ rõ resource cha.
-collection: là danh sách additional action cho resource.
-member: là danh sách additional action cho member resource.
+    collection_name: là tên của resource
+    member_name: là tên của member resource, ví dụ resource basics thì có member_name là basic.
+    controller: là đối tượng controller.
+    parent_resource: chỉ rõ resource cha.
+    collection: là danh sách additional action cho resource.
+    member: là danh sách additional action cho member resource.
 
 ##  FAQ?
 
 1. Vậy file basics.py thì để ở đâu trong project?
 
-Tùy theo version, nếu đang ta thêm Resource cho version 1 thì để file basics.py
-sẽ để vào thư mục: CAL/cal/v1/resource_extensions.
+    Tùy theo version, nếu đang ta thêm Resource cho version 1 thì để file basics.py
+    sẽ để vào thư mục: CAL/cal/v1/resource_extensions.
 
 2. stevedore ManagerResouce hoạt động như thế nào?
 
-Nó sẽ load class Basics, add thông tin của resource vào routes.Mapper.
-Detail: Update at next time... :v :v :v
+    Nó sẽ load class Basics, add thông tin của resource vào routes.Mapper.
+    Detail: Update at next time... :v :v :v
 
 3. Làm sao để tôi có thể viết test cho resource?
 
-Comming soon... :v :v
+    Comming soon... :v :v
 
 4. Làm sao để tôi giải đáp những thắc mắc khi đọc tài liệu này?
 
-Liên hệ với techbk bạn nhé :(
+    Liên hệ với techbk bạn nhé :(
