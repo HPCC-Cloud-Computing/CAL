@@ -80,6 +80,7 @@ Cả hai đoạn code trên ta để trong cùng một file là basics.py
 2. Giải thích class Controller:
 
     Các hàm được khai báo trong class Controller tương ứng với một action.
+    Các hàm này có một tham sô mặc định là req tức là đối tượng Request.
     Các hàm này khi code chỉ cần return 1 biến kiểu dict.
 
 3. Giải thích các thuộc tính trong class Basics:
