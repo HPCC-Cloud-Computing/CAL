@@ -85,12 +85,12 @@ Cả hai đoạn code trên ta để trong cùng một file là basics.py
 
 3. Giải thích các thuộc tính trong class Basics:
 
-    collection_name: là tên của resource
-    member_name: là tên của member resource, ví dụ resource basics thì có member_name là basic.
-    controller: là đối tượng controller.
-    parent_resource: chỉ rõ resource cha.
-    collection: là danh sách additional action cho resource.
-    member: là danh sách additional action cho member resource.
+    - collection_name: là tên của resource
+    - member_name: là tên của member resource, ví dụ resource basics thì có member_name là basic.
+    - controller: là đối tượng controller.
+    - parent_resource: chỉ rõ resource cha.
+    - collection: là danh sách additional action cho resource.
+    - member: là danh sách additional action cho member resource.
 
 ##  FAQ?
 
@@ -102,11 +102,11 @@ Cả hai đoạn code trên ta để trong cùng một file là basics.py
 2. stevedore ManagerResouce hoạt động như thế nào?
 
     Nó sẽ load class Basics, add thông tin của resource vào routes.Mapper.
-    Detail: Update at next time... :v :v :v
+    Detail: Update at next time... 
 
 3. Làm sao để tôi có thể viết test cho resource?
 
-    Comming soon... :v :v
+    Comming soon...
 
 4. Làm sao để tôi giải đáp những thắc mắc khi đọc tài liệu này?
 
