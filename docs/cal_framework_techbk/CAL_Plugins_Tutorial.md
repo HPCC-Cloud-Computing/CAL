@@ -93,7 +93,8 @@ Cả hai đoạn code trên ta để trong cùng một file là basics.py
     - PUT /basic/1      => basics.update(id)
     - DELETE /basic/1   => basics.delete(id)
     - GET /basic/1      => basics.show(id)
-    ...
+    - ...
+
     Addition actions:
     - GET /basic/detail => basics.detail()
     - GET /basic/1/mem_action => basic.mem_action(id)
