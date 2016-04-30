@@ -13,7 +13,10 @@ class APIRouterV1(wsgi.Router):
     def __init__(self):
         mapper = Mapper()
         controller = BasicController()
-        mapper.resource('basic', 'basics', controller=wsgi.Resource(controller))
+        mapper.resource('basic',
+                        'basics',
+                        controller=wsgi.Resource(controller),
+                        member={'mem_action': 'GET'})
         super(APIRouterV1, self).__init__(mapper)
 
     @classmethod
