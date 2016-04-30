@@ -45,6 +45,20 @@ class BasicController(object):
         }
         return data
 
+    def detail(self, req):
+        data = {
+            'action': 'detail',
+            'controller': 'basic',
+        }
+        return data
+
+    def mem_action(self, req, id):
+        data = {
+            'action': 'mem_action',
+            'controller': 'basic',
+            'id': id
+        }
+        return data
     # Defining a method implements the following API responses:
     #   delete -> DELETE
     #   update -> PUT
