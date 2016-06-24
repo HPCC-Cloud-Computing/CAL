@@ -6,17 +6,19 @@ https://github.com/pypa/sampleproject
 """
 
 # Always prefer setuptools over distutils
-from setuptools import setup, find_packages
+import setuptools
+    #, find_packages
 # To use a consistent encoding
-from codecs import open
-from os import path
+# from codecs import open
+# from os import path
 
-here = path.abspath(path.dirname(__file__))
+# here = path.abspath(path.dirname(__file__))
 
 # Get the long description from the README file
-with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
-    long_description = f.read()
+# with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
+#     long_description = f.read()
 
-setup(
-
+setuptools.setup(
+    setup_requires=['pbr>=1.8'],
+    pbr=True
 )
