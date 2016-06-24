@@ -69,7 +69,7 @@ target/
 # IPython Notebook
 /WSGITest
 /example
-/leans
+/learn
 .ipynb_checkpoints
 
 # pyenv
