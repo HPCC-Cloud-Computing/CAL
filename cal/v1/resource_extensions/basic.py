@@ -1,8 +1,5 @@
-from cal.v1 import wsgi
+# from openframework.v1.wsgi import Controller
 
-ALIAS = 'basic'
-# ALIAS needs to be unique and should be of the format
-# ^[a-z]+[a-z\-]*[a-z]$
 
 class BasicController(object):
 
@@ -45,6 +42,7 @@ class BasicController(object):
         }
         return data
 
+
     def detail(self, req):
         data = {
             'action': 'detail',
@@ -59,6 +57,17 @@ class BasicController(object):
             'id': id
         }
         return data
+
+
+class Basics:
+    collection_name = 'basics'
+    member_name = 'basic'
+    controller = BasicController()
+    parent_resource = {}
+    collection = {'detail': 'GET'}
+    member = {'mem_action': 'GET'}
+
+
     # Defining a method implements the following API responses:
     #   delete -> DELETE
     #   update -> PUT
