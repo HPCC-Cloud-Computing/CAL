@@ -315,9 +315,9 @@ class Resource(object):
         action_args = self.get_action_args(request.environ)
         action = action_args.pop('action', None)
 
-        deserialized_request = self.dispatch(self.deserializer,
+        deserialized_request_body = self.dispatch(self.deserializer,
                                              action, request)
-        action_args.update(deserialized_request)
+        action_args.update(deserialized_request_body)
 
         action_result = self.dispatch(self.controller, action,
                                       request, **action_args)
