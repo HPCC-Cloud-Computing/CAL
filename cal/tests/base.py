@@ -1,3 +1,7 @@
+"""Base classes for our unit tests.
+Allows overriding of flags for use of fakes, and some black magic for
+inline callbacks.
+"""
 import contextlib
 
 import datetime
@@ -12,6 +16,8 @@ import os
 import six
 import testtools
 
+from cal.tests import tools 
+
 if six.PY2:
     nested = contextlib.nested
 else:
@@ -19,6 +25,8 @@ else:
     def nested(*contexts):
         with contextlib.ExitStack() as stack:
             yield [stack.enter_context(c) for c in contexts]
+
+
 
 class skipIf(object):
     """Class for skipping individual test methods 
@@ -90,8 +98,12 @@ class TestCase(testtools.TestCase):
     def setUp(self):
         """Run before each test method to initialize test environment."""
         super(TestCase, self).setUp()
+        # Change the default directory that the tempfile 
+        # module places temporary files and directories in
         self.useFixture(fixtures.NestedTempfile())
+        # Create a temporary directory and set it as $HOME in the environment.
         self.useFixture(fixtures.TempHomeDir())
+        self.useFixture(tools.StandardLogging)
         self.addCleanup(self._clear_attrs)
 
     def _clear_attrs(self):
