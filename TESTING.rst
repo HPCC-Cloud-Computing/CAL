@@ -27,7 +27,9 @@ Testing CAL
 Testing framework
 -----------------
 
-Hiện nay, mới chỉ triển khai Unit tests.
+Cần lưu ý, Test framework trong CAL chỉ là **Unit tests**, chứ không phải **Testing-Driven Developement** - TDD_, vì vậy sẽ chỉ viết test sau khi thiết kế và hoàn thành việc code chức năng.
+
+.. _TDD: https://en.wikipedia.org/wiki/Test-driven_development
 
 Unit Tests
 ~~~~~~~~~~
@@ -44,15 +46,63 @@ Cấu trúc cây thư mục Unit Test nên tương ứng với cấu trúc cây 
     
     - test.module: cal.tests.unit.test_wsgi
 
+Cấu trúc thư mục `tests/`::
+
+	├── base.py
+	├── __init__.py
+	├── fixtures.py
+	└── unit
+		├── conf_fixtures.py
+		├── drivers
+		├── __init__.py
+		├── resources
+		│   ├── compute
+		│   │   └── __init__.py
+		│   ├── file_fixtures.py
+		│   ├── __init__.py
+		│   ├── network
+		│   │   └── __init__.py
+		│   ├── storage
+		│   │   └── __init__.py
+		│   └── test_file_fixtures.py
+		├── test_conf_fixtures.py
+		├── test_connection.py
+		└── test_wsgi.py
+
+Trong đó:
+
+- *base.py*: chứa các test utility và base TestCase, các lớp trong unit/ sẽ kết thừa lớp base TestCase này. 
+
+- *fixtures.py*: chứa các Fixture cơ bản được sử dụng cho TestCase.
+
+- *test_connection.py*: kiểm tra việc kết nối các cloud provider.(tùy chọn)
+
+Cách viết testcase
+------------------
+
+Lưu ý:
+
+*mock*: `mock`_ đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể sử dụng mock theo những cách sau: (Update later...)
+
+Phương thức *stub_out(old_func, new_func)* cho phép việc thay thế sử dụng 1 phương thức/hàm bằng 1 phương thức/hàm khác.
+
+KHÔNG SỬ DỤNG `MOX`_!
+
+(Update later...)
+
+.. _mock: https://docs.python.org/3/library/unittest.mock.html
+.. _MOX: https://pypi.python.org/pypi/mox
+
+
 Chạy Unit Test
 --------------
 
 Dùng `tox`
 ~~~~~~~~~
 
-CAL sử dụng `tox` để quản lý môi trường ảo nhằm phục vụ cho việc chạy test cases. Nó sử dụng `Testr`để quản lý việc chạy các test cases.
+CAL sử dụng `tox`_ để quản lý môi trường ảo nhằm phục vụ cho việc chạy test cases. Nó sử dụng `Testr`_ để quản lý việc chạy các test cases.
 
-Tox xử lý việc tạo ra 1 loạt `virtualenvs`.
+Tox xử lý việc tạo ra 1 loạt `virtualenvs`_.
 
 Testr xử lý việc thực hiện song song một loạt các test cases cũng như tracking các long-running tests.
 
