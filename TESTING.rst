@@ -80,19 +80,56 @@ Trong đó:
 Cách viết testcase
 ------------------
 
-Lưu ý:
+**Lưu ý:**
 
-*mock*: `mock`_ đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể sử dụng mock theo những cách sau: (Update later...)
+1. *mock*: `mock`_ đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể sử dụng mock theo những cách sau - gọi là các **mock styles**:
 
-Phương thức *stub_out(old_func, new_func)* cho phép việc thay thế sử dụng 1 phương thức/hàm bằng 1 phương thức/hàm khác.
+- The nested context manager.
 
-KHÔNG SỬ DỤNG `MOX`_!
+- Decorating the method or the class
 
-(Update later...)
+- Mock/patcher objects
+
+# Chi tiết tham khảo thêm `Slide`_
+
+
+2. Phương thức *stub_out(old_func, new_func)* cho phép việc thay thế sử dụng 1 phương thức/hàm bằng 1 phương thức/hàm khác Lấy ví dụ `1 trường hợp sử dụng`_ trong test case của Openstack Nova::
+	
+	self.stub_out('os.chmod', lambda *a, **kw: None)
+
+3. Về class skipIf() trong base.py, sẽ được sử dụng dưới dạng decorator khi muốn bỏ qua 1 phương thức test với điều kiện cho trước.
+
+4. Cách viết 1 test case:
+
+.. code-block:: python
+	
+	from cal.tests import base
+	
+	class TestSomeThing(base.TestCase):
+		
+		# Chuẩn bị môi trường cho việc test, 
+		# thích hợp trong các trường hợp có 
+		# những đoạn code lặp lại để chuẩn bị.
+		def setUp(self):
+			pass
+		
+		def test_method_one_case_one(self):
+			pass
+		
+		def test_method_one_case_two(self):
+			pass
+			
+		# Kết thúc việc test.
+		def tearDown(self):
+			pass
+			
+
+5. KHÔNG SỬ DỤNG `MOX`_!
 
 .. _mock: https://docs.python.org/3/library/unittest.mock.html
 .. _MOX: https://pypi.python.org/pypi/mox
-
+.. _Slide: https://docs.google.com/presentation/d/11N2sStyrKmRe6ubzabz5R-HWMHZDnfUEyULbtkdcSAA/edit#slide=id.g3bba25117_116
+.. _1 trường hợp sử dụng: https://github.com/openstack/nova/blob/master/nova/tests/unit/network/test_linux_net.py#L760
 
 Chạy Unit Test
 --------------
@@ -117,3 +154,10 @@ Thông tin chi tiết có thể tham khảo tại trang wiki:
 .. _Testr: https://wiki.openstack.org/wiki/Testr
 .. _tox: http://tox.readthedocs.org/en/latest/
 .. _virtualenvs: https://pypi.python.org/pypi/virtualenv
+
+Tài liệu tham khảo
+------------------
+
+1. `Note`_ về unittest. 
+
+.. _Note: https://gist.github.com/ntk148v/55154ea867555001c4aa47b970cac64b
