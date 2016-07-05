@@ -71,11 +71,11 @@ Cấu trúc thư mục `tests/`::
 
 Trong đó:
 
-	- *base.py*: chứa các test utility và base TestCase, các lớp trong unit/ sẽ kết thừa lớp base TestCase này. 
-	
-	- *fixtures.py*: chứa các Fixture cơ bản được sử dụng cho TestCase.
-	
-	- *test_connection.py*: kiểm tra việc kết nối các cloud provider.(tùy chọn)
+- *base.py*: chứa các test utility và base TestCase, các lớp trong unit/ sẽ kết thừa lớp base TestCase này. 
+
+- *fixtures.py*: chứa các Fixture cơ bản được sử dụng cho TestCase.
+
+- *test_connection.py*: kiểm tra việc kết nối các cloud provider.(tùy chọn)
 
 Cách viết testcase
 ------------------
@@ -84,11 +84,11 @@ Cách viết testcase
 
 1. *mock*: `mock`_ đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể sử dụng mock theo những cách sau - gọi là các **mock styles**:
 
-	- The nested context manager.
-	
-	- Decorating the method or the class
-	
-	- Mock/patcher objects	
+- The nested context manager.
+
+- Decorating the method or the class
+
+- Mock/patcher objects	
 
 	# Chi tiết tham khảo thêm `Slide`_
 
