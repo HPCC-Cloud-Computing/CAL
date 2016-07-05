@@ -158,6 +158,6 @@ Thông tin chi tiết có thể tham khảo tại trang wiki:
 Tài liệu tham khảo
 ------------------
 
-1. `Note`_ về unittest. 
+1. `Note về unittest`_. 
 
-.. _Note: https://gist.github.com/ntk148v/55154ea867555001c4aa47b970cac64b
+.. _Note về unittest: https://gist.github.com/ntk148v/55154ea867555001c4aa47b970cac64b
