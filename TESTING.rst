@@ -82,7 +82,7 @@ Cách viết testcase
 
 **Lưu ý:**
 
-1. *mock*: `mock`_ đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể sử dụng mock theo những cách sau - gọi là các **mock styles**:
+1. *mock*: `mock` đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể định nghĩa mock object theo những cách sau - gọi là các **mock styles**:
 
 - The nested context manager.
 
@@ -90,8 +90,13 @@ Cách viết testcase
 
 - Mock/patcher objects	
 
-	# Chi tiết tham khảo thêm `Slide`_
+Sau khi định nghĩa được các mock object, cần lưu ý đến hai attribute quan trọng sau:
 
+- *side_effect*: attribute này sẽ giúp xác định behavior cho mock object. bằng việc raise những ngoại lệ Exception mong muốn hoặc hỗ trợ trả về nhiều hơn 1 kết quả `iterable` khi mock object được gọi.
+
+- *return_value*: attribute định nghĩa kết quả được trả về khi mock object được gọi.
+
+	Chi tiết tham khảo thêm `Slide`_ và `Docs`_
 
 2. Phương thức *stub_out(old_func, new_func)* cho phép việc thay thế sử dụng 1 phương thức/hàm bằng 1 phương thức/hàm khác Lấy ví dụ `1 trường hợp sử dụng`_ trong test case của Openstack Nova:
 	
@@ -128,9 +133,9 @@ Cách viết testcase
 
 5. KHÔNG SỬ DỤNG `MOX`_!
 
-.. _mock: https://docs.python.org/3/library/unittest.mock.html
 .. _MOX: https://pypi.python.org/pypi/mox
 .. _Slide: https://docs.google.com/presentation/d/11N2sStyrKmRe6ubzabz5R-HWMHZDnfUEyULbtkdcSAA/edit#slide=id.g3bba25117_116
+.. _Docs: https://docs.python.org/3/library/unittest.mock.html
 .. _1 trường hợp sử dụng: https://github.com/openstack/nova/blob/master/nova/tests/unit/network/test_linux_net.py#L760
 
 Chạy Unit Test
