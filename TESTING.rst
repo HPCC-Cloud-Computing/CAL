@@ -48,34 +48,34 @@ Cấu trúc cây thư mục Unit Test nên tương ứng với cấu trúc cây 
 
 Cấu trúc thư mục `tests/`::
 
-	├── base.py
-	├── __init__.py
-	├── fixtures.py
-	└── unit
-		├── conf_fixtures.py
-		├── drivers
+		├── base.py
 		├── __init__.py
-		├── resources
-		│   ├── compute
-		│   │   └── __init__.py
-		│   ├── file_fixtures.py
-		│   ├── __init__.py
-		│   ├── network
-		│   │   └── __init__.py
-		│   ├── storage
-		│   │   └── __init__.py
-		│   └── test_file_fixtures.py
-		├── test_conf_fixtures.py
-		├── test_connection.py
-		└── test_wsgi.py
+		├── fixtures.py
+		└── unit
+			├── conf_fixtures.py
+			├── drivers
+			├── __init__.py
+			├── resources
+			│   ├── compute
+			│   │   └── __init__.py
+			│   ├── file_fixtures.py
+			│   ├── __init__.py
+			│   ├── network
+			│   │   └── __init__.py
+			│   ├── storage
+			│   │   └── __init__.py
+			│   └── test_file_fixtures.py
+			├── test_conf_fixtures.py
+			├── test_connection.py
+			└── test_wsgi.py
 
 Trong đó:
 
-- *base.py*: chứa các test utility và base TestCase, các lớp trong unit/ sẽ kết thừa lớp base TestCase này. 
-
-- *fixtures.py*: chứa các Fixture cơ bản được sử dụng cho TestCase.
-
-- *test_connection.py*: kiểm tra việc kết nối các cloud provider.(tùy chọn)
+	- *base.py*: chứa các test utility và base TestCase, các lớp trong unit/ sẽ kết thừa lớp base TestCase này. 
+	
+	- *fixtures.py*: chứa các Fixture cơ bản được sử dụng cho TestCase.
+	
+	- *test_connection.py*: kiểm tra việc kết nối các cloud provider.(tùy chọn)
 
 Cách viết testcase
 ------------------
@@ -84,18 +84,20 @@ Cách viết testcase
 
 1. *mock*: `mock`_ đơn giản là thay thế 1 đối tượng/lớp/phương thức bằng 1 đối tượng mock, và kiểm tra xem cách thức sử dụng, hoạt động của đối tượng đấy. Có thể sử dụng mock theo những cách sau - gọi là các **mock styles**:
 
-- The nested context manager.
-
-- Decorating the method or the class
-
-- Mock/patcher objects
-
-# Chi tiết tham khảo thêm `Slide`_
-
-
-2. Phương thức *stub_out(old_func, new_func)* cho phép việc thay thế sử dụng 1 phương thức/hàm bằng 1 phương thức/hàm khác Lấy ví dụ `1 trường hợp sử dụng`_ trong test case của Openstack Nova::
+	- The nested context manager.
 	
-	self.stub_out('os.chmod', lambda *a, **kw: None)
+	- Decorating the method or the class
+	
+	- Mock/patcher objects	
+
+	# Chi tiết tham khảo thêm `Slide`_
+
+
+2. Phương thức *stub_out(old_func, new_func)* cho phép việc thay thế sử dụng 1 phương thức/hàm bằng 1 phương thức/hàm khác Lấy ví dụ `1 trường hợp sử dụng`_ trong test case của Openstack Nova:
+	
+	.. code-block:: python
+	
+		self.stub_out('os.chmod', lambda *a, **kw: None)
 
 3. Về class skipIf() trong base.py, sẽ được sử dụng dưới dạng decorator khi muốn bỏ qua 1 phương thức test với điều kiện cho trước.
 
@@ -121,7 +123,7 @@ Cách viết testcase
 			
 		# Kết thúc việc test.
 		def tearDown(self):
-			pass
+			pass	
 			
 
 5. KHÔNG SỬ DỤNG `MOX`_!
