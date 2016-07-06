@@ -15,7 +15,6 @@ class Test(base.NoDBTestCase):
     def test_debug(self):
 
         class Application(wsgi.Application):
-
             """Dummy application to test debug."""
 
             def __call__(self, environ, start_response):
@@ -29,7 +28,6 @@ class Test(base.NoDBTestCase):
     def test_router(self):
 
         class Application(wsgi.Application):
-
             """Test application to call from router."""
 
             def __call__(self, environ, start_response):
@@ -37,7 +35,6 @@ class Test(base.NoDBTestCase):
                 return ['Router result']
 
         class Router(wsgi.Router):
-
             """Test router."""
 
             def __init__(self):
@@ -53,30 +50,30 @@ class Test(base.NoDBTestCase):
 
 class JSONRequestDeserializerTest(base.NoDBTestCase):
 
+    def setUp(self):
+        super(JSONRequestDeserializerTest, self).setUp()
+        self.deserializer = wsgi.JSONRequestDeserializer()
+
     def test_has_body_return_false(self):
-        deserializer = wsgi.JSONRequestDeserializer()
         request = wsgi.Request.blank(
             "/", headers={'Content-Length': 0})
 
-        self.assertFalse(deserializer.has_body(request))
+        self.assertFalse(self.deserializer.has_body(request))
 
     def test_has_body_return_true(self):
-        deserializer = wsgi.JSONRequestDeserializer()
         request = wsgi.Request.blank(
             "/", headers={'Content-Length': 1})
 
-        self.assertTrue(deserializer.has_body(request))
+        self.assertTrue(self.deserializer.has_body(request))
 
-    # def test_default_with_has_body_return_false(self):
-    #     deserializer = wsgi.JSONRequestDeserializer()
-    #     request = wsgi.Request.blank(
-    #         "/", headers={'Content-Length': 0})
+    def test_default_with_has_body_return_false(self):
+        request = wsgi.Request.blank(
+            "/", headers={'Content-Length': 0})
 
-    #     self.assertEqual({},
-    #                      deserializer.default(request))
+        self.assertEqual({},
+                         self.deserializer.default(request))
 
     def test_default_success(self):
-        deserializer = wsgi.JSONRequestDeserializer()
         data = """{"a": {
                 "a1": "1",
                 "a2": "2",
@@ -96,13 +93,40 @@ class JSONRequestDeserializerTest(base.NoDBTestCase):
         request = webob.Request.blank("/", body=data)
 
         self.assertEqual(as_dict,
-                         deserializer.default(request))
+                         self.deserializer.default(request))
 
     def test_default_raise_Malformed_Exception(self):
         request = wsgi.Request.blank("/", body=b"{mal:formed")
-        deserializer = wsgi.JSONRequestDeserializer()
 
         self.assertRaises(
             webob.exc.HTTPBadRequest,
-            deserializer.default,
+            self.deserializer.default,
             request)
+
+
+class JSONResponseSerializerTest(base.NoDBTestCase):
+
+    def setUp(self):
+        super(JSONResponseSerializerTest, self).setUp()
+        self.serializer = wsgi.JSONResponseSerializer()
+
+    def test_default(self):
+        result = {
+            'a': {
+                'a1': '1',
+                'a2': '2',
+                'bs': ['1', '2', '3', {'c': {'c1': '1'}}],
+                'd': {'e': '1'},
+                'f': '1'}
+        }
+
+        expected_body = '{"a": {"a1": "1", "a2": "2", ' \
+                        '"bs": ["1", "2", "3", ' \
+                        '{"c": {"c1": "1"}}], '\
+                        '"d": {"e": "1"}, "f": "1"}}'
+
+        response = webob.Response()
+        self.serializer.default(response, result)
+        self.assertEqual("application/json",
+                         response.content_type)
+        self.assertEqual(response.body, expected_body)
