@@ -27,7 +27,7 @@ else:
 
 class skipIf(object):
 
-    """Class for skipping individual test methods 
+    """Class for skipping individual test methods
     and even whole classes of tests.(Like unittest.skipIf())
     Example usage could be:
         @base.skipIf(mylib.__version__ < (1, 3),
@@ -148,6 +148,7 @@ class TestCase(testtools.TestCase):
         patcher.start()
         self.addCleanup(patcher.stop)
         return new_attr
+
 
 class NoDBTestCase(TestCase):
     """`NoDBTestCase` differs from TestCase in that DB access is not supported.
