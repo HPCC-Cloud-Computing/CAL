@@ -4,19 +4,17 @@ inline callbacks.
 """
 import contextlib
 
-import datetime
 import eventlet
 eventlet.monkey_patch(os=False)
 
-import copy
+import fixtures
 import inspect
 import mock
-import os
 
 import six
 import testtools
 
-from cal.tests import tools 
+from cal.tests import tools
 
 if six.PY2:
     nested = contextlib.nested
@@ -27,14 +25,15 @@ else:
             yield [stack.enter_context(c) for c in contexts]
 
 
-
 class skipIf(object):
+
     """Class for skipping individual test methods 
     and even whole classes of tests.(Like unittest.skipIf())
     Example usage could be:
         @base.skipIf(mylib.__version__ < (1, 3),
                      "not supported in this library version")
     """
+
     def __init__(self, condition, reason):
         self.condition = condition
         self.reason = reason
@@ -65,6 +64,7 @@ class skipIf(object):
             raise TypeError('skipUnless can be used only with functions or '
                             'classes')
 
+
 def _patch_mock_to_raise_for_invalid_assert_calls():
     def raise_for_invalid_assert_calls(wrapped):
         def wrapper(_self, name):
@@ -87,7 +87,9 @@ def _patch_mock_to_raise_for_invalid_assert_calls():
 # to patch the mock lib
 _patch_mock_to_raise_for_invalid_assert_calls()
 
+
 class TestCase(testtools.TestCase):
+
     """Test case base class for all unit tests.
     Due to the slowness of DB access, please consider deriving from
     `NoDBTestCase` first.
@@ -98,12 +100,12 @@ class TestCase(testtools.TestCase):
     def setUp(self):
         """Run before each test method to initialize test environment."""
         super(TestCase, self).setUp()
-        # Change the default directory that the tempfile 
+        # Change the default directory that the tempfile
         # module places temporary files and directories in
         self.useFixture(fixtures.NestedTempfile())
         # Create a temporary directory and set it as $HOME in the environment.
         self.useFixture(fixtures.TempHomeDir())
-        self.useFixture(tools.StandardLogging)
+        self.useFixture(tools.StandardLogging())
         self.addCleanup(self._clear_attrs)
 
     def _clear_attrs(self):
@@ -147,7 +149,22 @@ class TestCase(testtools.TestCase):
         self.addCleanup(patcher.stop)
         return new_attr
 
+class NoDBTestCase(TestCase):
+    """`NoDBTestCase` differs from TestCase in that DB access is not supported.
+    This makes tests run significantly faster. If possible, all new tests
+    should derive from this class.
+    """
+    USES_DB = False
+
+
+class BaseHookTestCase(NoDBTestCase):
+    def assert_has_hook(self, expected_name, func):
+        self.assertTrue(hasattr(func, '__hook_name__'))
+        self.assertEqual(expected_name, func.__hook_name__)
+
+
 class MatchType(object):
+
     """Matches any instance of a specified type
     The MatchType class is a helper for use with the
     mock.assert_called_with() method that lets you
@@ -163,6 +180,7 @@ class MatchType(object):
             "world",
             MatchType(objects.KeyPair))
     """
+
     def __init__(self, wanttype):
         self.wanttype = wanttype
 
