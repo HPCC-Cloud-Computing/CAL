@@ -4,6 +4,7 @@ Test WSGI basics and provide some helper functions for other WSGI tests.
 
 import routes
 import webob
+import webob.exc
 
 from cal import wsgi
 from cal.tests import base
@@ -14,6 +15,7 @@ class Test(base.NoDBTestCase):
     def test_debug(self):
 
         class Application(wsgi.Application):
+
             """Dummy application to test debug."""
 
             def __call__(self, environ, start_response):
@@ -27,6 +29,7 @@ class Test(base.NoDBTestCase):
     def test_router(self):
 
         class Application(wsgi.Application):
+
             """Test application to call from router."""
 
             def __call__(self, environ, start_response):
@@ -34,6 +37,7 @@ class Test(base.NoDBTestCase):
                 return ['Router result']
 
         class Router(wsgi.Router):
+
             """Test router."""
 
             def __init__(self):
@@ -45,3 +49,60 @@ class Test(base.NoDBTestCase):
         self.assertEqual(result.body, "Router result")
         result = webob.Request.blank('/bad').get_response(Router())
         self.assertNotEqual(result.body, "Router result")
+
+
+class JSONRequestDeserializerTest(base.NoDBTestCase):
+
+    def test_has_body_return_false(self):
+        deserializer = wsgi.JSONRequestDeserializer()
+        request = wsgi.Request.blank(
+            "/", headers={'Content-Length': 0})
+
+        self.assertFalse(deserializer.has_body(request))
+
+    def test_has_body_return_true(self):
+        deserializer = wsgi.JSONRequestDeserializer()
+        request = wsgi.Request.blank(
+            "/", headers={'Content-Length': 1})
+
+        self.assertTrue(deserializer.has_body(request))
+
+    # def test_default_with_has_body_return_false(self):
+    #     deserializer = wsgi.JSONRequestDeserializer()
+    #     request = wsgi.Request.blank(
+    #         "/", headers={'Content-Length': 0})
+
+    #     self.assertEqual({},
+    #                      deserializer.default(request))
+
+    def test_default_success(self):
+        deserializer = wsgi.JSONRequestDeserializer()
+        data = """{"a": {
+                "a1": "1",
+                "a2": "2",
+                "bs": ["1", "2", "3", {"c": {"c1": "1"}}],
+                "d": {"e": "1"},
+                "f": "1"}}"""
+
+        as_dict = {
+            'body': {
+                u'a': {
+                    u'a1': u'1',
+                    u'a2': u'2',
+                    u'bs': [u'1', u'2', u'3', {u'c': {u'c1': u'1'}}],
+                    u'd': {u'e': u'1'},
+                    u'f': u'1'}}}
+
+        request = webob.Request.blank("/", body=data)
+
+        self.assertEqual(as_dict,
+                         deserializer.default(request))
+
+    def test_default_raise_Malformed_Exception(self):
+        request = wsgi.Request.blank("/", body=b"{mal:formed")
+        deserializer = wsgi.JSONRequestDeserializer()
+
+        self.assertRaises(
+            webob.exc.HTTPBadRequest,
+            deserializer.default,
+            request)
