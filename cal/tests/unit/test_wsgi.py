@@ -130,3 +130,49 @@ class JSONResponseSerializerTest(base.NoDBTestCase):
         self.assertEqual("application/json",
                          response.content_type)
         self.assertEqual(response.body, expected_body)
+
+
+class ResouceTest(base.NoDBTestCase):
+
+    def setUp(self):
+        super(ResouceTest, self).setUp()
+        self.resource = wsgi.Resource(self.Controller())
+
+    class Controller(object):
+        def index(self, req, index=None):
+            return index
+
+    def test_dispatch(self):
+        actual = self.resource.dispatch(self.resource.controller, 'index',
+                                        None, 'off')
+        expected = 'off'
+        self.assertEqual(actual, expected)
+
+    def test_dispatch_unknown_action(self):
+        self.assertRaises(
+            AttributeError, self.resource.dispatch,
+            self.resource.controller, 'create', {})
+
+    def test_get_action_args(self):
+        env = {
+            'wsgiorg.routing_args': [None, {
+                'controller': None,
+                'format': None,
+                'action': 'update',
+                'id': 12,
+            }],
+        }
+
+        expected = {'action': 'update', 'id': 12}
+
+        self.assertEqual(self.resource.get_action_args(env),
+                         expected)
+
+    # def test_malformed_request_body_throws_bad_request(self):
+    #     resource = wsgi.Resource(None)
+    #     request = wsgi.Request.blank(
+    #         "/", body=b"{mal:formed", method='POST',
+    #         headers={'Content-Type': "application/json"})
+
+    #     response = resource(request)
+    #     self.assertEqual(400, response.status_int)
