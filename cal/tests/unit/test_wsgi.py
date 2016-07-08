@@ -135,7 +135,7 @@ class JSONResponseSerializerTest(base.NoDBTestCase):
 class ResourceTest(base.NoDBTestCase):
 
     def setUp(self):
-        super(ResouceTest, self).setUp()
+        super(ResourceTest, self).setUp()
         self.resource = wsgi.Resource(self.Controller())
 
     class Controller(object):
