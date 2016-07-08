@@ -132,7 +132,7 @@ class JSONResponseSerializerTest(base.NoDBTestCase):
         self.assertEqual(response.body, expected_body)
 
 
-class ResouceTest(base.NoDBTestCase):
+class ResourceTest(base.NoDBTestCase):
 
     def setUp(self):
         super(ResouceTest, self).setUp()
@@ -167,12 +167,3 @@ class ResouceTest(base.NoDBTestCase):
 
         self.assertEqual(self.resource.get_action_args(env),
                          expected)
-
-    # def test_malformed_request_body_throws_bad_request(self):
-    #     resource = wsgi.Resource(None)
-    #     request = wsgi.Request.blank(
-    #         "/", body=b"{mal:formed", method='POST',
-    #         headers={'Content-Type': "application/json"})
-
-    #     response = resource(request)
-    #     self.assertEqual(400, response.status_int)
