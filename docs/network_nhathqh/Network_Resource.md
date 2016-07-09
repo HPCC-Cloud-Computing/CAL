@@ -12,7 +12,7 @@ Các lớp Network sẽ chưa các thuộc tính:
 + collection = {'detail':'GET'} là danh sách cách action và method tương ứng được bổ sung từ lớp cơ bản cho resource này.
 + member : tương tự như trên, là danh sách các action và method của member resource.
 
-![Biểu đồ lớp Network Resource]('images/network_resource.png')
+![Biểu đồ lớp Network Resource](./images/network_resource.png)
 
 ** Codeflow **
 
