@@ -1,6 +1,6 @@
 <h1> Network Resource </h1>
 
-** Biểu đồ lớp **
+<h3> Biểu đồ lớp </h3>
 
 Các lớp NetworkController kế thừa từ một lớp BasicController (hiện tại thì viết tạm luôn vào controller).
 
@@ -14,7 +14,7 @@ Các lớp Network sẽ chưa các thuộc tính:
 
 ![Biểu đồ lớp Network Resource](./images/network_resource.png)
 
-** Codeflow **
+<h3> Codeflow </h3>
 
 Mỗi một action của resource sẽ được đặt dưới decorator:
 + validate_driver : chức năng kiểm tra driver ở trạng thái active hay không (active nghĩa là gì?)
