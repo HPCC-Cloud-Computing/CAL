@@ -4,3 +4,13 @@ python:
 #  - "3.4"
 install: "pip install -r test-requirements.txt"
 script: tox
+notifications:
+  email:
+    recipients:
+      - hieulq19@gmail.com
+      - ntk148v@gmail.com 
+      - daibk115@gmail.com
+      - nhat.hqh@gmail.com
+      - quangbinh.nguyentrong@gmail.com
+    on_success: change
+    on_failure: always
