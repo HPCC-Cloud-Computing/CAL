@@ -1,7 +1,4 @@
-
-.. image:: https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=master
-    :target: https://travis-ci.org/cloudcomputinghust/CAL
-
+[![Travis CI](https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=master)](https://travis-ci.org/cloudcomputinghust/CAL)
     
 # CAL
 ## CAL Framework:
