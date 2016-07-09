@@ -26,14 +26,12 @@ else:
 
 
 class skipIf(object):
-
     """Class for skipping individual test methods
     and even whole classes of tests.(Like unittest.skipIf())
     Example usage could be:
         @base.skipIf(mylib.__version__ < (1, 3),
                      "not supported in this library version")
     """
-
     def __init__(self, condition, reason):
         self.condition = condition
         self.reason = reason
@@ -89,7 +87,6 @@ _patch_mock_to_raise_for_invalid_assert_calls()
 
 
 class TestCase(testtools.TestCase):
-
     """Test case base class for all unit tests.
     Due to the slowness of DB access, please consider deriving from
     `NoDBTestCase` first.
@@ -130,12 +127,6 @@ class TestCase(testtools.TestCase):
         on mox) going forward.
         """
         self.useFixture(fixtures.MonkeyPatch(old, new))
-
-    def flags(self, **kw):
-        """Override flag variables for a test."""
-        group = kw.pop('group', None)
-        for k, v in six.iteritems(kw):
-            CONF.set_override(k, v, group)
 
     def mock_object(self, obj, attr_name, new_attr=None, **kwargs):
         """Use python mock to mock an object attribute

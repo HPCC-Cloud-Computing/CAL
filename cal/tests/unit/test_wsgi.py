@@ -6,8 +6,8 @@ import routes
 import webob
 import webob.exc
 
-from cal import wsgi
 from cal.tests import base
+from cal import wsgi
 
 
 class Test(base.NoDBTestCase):
