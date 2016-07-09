@@ -318,6 +318,7 @@ class Resource(object):
         deserialized_request_body = self.dispatch(self.deserializer,
                                              action, request)
         action_args.update(deserialized_request_body)
+        action_args.update(request.body)
 
         action_result = self.dispatch(self.controller, action,
                                       request, **action_args)
@@ -359,3 +360,5 @@ class Resource(object):
             pass
 
         return args
+
+

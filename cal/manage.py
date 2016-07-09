@@ -1,6 +1,6 @@
 from webob import Response
-import webob
-from cal.wsgi import Middleware, JSONRequestDeserializer, JSONResponseSerializer
+import webob.dec
+from cal import wsgi
 
 class ShowVersion(object):
     """
@@ -28,12 +28,12 @@ class ShowVersion(object):
 
 
 
-class JsonMiddleware(Middleware):
-
-    def process_request(self, req):
-        body = JSONRequestDeserializer.default(req.body)
-        req.body = body
-        return req
+# class JsonMiddleware(Middleware):
+#
+#     def process_request(self, req):
+#         body = JSONRequestDeserializer().default(req)
+#         req.body = body
+#         return req
 
     # def process_response(self, response):
     #     try:
@@ -47,9 +47,11 @@ class JsonMiddleware(Middleware):
     #     except Exception:
     #         return {}
 
-class BrokerMiddleware(Middleware):
+class BrokerMiddleware(wsgi.Middleware):
 
-    def process_request(self, req):
-        cloud = req.body.get('cloud')
-        req.body['cloud'] = cloud
-        return req
+    @webob.dec.wsgify(RequestClass=wsgi.Request)
+    def __call__(self, req):
+        body = wsgi.JSONRequestDeserializer().default(req)
+        cloud = body.get('cloud')
+        req.environ['cal.cloud'] = cloud
+        return self.application

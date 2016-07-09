@@ -7,7 +7,8 @@ class BasicController(object):
     def index(self, req):
         data = {
             'action': "index",
-            'controller': "basic"
+            'controller': "basic",
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
@@ -15,7 +16,8 @@ class BasicController(object):
         data = {
             'action': "delete",
             'controller': "basic",
-            'id': id
+            'id': id,
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
@@ -23,14 +25,16 @@ class BasicController(object):
         data = {
             'action': "update",
             'controller': "basic",
-            'id': id
+            'id': id,
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
     def create(self, req):
         data = {
             'action': "create",
-            'controller': "basic"
+            'controller': "basic",
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
@@ -38,7 +42,8 @@ class BasicController(object):
         data = {
             'action': "show",
             'controller': "basic",
-            'id': id
+            'id': id,
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
@@ -47,6 +52,7 @@ class BasicController(object):
         data = {
             'action': 'detail',
             'controller': 'basic',
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
@@ -54,7 +60,8 @@ class BasicController(object):
         data = {
             'action': 'mem_action',
             'controller': 'basic',
-            'id': id
+            'id': id,
+            'cloud': req.environ['cal.cloud']
         }
         return data
 
