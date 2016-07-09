@@ -152,7 +152,13 @@ Testr xử lý việc thực hiện song song một loạt các test cases cũng
 
 Để chạy unit tests::
 
-    tox -e py27
+    tox
+
+Nếu muốn test từng env có thể chạy, với env là `py27`, `py34` và `pep8`::
+
+    tox -e <env>
+
+Lưu ý: Khi chạy nếu `py34` fail và xuất hiện lỗi *db type could not be determined*, xóa thư mục .testrepository và chạy lại lần nữa. 
 
 Thông tin chi tiết có thể tham khảo tại trang wiki:
     
