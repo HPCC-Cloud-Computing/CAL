@@ -297,7 +297,7 @@ class JSONResponseSerializer(object):
         return obj
 
     def to_json(self, data):
-        return json.dumps(data, default=self._sanitizer)
+        return json.dumps(data, default=self._sanitizer, sort_keys=True)
 
     def default(self, response, result):
         response.content_type = 'application/json'
