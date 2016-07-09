@@ -74,4 +74,4 @@ class StandardLogging(fixtures.Fixture):
 
             # Don't log every single DB migration step
             std_logging.getLogger(
-                    'migrate.versioning.api').setLevel(std_logging.WARNING)
+                'migrate.versioning.api').setLevel(std_logging.WARNING)
