@@ -3,6 +3,7 @@ Test WSGI basics and provide some helper functions for other WSGI tests.
 """
 
 import routes
+import sys
 import webob
 import webob.exc
 
@@ -12,6 +13,8 @@ from cal import wsgi
 
 class Test(base.NoDBTestCase):
 
+    @base.skipIf(sys.version_info > (3, 0),
+                 "not supported in this version")
     def test_debug(self):
 
         class Application(wsgi.Application):
@@ -73,6 +76,8 @@ class JSONRequestDeserializerTest(base.NoDBTestCase):
         self.assertEqual({},
                          self.deserializer.default(request))
 
+    @base.skipIf(sys.version_info > (3, 0),
+                 "not supported in this version")
     def test_default_success(self):
         data = """{"a": {
                 "a1": "1",
@@ -95,6 +100,8 @@ class JSONRequestDeserializerTest(base.NoDBTestCase):
         self.assertEqual(as_dict,
                          self.deserializer.default(request))
 
+    @base.skipIf(sys.version_info > (3, 0),
+                 "not supported in this version")
     def test_default_raise_Malformed_Exception(self):
         request = wsgi.Request.blank("/", body=b"{mal:formed")
 
@@ -110,6 +117,8 @@ class JSONResponseSerializerTest(base.NoDBTestCase):
         super(JSONResponseSerializerTest, self).setUp()
         self.serializer = wsgi.JSONResponseSerializer()
 
+    @base.skipIf(sys.version_info > (3, 0),
+                 "not supported in this version")
     def test_default(self):
         result = {
             'a': {
