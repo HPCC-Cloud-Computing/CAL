@@ -1,6 +1,11 @@
+
+from oslo_config import cfg
 from webob import Response
 import webob.dec
 from cal import wsgi
+
+
+CONF = cfg.CONF
 
 class ShowVersion(object):
     """
