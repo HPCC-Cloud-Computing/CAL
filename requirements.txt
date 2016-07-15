@@ -9,4 +9,3 @@ oslo.utils
 werkzeug
 falcon
 gunicorn
-wsgiref
