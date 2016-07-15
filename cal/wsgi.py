@@ -8,6 +8,7 @@ import six
 import socket
 
 from cal import base
+from cal import utils
 from cal.v1 import compute
 from cal.v1 import network
 from cal.v1 import storage
@@ -33,6 +34,16 @@ class FuncMiddleware(base.BaseMiddleware):
         super(FuncMiddleware, self).__init__()
         self.func = func
 
+    def process_request(self, req, resp):
+        deserializer = utils.JSONRequestDeserializer()
+        if deserializer.has_body:
+            raise falcon.HTTPBadRequest('Empty request body',
+                                        'A valid JSON doc is required')
+
+        body = deserializer.default(req)
+        cloud = body.get('cloud')
+        req.environ['cal.cloud'] = cloud
+
     def process_resource(self, req, resp, resource, params):
         return self.func(req, resp, params)
 
@@ -41,6 +52,8 @@ class WSGIDriver(object):
 
     def __init__(self):
         self.app = None
+        self.endpoints = None
+        self.middleware = None
         self._init_routes_and_middlewares()
 
     def before_hooks(self):
@@ -49,22 +62,33 @@ class WSGIDriver(object):
             # Some hook methods
         ]
 
+    def _init_endpoints(self):
+        """Initialize URI routes to resources"""
+        self.endpoints = network.public_endpoint(self, CONF)
+        self.endpoints += compute.public_endpoint(self, CONF)
+        self.endpoints += storage.public_endpoint(self, CONF)
+
+    def _init_middlewares(self):
+        """Initialize hooks and middlewares
+        If you have another Middleware, like BrokeMiddleware for e.x
+        You can append this to middleware:
+        self.middleware.append(BrokeMiddleware)
+        """
+        self.middleware = \
+            [FuncMiddleware(hook) for hook in self.before_hooks()]
+
     def _init_routes_and_middlewares(self):
         """Initialize hooks and URI routes to resources."""
-        middleware = [FuncMiddleware(hook) for hook in self.before_hooks()]
-        # If you have another Middleware, like BrokeMiddleware for e.x
-        # You can append this to middleware:
-        # middleware.append(BrokeMiddleware)
-        self.app = falcon.API(middleware=middleware)
+        self._init_middlewares()
+        self._init_endpoints()
 
-        endpoints = network.public_endpoint(self, CONF)
-        endpoints += compute.public_endpoint(self, CONF)
-        endpoints += storage.public_endpoint(self, CONF)
+        self.app = falcon.API(middleware=self.middleware)
 
-        for route, resource in endpoints:
+        for route, resource in self.endpoints:
             self.app.add_route(route, resource)
 
     def _error_handler(self, exc, request, response, params):
+        """Handler error"""
         if isinstance(exc, falcon.HTTPError):
             raise exc
         LOG.exception(exc)
