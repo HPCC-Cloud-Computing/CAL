@@ -59,7 +59,7 @@ class TestWSGIDriver(wsgi.WSGIDriver):
 
     def _init_routes_and_middlewares(self):
         middleware = \
-                [wsgi.FuncMiddleware(hook) for hook in self.before_hooks()]
+            [wsgi.FuncMiddleware(hook) for hook in self.before_hooks()]
         self.app = falcon.API(middleware=middleware)
 
         controller = TestController()
