@@ -29,6 +29,13 @@ def _second_hook(req, resp, resource):
     if req.method not in methods:
         raise falcon.HTTPNotFound()
 
+class TestMiddleware(wsgi.FuncMiddleware):
+    def __init__(self, func):
+        super(TestMiddleware, self).__init__(func)
+    
+    def process_request(self, req, resp):
+        pass
+
 
 class TestController(object):
 
@@ -36,7 +43,7 @@ class TestController(object):
         return msg
 
 
-class TestResource(wsgi_base.BaseSource):
+class TestResource(wsgi_base.BaseResource):
 
     def __init__(self, controller):
         self.controller = controller
@@ -57,13 +64,16 @@ class TestWSGIDriver(wsgi.WSGIDriver):
             _second_hook,
         ]
 
-    def _init_routes_and_middlewares(self):
-        middleware = \
-            [wsgi.FuncMiddleware(hook) for hook in self.before_hooks()]
-        self.app = falcon.API(middleware=middleware)
-
+    def _init_endpoints(self):
         controller = TestController()
-        self.app.add_route('/', TestResource(controller))
+        self.endpoints = [('/', TestResource(controller))]
+
+    def _init_middlewares(self):
+        self.middleware = \
+            [TestMiddleware(hook) for hook in self.before_hooks()]
+
+    def _init_routes_and_middlewares(self):
+        super(TestWSGIDriver, self)._init_routes_and_middlewares()
 
 
 class Test(base.TestCase):
@@ -78,7 +88,7 @@ class Test(base.TestCase):
             'Accept': 'application/xml',
         }
 
-        result = self.simulate_get(path='/', headers=bad_headers)
+        result = self.simulate_post(headers=bad_headers)
         self.assertEqual(falcon.HTTP_406, result.status)
 
     def test_first_hook_raise_HTTPUnsupportedMediaType(self):
@@ -87,15 +97,16 @@ class Test(base.TestCase):
             'URL-METHODS': 'POST, GET, PUT',
         }
 
-        result = self.simulate_post(path='/', headers=bad_headers)
+        result = self.simulate_post(headers=bad_headers)
         self.assertEqual(falcon.HTTP_415, result.status)
 
     def test_second_hook_raise_HTTPNotFound(self):
-        headers = {
+        bad_headers = {
             'Content-Type': 'application/json',
             'URL-METHODS': 'GET, PUT',
         }
-        result = self.simulate_post(path='/', headers=headers)
+
+        result = self.simulate_post(headers=bad_headers)
         self.assertEqual(falcon.HTTP_404, result.status)
 
     def test_pass_all_hooks(self):
@@ -103,7 +114,8 @@ class Test(base.TestCase):
             'Content-Type': 'application/json',
             'URL-METHODS': 'POST, GET, PUT',
         }
-        result = self.simulate_post(path='/', headers=headers)
+
+        result = self.simulate_post(headers=headers)
         self.assertEqual(falcon.HTTP_200, result.status)
 
     def test_wrong_router(self):

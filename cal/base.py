@@ -56,7 +56,7 @@ class BaseMiddleware(object):
         pass
 
 
-class BaseSource(object):
+class BaseResource(object):
 
     def __init__(self, controller, *args, **kwargs):
         self.controller
