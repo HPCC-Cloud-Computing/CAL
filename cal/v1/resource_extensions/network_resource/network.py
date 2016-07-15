@@ -1,17 +1,20 @@
-from validate import *
+from cal.v1.utils import validate_driver
+from cal.v1.resource_extendsion import basic
 
-class NetworkController(object):
+class NetworkController(basic.Controller):
 
     # Define support for GET on a collection
     @validate_driver
-    def index(self, req, driver):
+    def index(self, req, drivers):
         """List all network
-        List all of netowrks on special cloud
+        List all of netowrks on some special cloud
         with:
         :Param  req
         :Type   object Request
         """
-    	result = driver.list_network(req.params) # some filter, ...
+        result = []
+        for driver in drivers:
+            result.append(driver.list_network(req.params) # some filter, ...)
         data = {
             'action': "index",
             'controller': "network",
@@ -20,7 +23,9 @@ class NetworkController(object):
         }
         return data
 
-    def delete(self, req, id):
+    @validate_driver
+    @validate_resource
+    def delete(self, req, driver):
         """Delete a network
         Delete a specific netowrk with id on special cloud
         with:
@@ -37,7 +42,9 @@ class NetworkController(object):
         }
         return data
 
-    def update(self, req, id):
+    @validate_driver
+    @validate_resource
+    def update(self, req, driver):
         """Update a network
         Update a specific netowrk with id on special cloud
         with:
@@ -72,7 +79,9 @@ class NetworkController(object):
         }
         return data
 
-    def get(self, req, id):
+    @validate_driver
+    @validate_resource
+    def get(self, req, driver):
         """Get info of a network
         Get info of a specific netowrk with id on special cloud
         with:
@@ -89,8 +98,9 @@ class NetworkController(object):
         }
         return data
 
-
-    def detail(self, req):
+    @validate_driver
+    @validate_resource
+    def detail(self, req, driver):
         data = {
             'action': 'detail',
             'controller': 'network',
@@ -107,7 +117,9 @@ class NetworkController(object):
     #     }
     #     return data
 
-    def attach_igw(self, req, id):
+    @validate_driver
+    @validate_resource
+    def attach_igw(self, req, driver):
         """Attach network to Internet gateway
         :Param  req
         :Type   object Request
@@ -124,7 +136,10 @@ class NetworkController(object):
             'response': response
         }
         return data
-    def dettach_igw(self, req, id):
+
+    @validate_driver
+    @validate_resource
+    def dettach_igw(self, req, driver):
         """Dettach network from Internet gateway
         :Param  req
         :Type   object Request
@@ -139,6 +154,8 @@ class NetworkController(object):
         }
         return data
 
+    @validate_driver
+    @validate_resource
     def attach_vpngw(self, req, id):
         """Attach network to VPN gateway
         :Param  req
@@ -157,7 +174,9 @@ class NetworkController(object):
         }
         return data
 
-    def dettach_vpngw(self, req, id):
+    @validate_driver
+    @validate_resource
+    def dettach_vpngw(self, req, driver):
         """Dettach network from Internet gateway
         :Param  req
         :Type   object Request
@@ -172,13 +191,17 @@ class NetworkController(object):
         }
         return data
 
+    @validate_driver
+    @validate_resource
     def add_firewall(self, req, id):
         pass
 
+    @validate_driver
+    @validate_resource
     def remove_firewall(self, req, id):
         pass
 
-class Network:
+class Network(basic.Basic):
     collection_name = 'network'
     member_name = 'network'
     controller = NetworkController()
