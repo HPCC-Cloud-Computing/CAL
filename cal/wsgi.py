@@ -3,7 +3,7 @@ from wsgiref import simple_server
 import falcon
 from oslo_config import cfg
 from oslo_log import log as logging
-from oslo_utils import
+from oslo_utils import netutils
 import six
 import socket
 
@@ -30,7 +30,7 @@ LOG = logging.getLogger(__name__)
 class FuncMiddleware(base.BaseMiddleware):
 
     def __init__(self, func):
-        super(BaseMiddleware, self).__init__()
+        super(FuncMiddleware, self).__init__()
         self.func = func
 
     def process_resource(self, req, resp, resource, params):
@@ -41,7 +41,7 @@ class WSGIDriver(object):
 
     def __init__(self):
         self.app = None
-        self._init_routes_and_middleware()
+        self._init_routes_and_middlewares()
 
     def before_hooks(self):
         """Exposed to facilitate unit testing."""
@@ -51,15 +51,16 @@ class WSGIDriver(object):
 
     def _init_routes_and_middlewares(self):
         """Initialize hooks and URI routes to resources."""
-        middleware = [FuncMiddleware(hook) for hook in self.before_hooks]
+        middleware = [FuncMiddleware(hook) for hook in self.before_hooks()]
         # If you have another Middleware, like BrokeMiddleware for e.x
         # You can append this to middleware:
         # middleware.append(BrokeMiddleware)
         self.app = falcon.API(middleware=middleware)
 
-        endpoints = network.public_endpoint(self, CONF) +
-            compute.public_endpoint(self, CONF) +
-            storage.public_endpoint(self, CONF)
+        endpoints = network.public_endpoint(self, CONF)
+        endpoints += compute.public_endpoint(self, CONF)
+        endpoints += storage.public_endpoint(self, CONF)
+
         for route, resource in endpoints:
             self.app.add_route(route, resource)
 
@@ -84,7 +85,7 @@ class WSGIDriver(object):
     def listen(self):
         """Self-host using 'bind' and 'port' from the WSGI config group."""
 
-        msgtmpl = _(u'Serving on host %(host)s:%(port)s')
+        msgtmpl = (u'Serving on host %(host)s:%(port)s')
         host = getattr(CONF, 'host', '127.0.0.1')
         port = getattr(CONF, 'port', 8888)
         LOG.info(msgtmpl,
@@ -94,4 +95,4 @@ class WSGIDriver(object):
                                           port,
                                           self.app,
                                           server_cls)
-        httpd.serve_forever()
+        httpd.handle_request()

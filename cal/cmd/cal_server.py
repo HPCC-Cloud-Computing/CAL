@@ -1,17 +1,15 @@
-"""Starter script for Nova OS API."""
-
-import sys
-
 from oslo_config import cfg
 from oslo_log import log as logging
 
-
-from cal import config
-
+from cal import wsgi
 
 CONF = cfg.CONF
 
 
-def main():
-    config.parse_args(sys.argv, default_config_files="/home/techbk/PycharmProjects/CAL/etc/cal/cal.conf")
-    logging.setup(CONF, "cal")
+def run():
+    wsgi_driver = wsgi.WSGIDriver()
+    wsgi_driver.listen()
+
+if __name__ == '__main__':
+    run()
+    logging.setup(CONF, 'cal')
