@@ -95,4 +95,4 @@ class WSGIDriver(object):
                                           port,
                                           self.app,
                                           server_cls)
-        httpd.handle_request()
+        httpd.serve_forever()
