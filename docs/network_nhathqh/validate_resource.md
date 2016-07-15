@@ -31,6 +31,7 @@
 
 ```
 //Networks: list cách network hiện có trên cloud này
+
 networks = 
 {
   "network_id":
@@ -44,10 +45,15 @@ networks =
     "connect_vpngw": True/False
   }
 }
+
+
 // FloatingIPs: list các floating IP đã sử dụng trên cloud này 
+
 floatingIPs = [192.168.50.100, 192.168.50.101 ...]
 
+
 // Firewalls: list các fire đang có trên cloud này
+
 firewalls =
 {
   "firewalls_id":
