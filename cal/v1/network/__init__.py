@@ -4,6 +4,6 @@ def public_endpoint(wsgidriver, conf):
     # ...
     # return [
     #   ('/path',
-    #    network.Resource())     
+    #    network.Resource())
     # ]
     return []
