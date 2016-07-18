@@ -29,8 +29,6 @@ wsgi_host = cfg.IPOpt(
 
 wsgi_port = cfg.PortOpt(
     'port',
-    min=1,
-    max=65535,
     default=8888,
     help='Port on which the self-hosting server will listen.'
 )
