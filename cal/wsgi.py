@@ -1,29 +1,19 @@
 from wsgiref import simple_server
 
 import falcon
-from oslo_config import cfg
 from oslo_log import log as logging
 from oslo_utils import netutils
 import six
 import socket
 
+import cal.conf
 from cal import base
 from cal import utils
 from cal.v1 import compute
 from cal.v1 import network
 from cal.v1 import storage
 
-CONF = cfg.CONF
-
-_WSGI_OPTIONS = (
-    cfg.IPOpt('host', default='127.0.0.1',
-              help='Address on which the self-hosting server will listen.'),
-
-    cfg.PortOpt('port', default=8888,
-                help='Port on which the self-hosting server will listen.'),
-)
-
-CONF.register_opts(_WSGI_OPTIONS)
+CONF = cal.conf.CONF
 
 LOG = logging.getLogger(__name__)
 
@@ -110,8 +100,8 @@ class WSGIDriver(object):
         """Self-host using 'bind' and 'port' from the WSGI config group."""
 
         msgtmpl = (u'Serving on host %(host)s:%(port)s')
-        host = getattr(CONF, 'host', '127.0.0.1')
-        port = getattr(CONF, 'port', 8888)
+        host = CONF.wsgi.wsgi_host
+        port = CONF.wsgi.wsgi_port
         LOG.info(msgtmpl,
                  {'host': host, 'port': port})
         server_cls = self._get_server_cls(host)
