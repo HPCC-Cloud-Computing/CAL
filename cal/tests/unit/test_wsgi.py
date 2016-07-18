@@ -2,177 +2,122 @@
 Test WSGI basics and provide some helper functions for other WSGI tests.
 """
 
-import routes
-import sys
-import webob
-import webob.exc
+import falcon
 
 from cal.tests import base
+from cal import base as wsgi_base
 from cal import wsgi
 
 
-class Test(base.NoDBTestCase):
+def _first_hook(req, resp, resource):
+    if not req.client_accepts_json:
+        raise falcon.HTTPNotAcceptable(
+            'This API only supports responses encoded as JSON.',
+            href='http://docs.examples.com/api/json')
 
-    @base.skipIf(sys.version_info > (3, 0),
-                 "not supported in this version")
-    def test_debug(self):
-
-        class Application(wsgi.Application):
-            """Dummy application to test debug."""
-
-            def __call__(self, environ, start_response):
-                start_response("200", [("X-Test", "checking")])
-                return ['Test result']
-
-        application = wsgi.Debug(Application())
-        result = webob.Request.blank('/').get_response(application)
-        self.assertEqual(result.body, "Test result")
-
-    def test_router(self):
-
-        class Application(wsgi.Application):
-            """Test application to call from router."""
-
-            def __call__(self, environ, start_response):
-                start_response("200", [])
-                return ['Router result']
-
-        class Router(wsgi.Router):
-            """Test router."""
-
-            def __init__(self):
-                mapper = routes.Mapper()
-                mapper.connect("/test", controller=Application())
-                super(Router, self).__init__(mapper)
-
-        result = webob.Request.blank('/test').get_response(Router())
-        self.assertEqual(result.body, "Router result")
-        result = webob.Request.blank('/bad').get_response(Router())
-        self.assertNotEqual(result.body, "Router result")
+    if req.method in ('POST', 'PUT'):
+        if 'application/json' not in req.content_type:
+            raise falcon.HTTPUnsupportedMediaType(
+                'This API only supports requests encoded as JSON.',
+                href='http://docs.examples.com/api/json')
 
 
-class JSONRequestDeserializerTest(base.NoDBTestCase):
+def _second_hook(req, resp, resource):
+    headers = req.headers
+    methods = headers.get('URL-METHODS', '').split(',')
 
-    def setUp(self):
-        super(JSONRequestDeserializerTest, self).setUp()
-        self.deserializer = wsgi.JSONRequestDeserializer()
+    if req.method not in methods:
+        raise falcon.HTTPNotFound()
 
-    def test_has_body_return_false(self):
-        request = wsgi.Request.blank(
-            "/", headers={'Content-Length': 0})
-
-        self.assertFalse(self.deserializer.has_body(request))
-
-    def test_has_body_return_true(self):
-        request = wsgi.Request.blank(
-            "/", headers={'Content-Length': 1})
-
-        self.assertTrue(self.deserializer.has_body(request))
-
-    def test_default_with_has_body_return_false(self):
-        request = wsgi.Request.blank(
-            "/", headers={'Content-Length': 0})
-
-        self.assertEqual({},
-                         self.deserializer.default(request))
-
-    @base.skipIf(sys.version_info > (3, 0),
-                 "not supported in this version")
-    def test_default_success(self):
-        data = """{"a": {
-                "a1": "1",
-                "a2": "2",
-                "bs": ["1", "2", "3", {"c": {"c1": "1"}}],
-                "d": {"e": "1"},
-                "f": "1"}}"""
-
-        as_dict = {
-            'body': {
-                u'a': {
-                    u'a1': u'1',
-                    u'a2': u'2',
-                    u'bs': [u'1', u'2', u'3', {u'c': {u'c1': u'1'}}],
-                    u'd': {u'e': u'1'},
-                    u'f': u'1'}}}
-
-        request = webob.Request.blank("/", body=data)
-
-        self.assertEqual(as_dict,
-                         self.deserializer.default(request))
-
-    @base.skipIf(sys.version_info > (3, 0),
-                 "not supported in this version")
-    def test_default_raise_Malformed_Exception(self):
-        request = wsgi.Request.blank("/", body=b"{mal:formed")
-
-        self.assertRaises(
-            webob.exc.HTTPBadRequest,
-            self.deserializer.default,
-            request)
+class TestMiddleware(wsgi.FuncMiddleware):
+    def __init__(self, func):
+        super(TestMiddleware, self).__init__(func)
+    
+    def process_request(self, req, resp):
+        pass
 
 
-class JSONResponseSerializerTest(base.NoDBTestCase):
+class TestController(object):
+
+    def get(self, msg):
+        return msg
+
+
+class TestResource(wsgi_base.BaseResource):
+
+    def __init__(self, controller):
+        self.controller = controller
+
+    def on_get(self, req, resp):
+        resp.status = falcon.HTTP_200
+        resp.body = self.controller.get('Success')
+
+
+class TestWSGIDriver(wsgi.WSGIDriver):
+
+    def __init__(self):
+        super(TestWSGIDriver, self).__init__()
+
+    def before_hooks(self):
+        return [
+            _first_hook,
+            _second_hook,
+        ]
+
+    def _init_endpoints(self):
+        controller = TestController()
+        self.endpoints = [('/', TestResource(controller))]
+
+    def _init_middlewares(self):
+        self.middleware = \
+            [TestMiddleware(hook) for hook in self.before_hooks()]
+
+    def _init_routes_and_middlewares(self):
+        super(TestWSGIDriver, self)._init_routes_and_middlewares()
+
+
+class Test(base.TestCase):
 
     def setUp(self):
-        super(JSONResponseSerializerTest, self).setUp()
-        self.serializer = wsgi.JSONResponseSerializer()
+        super(Test, self).setUp()
+        self.wsgi_driver = TestWSGIDriver()
+        self.api = self.wsgi_driver.app
 
-    @base.skipIf(sys.version_info > (3, 0),
-                 "not supported in this version")
-    def test_default(self):
-        result = {
-            'a': {
-                'a1': '1',
-                'a2': '2',
-                'bs': ['1', '2', '3', {'c': {'c1': '1'}}],
-                'd': {'e': '1'},
-                'f': '1'}
+    def test_first_hook_raise_HTTPNotAcceptable(self):
+        bad_headers = {
+            'Accept': 'application/xml',
         }
 
-        expected_body = '{"a": {"a1": "1", "a2": "2", ' \
-                        '"bs": ["1", "2", "3", ' \
-                        '{"c": {"c1": "1"}}], '\
-                        '"d": {"e": "1"}, "f": "1"}}'
+        result = self.simulate_post(headers=bad_headers)
+        self.assertEqual(falcon.HTTP_406, result.status)
 
-        response = webob.Response()
-        self.serializer.default(response, result)
-        self.assertEqual("application/json",
-                         response.content_type)
-        self.assertEqual(response.body, expected_body)
-
-
-class ResourceTest(base.NoDBTestCase):
-
-    def setUp(self):
-        super(ResourceTest, self).setUp()
-        self.resource = wsgi.Resource(self.Controller())
-
-    class Controller(object):
-        def index(self, req, index=None):
-            return index
-
-    def test_dispatch(self):
-        actual = self.resource.dispatch(self.resource.controller, 'index',
-                                        None, 'off')
-        expected = 'off'
-        self.assertEqual(actual, expected)
-
-    def test_dispatch_unknown_action(self):
-        self.assertRaises(
-            AttributeError, self.resource.dispatch,
-            self.resource.controller, 'create', {})
-
-    def test_get_action_args(self):
-        env = {
-            'wsgiorg.routing_args': [None, {
-                'controller': None,
-                'format': None,
-                'action': 'update',
-                'id': 12,
-            }],
+    def test_first_hook_raise_HTTPUnsupportedMediaType(self):
+        bad_headers = {
+            'Content-Type': 'text/html',
+            'URL-METHODS': 'POST, GET, PUT',
         }
 
-        expected = {'action': 'update', 'id': 12}
+        result = self.simulate_post(headers=bad_headers)
+        self.assertEqual(falcon.HTTP_415, result.status)
 
-        self.assertEqual(self.resource.get_action_args(env),
-                         expected)
+    def test_second_hook_raise_HTTPNotFound(self):
+        bad_headers = {
+            'Content-Type': 'application/json',
+            'URL-METHODS': 'GET, PUT',
+        }
+
+        result = self.simulate_post(headers=bad_headers)
+        self.assertEqual(falcon.HTTP_404, result.status)
+
+    def test_pass_all_hooks(self):
+        headers = {
+            'Content-Type': 'application/json',
+            'URL-METHODS': 'POST, GET, PUT',
+        }
+
+        result = self.simulate_post(headers=headers)
+        self.assertEqual(falcon.HTTP_200, result.status)
+
+    def test_wrong_router(self):
+        result = self.simulate_get(path='/some/wrong/path')
+        self.assertEqual(falcon.HTTP_404, result.status)
