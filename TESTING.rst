@@ -118,7 +118,8 @@ Sau khi định nghĩa được các mock object, cần lưu ý đến hai attri
 		# thích hợp trong các trường hợp có 
 		# những đoạn code lặp lại để chuẩn bị.
 		def setUp(self):
-			pass
+			super(TestCase, self).setUp()
+			self.api = your_wsgi_app # default: falcon.API()
 		
 		def test_method_one_case_one(self):
 			pass
@@ -130,13 +131,18 @@ Sau khi định nghĩa được các mock object, cần lưu ý đến hai attri
 		def tearDown(self):
 			pass	
 			
+5. Ở unittest này, chúng ta sẽ sử dụng `falcon.testing.TestCase`_, trong đó, sẽ có một số phương thức dùng để giả lập request như `simulate_get`, `simulate_post`,...
+Những phương thức này sẽ trả về một đối tượng của class `Result`.
+   
+   Mọi thông tin thêm xem ở link `falcon.testing.TestCase`_ và ví dụ cal/tests/unit/test_wsgi.py
 
-5. KHÔNG SỬ DỤNG `MOX`_!
+6. KHÔNG SỬ DỤNG `MOX`_!
 
 .. _MOX: https://pypi.python.org/pypi/mox
 .. _Slide: https://docs.google.com/presentation/d/11N2sStyrKmRe6ubzabz5R-HWMHZDnfUEyULbtkdcSAA/edit#slide=id.g3bba25117_116
 .. _Docs: https://docs.python.org/3/library/unittest.mock.html
 .. _1 trường hợp sử dụng: https://github.com/openstack/nova/blob/master/nova/tests/unit/network/test_linux_net.py#L760
+.. _falcon.testing.TestCase: https://github.com/falconry/falcon/blob/master/falcon/testing/test_case.py
 
 Chạy Unit Test
 --------------
