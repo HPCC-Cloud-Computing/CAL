@@ -7,4 +7,3 @@ CONF = cfg.CONF
 
 network.register_opts(CONF)
 wsgi.register_opts(CONF)
-
