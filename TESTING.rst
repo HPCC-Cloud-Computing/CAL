@@ -130,11 +130,13 @@ Sau khi định nghĩa được các mock object, cần lưu ý đến hai attri
 		# Kết thúc việc test.
 		def tearDown(self):
 			pass	
+
 			
 5. Ở unittest này, chúng ta sẽ sử dụng `falcon.testing.TestCase`_, trong đó, sẽ có một số phương thức dùng để giả lập request như `simulate_get`, `simulate_post`,...
 Những phương thức này sẽ trả về một đối tượng của class `Result`.
    
    Mọi thông tin thêm xem ở link `falcon.testing.TestCase`_ và ví dụ cal/tests/unit/test_wsgi.py
+
 
 6. KHÔNG SỬ DỤNG `MOX`_!
 
@@ -156,11 +158,11 @@ Tox xử lý việc tạo ra 1 loạt `virtualenvs`_.
 
 Testr xử lý việc thực hiện song song một loạt các test cases cũng như tracking các long-running tests.
 
-Để chạy unit tests::
+Để chạy unit tests, khi này sẽ chạy 3 env `py34`, `py27`, `pep8`::
 
     tox
 
-Nếu muốn test từng env có thể chạy, với env là `py27`, `py34` và `pep8`::
+Nếu muốn test từng env có thể chạy, với env là `py27`, `py34`, `pep8`, `cover`::
 
     tox -e <env>
 
