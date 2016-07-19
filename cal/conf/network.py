@@ -9,7 +9,7 @@ network_group = cfg.OptGroup('network',
 ALL_OPTS = ()
 
 def register_opts(conf):
-    conf.register_opts(network_group)
+    conf.register_group(network_group)
     conf.register_opts(ALL_OPTS, group=network_group)
 
 def list_opts():
