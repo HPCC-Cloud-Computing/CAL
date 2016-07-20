@@ -1,6 +1,6 @@
 from cal.v1.utils import validate_driver
 from validate import validate_resource
-# from cal.v1.resource_extendsion import basic
+# from cal.v1.resource import Resource
 
 
 class NetworkController():
