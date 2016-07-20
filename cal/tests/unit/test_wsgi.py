@@ -29,10 +29,11 @@ def _second_hook(req, resp, resource):
     if req.method not in methods:
         raise falcon.HTTPNotFound()
 
+
 class TestMiddleware(wsgi.FuncMiddleware):
     def __init__(self, func):
         super(TestMiddleware, self).__init__(func)
-    
+
     def process_request(self, req, resp):
         pass
 
