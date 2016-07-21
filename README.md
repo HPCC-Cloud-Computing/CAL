@@ -1,4 +1,4 @@
-CI Status: [![Travis CI](https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=master)](https://travis-ci.org/cloudcomputinghust/CAL)
+CI Status: [![Travis CI](https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=resource)](https://travis-ci.org/cloudcomputinghust/CAL)
     
 # CAL
 ## CAL Framework:
