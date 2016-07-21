@@ -1,4 +1,4 @@
-CI Status: [![Travis CI](https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=falcon)](https://travis-ci.org/cloudcomputinghust/CAL)
+CI Status: [![Travis CI](https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=oslo_config_falcon)](https://travis-ci.org/cloudcomputinghust/CAL)
     
 # CAL
 ## CAL Framework:
