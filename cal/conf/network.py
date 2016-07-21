@@ -4,9 +4,20 @@ from oslo_config import cfg
 network_group = cfg.OptGroup('network',
                              title='Network Options')
 
-# some config options here 
+re_check_cycle_time = cfg.IntOpt(
+    're_check_cycle_time',
+    help="Re check cycle time",
+)
 
-ALL_OPTS = ()
+expired_time = cfg.IntOpt(
+    'expired_time',
+    help="Define expired time",
+)
+
+ALL_OPTS = [
+    re_check_cycle_time,
+    expired_time,
+]
 
 def register_opts(conf):
     conf.register_group(network_group)
