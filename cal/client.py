@@ -14,10 +14,26 @@ _CLIENTS = {
 
 
 def Client(url=None, version=__version__,
-           subject=None, provider=None, **kwargs):
+           resource=None, provider=None, **kwargs):
     """Initialize client object based on given version.
+
+    :params url:
+    :params version: version of CAL, define at setup.cfg
+    :params resource: resource type
+    :params provider: cloud provider(Openstack, Amazon...)
+    :params **kwargs: specific args for resource
+    :return: class Client
+
+    HOW-TO:
+    The simplest way to create a client instance is initialization::
+
+        >> from cal import client
+        >> cal = client.Client(version='1.0.0',
+                               resource='compute',
+                               provider='OpenStack',
+                               some_needed_args_for_ComputeClient)
     """
     try:
-        return _CLIENTS[version][subject](url, provider, **kwargs)
+        return _CLIENTS[version][resource](url, provider, **kwargs)
     except KeyError:
         raise errors.CALError('Unknown client version or subject')
