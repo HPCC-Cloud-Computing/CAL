@@ -7,45 +7,39 @@ from network_driver import NetworkDriver
 
 
 class OpenstackNetWorkDriver(NetworkDriver):
+
     """docstring for OpenstackNetWorkDriver"""
 
     def __init__(self, auth_url, project_name,
-                 username, password, user_domain_name=None,
-                 project_domain_name=None, driver_name=None):
+                 username, password, **kargs):
         super(OpenstackNetWorkDriver, self).__init__()
         self.provider = "OPENSTACK"
         self.auth_url = auth_url
-        self.project_domain_name = project_domain_name
-        self.user_domain_name = user_domain_name
         self.project_name = project_name
         self.username = username
         self.password = password
-        if driver_name:
-            self.driver_name = driver_name
-        else:
-            self.driver_name = "default"
-
+        self.driver_name = kargs.pop('driver_name', 'default')
         self._setup()
 
     def _setup(self):
         self.client = client.Client(
             username=self.username,
             password=self.password,
-            tenant_name=self.project_name,
+            project_name=self.project_name,
             auth_url=self.auth_url
         )
 
-    def create(self):
-        raise NotImplementedError
+    def create(self, network):
+        return self.client.create_network({'network': network})
 
-    def show(self):
-        raise NotImplementedError
+    def show(self, network_id):
+        return self.client.show_network(network_id)
 
-    def list(self):
-        raise NotImplementedError
+    def list(self, retrieve_all=True, **kargs):
+        return self.client.list_networks(retrieve_all, **kargs)
 
-    def update(self):
-        raise NotImplementedError
+    def update(self, network_id, network):
+        return self.client.update_network(network_id, {'network': network})
 
-    def delete(self):
-        raise NotImplementedError
+    def delete(self, network_id):
+        return self.client.delete_network(network_id)
