@@ -18,21 +18,23 @@ CONF = cal.conf.CONF
 LOG = logging.getLogger(__name__)
 
 
+class BrokeMiddleware(base.BaseMiddleware):
+
+    def __init__(self):
+        super(BrokeMiddleware, self).__init__()
+
+    def process_request(self, req, resp):
+        deserializer = utils.JSONRequestDeserializer()
+        body = deserializer.default(req)
+        cloud = body['body']['cloud']
+        req.env['cal.cloud'] = str(cloud)
+
+
 class FuncMiddleware(base.BaseMiddleware):
 
     def __init__(self, func):
         super(FuncMiddleware, self).__init__()
         self.func = func
-
-    def process_request(self, req, resp):
-        deserializer = utils.JSONRequestDeserializer()
-        if deserializer.has_body:
-            raise falcon.HTTPBadRequest('Empty request body',
-                                        'A valid JSON doc is required')
-
-        body = deserializer.default(req)
-        cloud = body.get('cloud')
-        req.environ['cal.cloud'] = cloud
 
     def process_resource(self, req, resp, resource, params):
         return self.func(req, resp, params)
@@ -64,7 +66,8 @@ class WSGIDriver(object):
         You can append this to middleware:
         self.middleware.append(BrokeMiddleware)
         """
-        self.middleware = \
+        self.middleware = [BrokeMiddleware()]
+        self.middleware += \
             [FuncMiddleware(hook) for hook in self.before_hooks()]
 
     def _init_routes_and_middlewares(self):

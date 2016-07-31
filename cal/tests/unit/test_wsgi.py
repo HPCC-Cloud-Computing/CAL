@@ -10,6 +10,10 @@ from cal import wsgi
 
 
 def _first_hook(req, resp, resource):
+    if req.env['cal.cloud'] != 'cloud1':
+        raise falcon.HTTPBadRequest(title='Process Request Error',
+                                    description='Problem when process request')
+
     if not req.client_accepts_json:
         raise falcon.HTTPNotAcceptable(
             'This API only supports responses encoded as JSON.',
@@ -28,14 +32,6 @@ def _second_hook(req, resp, resource):
 
     if req.method not in methods:
         raise falcon.HTTPNotFound()
-
-
-class TestMiddleware(wsgi.FuncMiddleware):
-    def __init__(self, func):
-        super(TestMiddleware, self).__init__(func)
-
-    def process_request(self, req, resp):
-        pass
 
 
 class TestController(object):
@@ -70,8 +66,7 @@ class TestWSGIDriver(wsgi.WSGIDriver):
         self.endpoints = [('/', TestResource(controller))]
 
     def _init_middlewares(self):
-        self.middleware = \
-            [TestMiddleware(hook) for hook in self.before_hooks()]
+        super(TestWSGIDriver, self)._init_middlewares()
 
     def _init_routes_and_middlewares(self):
         super(TestWSGIDriver, self)._init_routes_and_middlewares()
@@ -83,13 +78,43 @@ class Test(base.TestCase):
         super(Test, self).setUp()
         self.wsgi_driver = TestWSGIDriver()
         self.api = self.wsgi_driver.app
+        self.body = '{"cloud":"cloud1"}'
+
+    def test_process_request_failed_request_no_body(self):
+        bad_headers = {
+            'Content-Length': '0',
+            'Content-Type': 'application/json',
+            'URL-METHODS': 'POST, GET, PUT',
+        }
+
+        result = self.simulate_post(headers=bad_headers)
+        self.assertEqual(falcon.HTTP_400, result.status)
+
+    def test_process_request_failed_request_MalformedJSON(self):
+        headers = {
+            'Content-Type': 'application/json',
+            'URL-METHODS': 'POST, GET, PUT',
+        }
+
+        bad_body = '{"cloud":"cloud1"'
+        result = self.simulate_post(headers=headers, body=bad_body)
+        self.assertEqual(falcon.HTTP_400, result.status)
+
+    def test_process_request_success(self):
+        headers = {
+            'Content-Type': 'application/json',
+            'URL-METHODS': 'POST, GET, PUT',
+        }
+
+        result = self.simulate_post(headers=headers, body=self.body)
+        self.assertEqual(falcon.HTTP_200, result.status)
 
     def test_first_hook_raise_HTTPNotAcceptable(self):
         bad_headers = {
             'Accept': 'application/xml',
         }
 
-        result = self.simulate_post(headers=bad_headers)
+        result = self.simulate_post(headers=bad_headers, body=self.body)
         self.assertEqual(falcon.HTTP_406, result.status)
 
     def test_first_hook_raise_HTTPUnsupportedMediaType(self):
@@ -98,7 +123,7 @@ class Test(base.TestCase):
             'URL-METHODS': 'POST, GET, PUT',
         }
 
-        result = self.simulate_post(headers=bad_headers)
+        result = self.simulate_post(headers=bad_headers, body=self.body)
         self.assertEqual(falcon.HTTP_415, result.status)
 
     def test_second_hook_raise_HTTPNotFound(self):
@@ -107,7 +132,7 @@ class Test(base.TestCase):
             'URL-METHODS': 'GET, PUT',
         }
 
-        result = self.simulate_post(headers=bad_headers)
+        result = self.simulate_post(headers=bad_headers, body=self.body)
         self.assertEqual(falcon.HTTP_404, result.status)
 
     def test_pass_all_hooks(self):
@@ -116,9 +141,9 @@ class Test(base.TestCase):
             'URL-METHODS': 'POST, GET, PUT',
         }
 
-        result = self.simulate_post(headers=headers)
+        result = self.simulate_post(headers=headers, body=self.body)
         self.assertEqual(falcon.HTTP_200, result.status)
 
     def test_wrong_router(self):
-        result = self.simulate_get(path='/some/wrong/path')
+        result = self.simulate_get(path='/some/wrong/path', body=self.body)
         self.assertEqual(falcon.HTTP_404, result.status)
