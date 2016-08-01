@@ -3,6 +3,3 @@
     
 # Cloud Abstract Layer (CAL) framework
 
-
-## Change Log
-- v0.0.1: Create Abstract Classes namely: wsgi, manage

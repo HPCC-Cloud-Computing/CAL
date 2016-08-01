@@ -9,13 +9,23 @@ import socket
 import cal.conf
 from cal import base
 from cal import utils
-from cal.v1 import compute
-from cal.v1 import network
-from cal.v1 import storage
+from cal import v1
 
 CONF = cal.conf.CONF
 
 LOG = logging.getLogger(__name__)
+
+
+class BrokeMiddleware(base.BaseMiddleware):
+
+    def __init__(self):
+        super(BrokeMiddleware, self).__init__()
+
+    def process_request(self, req, resp):
+        deserializer = utils.JSONRequestDeserializer()
+        body = deserializer.default(req)
+        cloud = body['body']['cloud']
+        req.env['cal.cloud'] = str(cloud)
 
 
 class FuncMiddleware(base.BaseMiddleware):
@@ -23,16 +33,6 @@ class FuncMiddleware(base.BaseMiddleware):
     def __init__(self, func):
         super(FuncMiddleware, self).__init__()
         self.func = func
-
-    def process_request(self, req, resp):
-        deserializer = utils.JSONRequestDeserializer()
-        if deserializer.has_body:
-            raise falcon.HTTPBadRequest('Empty request body',
-                                        'A valid JSON doc is required')
-
-        body = deserializer.default(req)
-        cloud = body.get('cloud')
-        req.environ['cal.cloud'] = cloud
 
     def process_resource(self, req, resp, resource, params):
         return self.func(req, resp, params)
@@ -42,7 +42,7 @@ class WSGIDriver(object):
 
     def __init__(self):
         self.app = None
-        self.endpoints = None
+        self.catalog = None
         self.middleware = None
         self._init_routes_and_middlewares()
 
@@ -53,10 +53,14 @@ class WSGIDriver(object):
         ]
 
     def _init_endpoints(self):
-        """Initialize URI routes to resources"""
-        self.endpoints = network.public_endpoint(self, CONF)
-        self.endpoints += compute.public_endpoint(self, CONF)
-        self.endpoints += storage.public_endpoint(self, CONF)
+        """Initialize URI routes to resources
+        Define catalog - the list contain tuples which
+        combine version_path and that version's public
+        enpoint list.
+        """
+        self.catalog = [
+            ('/v1', v1.public_endpoint(self, CONF)),
+        ]
 
     def _init_middlewares(self):
         """Initialize hooks and middlewares
@@ -64,7 +68,8 @@ class WSGIDriver(object):
         You can append this to middleware:
         self.middleware.append(BrokeMiddleware)
         """
-        self.middleware = \
+        self.middleware = [BrokeMiddleware()]
+        self.middleware += \
             [FuncMiddleware(hook) for hook in self.before_hooks()]
 
     def _init_routes_and_middlewares(self):
@@ -73,9 +78,11 @@ class WSGIDriver(object):
         self._init_endpoints()
 
         self.app = falcon.API(middleware=self.middleware)
+        self.app.add_error_handler(Exception, self._error_handler)
 
-        for route, resource in self.endpoints:
-            self.app.add_route(route, resource)
+        for version_path, endpoints in self.catalog:
+            for route, resource in endpoints:
+                self.app.add_route(version_path + route, resource)
 
     def _error_handler(self, exc, request, response, params):
         """Handler error"""
