@@ -63,7 +63,10 @@ class TestWSGIDriver(wsgi.WSGIDriver):
 
     def _init_endpoints(self):
         controller = TestController()
-        self.endpoints = [('/', TestResource(controller))]
+        endpoints = [('/', TestResource(controller))]
+        self.catalog = [
+            ('', endpoints)
+        ]
 
     def _init_middlewares(self):
         super(TestWSGIDriver, self)._init_middlewares()
