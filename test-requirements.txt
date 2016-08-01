@@ -9,4 +9,3 @@ testtools>=1.4.0 # MIT
 flake8
 tox-travis
 coveralls
-
