@@ -1,5 +1,8 @@
 import datetime
-import json
+try:
+    import simplejson as json
+except ImportError:
+    import json
 
 import falcon
 
@@ -28,9 +31,11 @@ class JSONRequestDeserializer(object):
 
     def default(self, request):
         if self.has_body(request):
-            return {'body': self.from_json(request.body)}
+            body = request.stream.read(request.content_length)
+            return {'body': self.from_json(body.decode("utf-8"))}
         else:
-            return {}
+            raise falcon.HTTPBadRequest('Empty request body',
+                                        'A valid JSON doc is required')
 
 
 class JSONResponseSerializer(object):
