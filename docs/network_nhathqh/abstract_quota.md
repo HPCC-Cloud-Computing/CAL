@@ -1,6 +1,6 @@
 # Cloud Network Quota Survey
 
-| Openstack | AWS EC2 | Abtraction Quota|
+| Openstack | AWS EC2 | Abstract Quota|
 |---|---|---|
 | network, subnet | vpc (per region), subnet (per vpc) | Network |
 | port |  |  |
@@ -15,7 +15,7 @@
 | FaaS | Network ACLs (per VPC) | Firewall |
 | Firewall rules | Network ACL rules | Firewall rules |
 
-# Abtract Network Quota Proposal
+# Abstract Network Quota Proposal
 
 ####Commitment:
 OPS: 
