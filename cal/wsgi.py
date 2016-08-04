@@ -7,35 +7,15 @@ import six
 import socket
 
 import cal.conf
-from cal import base
+from cal.middlewares import DeserializeMiddleware, \
+                            FuncMiddleware, \
+                            SerializeMiddleware
 from cal import utils
 from cal import v1
 
 CONF = cal.conf.CONF
 
 LOG = logging.getLogger(__name__)
-
-
-class BrokeMiddleware(base.BaseMiddleware):
-
-    def __init__(self):
-        super(BrokeMiddleware, self).__init__()
-
-    def process_request(self, req, resp):
-        deserializer = utils.JSONRequestDeserializer()
-        body = deserializer.default(req)
-        cloud = body['body']['cloud']
-        req.env['cal.cloud'] = str(cloud)
-
-
-class FuncMiddleware(base.BaseMiddleware):
-
-    def __init__(self, func):
-        super(FuncMiddleware, self).__init__()
-        self.func = func
-
-    def process_resource(self, req, resp, resource, params):
-        return self.func(req, resp, params)
 
 
 class WSGIDriver(object):
@@ -50,6 +30,7 @@ class WSGIDriver(object):
         """Exposed to facilitate unit testing."""
         return [
             # Some hook methods
+            utils.append_request_id,
         ]
 
     def _init_endpoints(self):
@@ -66,11 +47,12 @@ class WSGIDriver(object):
         """Initialize hooks and middlewares
         If you have another Middleware, like BrokeMiddleware for e.x
         You can append this to middleware:
-        self.middleware.append(BrokeMiddleware)
+        self.middleware.append(BrokeMiddleware())
         """
-        self.middleware = [BrokeMiddleware()]
+        self.middleware = [DeserializeMiddleware()]
         self.middleware += \
             [FuncMiddleware(hook) for hook in self.before_hooks()]
+        self.middleware.append(SerializeMiddleware())
 
     def _init_routes_and_middlewares(self):
         """Initialize hooks and URI routes to resources."""

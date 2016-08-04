@@ -57,9 +57,11 @@ class BaseMiddleware(object):
 
 
 class BaseResource(object):
+    """Base class for CAL resources"""
 
     def __init__(self, controller, *args, **kwargs):
-        self.controller
+        self.controller = controller
+        self.req_ids = None
 
     def on_get(self, req, resp, *args, **kwargs):
         pass
