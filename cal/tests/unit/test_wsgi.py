@@ -6,11 +6,19 @@ import falcon
 
 from cal.tests import base
 from cal import base as wsgi_base
+from cal import utils
 from cal import wsgi
+from cal.middlewares import DeserializeMiddleware, \
+                            FuncMiddleware
 
 
-def _first_hook(req, resp, resource):
-    if req.env['cal.cloud'] != 'cloud1':
+def _first_hook(req, resp, resource, params):
+    if resource.req_ids is None:
+        raise falcon.HTTPBadRequest(title='Append request id failed',
+                                    description='Append request id failed')
+
+    if((req.env['cal.cloud'] != 'cloud1') or
+        ('request-id' not in req.env)):
         raise falcon.HTTPBadRequest(title='Process Request Error',
                                     description='Problem when process request')
 
@@ -26,7 +34,7 @@ def _first_hook(req, resp, resource):
                 href='http://docs.examples.com/api/json')
 
 
-def _second_hook(req, resp, resource):
+def _second_hook(req, resp, resource, params):
     headers = req.headers
     methods = headers.get('URL-METHODS', '').split(',')
 
@@ -43,7 +51,7 @@ class TestController(object):
 class TestResource(wsgi_base.BaseResource):
 
     def __init__(self, controller):
-        self.controller = controller
+        super(TestResource, self).__init__(controller)
 
     def on_get(self, req, resp):
         resp.status = falcon.HTTP_200
@@ -57,6 +65,7 @@ class TestWSGIDriver(wsgi.WSGIDriver):
 
     def before_hooks(self):
         return [
+            utils.append_request_id,
             _first_hook,
             _second_hook,
         ]
@@ -70,6 +79,9 @@ class TestWSGIDriver(wsgi.WSGIDriver):
 
     def _init_middlewares(self):
         super(TestWSGIDriver, self)._init_middlewares()
+        self.middleware = [DeserializeMiddleware()]
+        self.middleware += \
+            [FuncMiddleware(hook) for hook in self.before_hooks()]
 
     def _init_routes_and_middlewares(self):
         super(TestWSGIDriver, self)._init_routes_and_middlewares()
@@ -103,15 +115,6 @@ class Test(base.TestCase):
         result = self.simulate_post(headers=headers, body=bad_body)
         self.assertEqual(falcon.HTTP_400, result.status)
 
-    def test_process_request_success(self):
-        headers = {
-            'Content-Type': 'application/json',
-            'URL-METHODS': 'POST, GET, PUT',
-        }
-
-        result = self.simulate_post(headers=headers, body=self.body)
-        self.assertEqual(falcon.HTTP_200, result.status)
-
     def test_first_hook_raise_HTTPNotAcceptable(self):
         bad_headers = {
             'Accept': 'application/xml',
@@ -138,7 +141,7 @@ class Test(base.TestCase):
         result = self.simulate_post(headers=bad_headers, body=self.body)
         self.assertEqual(falcon.HTTP_404, result.status)
 
-    def test_pass_all_hooks(self):
+    def test_process_request_and_resource_success(self):
         headers = {
             'Content-Type': 'application/json',
             'URL-METHODS': 'POST, GET, PUT',

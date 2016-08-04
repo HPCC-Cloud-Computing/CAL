@@ -5,6 +5,7 @@ except ImportError:
     import json
 
 import falcon
+from falcon import Response
 
 
 class JSONRequestDeserializer(object):
@@ -54,3 +55,30 @@ class JSONResponseSerializer(object):
     def default(self, response, result):
         response.content_type = 'application/json'
         response.body = self.to_json(result)
+
+
+def append_request_id(req, resp, resource, params):
+    """Append request id which got from response
+    header to resource.req_ids list.
+    """
+    def get_headers(resp):
+        if hasattr(resp, 'headers'):
+            return resp.headers
+        if hasattr(resp, '_headers'):
+            return resp._headers
+        return None
+
+    if(isinstance(resp, Response) or
+       (get_headers(resp) is not None)):
+        # Extract 'x-request-id' from headers if
+        # response is a Response object.
+        request_id = get_headers(resp).get('x-request-id')
+    else:
+        # If resp is of type string or None.
+        request_id = resp
+
+    if resource.req_ids is None:
+        resource.req_ids = []
+
+    if request_id not in resource.req_ids:
+        resource.req_ids.append(request_id)
