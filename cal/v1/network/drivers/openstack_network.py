@@ -3,7 +3,7 @@
 """
 
 from neutronclient.v2_0 import client
-from network_driver import NetworkDriver
+from network_driver import NetworkDriver, NetworkQuota
 
 
 class OpenstackNetWorkDriver(NetworkDriver):
@@ -30,6 +30,7 @@ class OpenstackNetWorkDriver(NetworkDriver):
             auth_url=self.auth_url,
             endpoint_url=self.endpoint_url
         )
+        self.network_quota = OpenstackNetworkQuota(self.client)
 
     def create(self, name, cidr, **kargs):
         admin_state_up = kargs.pop('admin_state_up', True)
@@ -101,3 +102,119 @@ class OpenstackNetWorkDriver(NetworkDriver):
 
     def delete(self, network_id):
         return self.client.delete_network(network_id)
+
+
+class OpenstackNetworkQuota(NetworkQuota):
+    """docstring for OpenstackNetworkQuota"""
+
+    def __init__(self, client):
+        super(NetworkQuota, self).__init__()
+        self.client = client
+
+    def get_networks(self):
+        networks = {
+                      "max": 50,
+                      "used": 5,
+                      "list_cidrs": [
+                                  {"net_id": "net01", "cidr": "10.0.0.0/24"},
+                                  {"net_id": "net01", "cidr": "10.0.1.0/24"},
+                                  {"net_id": "net01", "cidr": "10.10.0.0/16"},
+                                  {"net_id": "net01", "cidr": "10.20.0.0/16"},
+                                  {"net_id": "net01", "cidr": "10.0.2.192/28"}
+                              ],
+                      "VPCs":
+                      {
+                          "max": 5,
+                          "used": 1,
+                          "list_cidrs": [
+                              {
+                                  "vpc_id": "vpc01",
+                                  "cidr": "10.0.0.0/8"
+                              }
+                          ]
+                      }
+                    }
+
+        return networks
+
+    def get_security_groups(self):
+        security_groups = {
+                            "max": 50,
+                            "used": 1,
+                            "list_security_groups": [
+                                {
+                                    "security_group_id": "secgroup01",
+                                    "rules_max": 50,
+                                    "rules_used": 10,
+                                    "list_rules": []
+                                }
+                            ]
+                          }
+
+        return security_groups
+
+    def get_floating_ips(self):
+        floating_ips = {
+                          "max": 10,
+                          "used": 5,
+                          "list_floating_ips": []
+                        }
+
+        return floating_ips
+
+    def get_routers(self):
+        routers = {
+                    "max": 50,
+                    "used": 1,
+                    "list_routers": [
+                                {
+                                    "router_id": "router01",
+                                    "is_gateway": False
+                                }
+                    ]
+                  }
+
+        return routers
+
+    def get_internet_gateways(self):
+        internet_gateways = {
+                              "max": 5,
+                              "used": 1,
+                              "list_internet_gateways": [
+                                  {"internet_gateway_id": "igw01"}
+                              ]
+                            }
+
+        return internet_gateways
+
+    def get_vpn_gateways(self):
+        vpn_gateways = {
+                          "max": 5,
+                          "used": 1,
+                          "list_vpn_gateways": [
+                                              {
+                                                  "vpn_gateway_id": "vnp01",
+                                                  "max_connections": 10,
+                                                  "used_connections": 1,
+                                                  "list_connections": []
+                                              }
+                          ]
+                        }
+
+        return vpn_gateways
+
+    def get_firewall(self):
+        firewall = {
+                      "max": 50,
+                      "used": 1,
+                      "list_firewalls": [
+                                      {
+                                          "firewall_id": "fw01",
+                                          "rules_max": 50,
+                                          "rules_used": 10,
+                                          "list_rules": []
+                                      }
+                      ]
+                    }
+
+        return firewall
