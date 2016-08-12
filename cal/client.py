@@ -1,25 +1,27 @@
 from cal import exceptions
 from cal.v1.compute import client as compute_client_v1
 from cal.v1.network import client as network_client_v1
-from cal.v1.storage import client as storage_client_v1
+from cal.v1.block_storage import client as block_storage_client_v1
+from cal.v1.object_storage import client as object_storage_client_v1
 from cal.version import __version__
 
 _CLIENTS = {
     '1.0.0': {
         'compute': compute_client_v1.Client,
         'network': network_client_v1.Client,
-        'storge': storage_client_v1.Client,
+        'block_storage': block_storage_client_v1.Client,
+        'object_storge': object_storage_client_v1.Client,
     }
 }
 
 
-def Client(url=None, version=__version__,
-           resource=None, provider=None, **kwargs):
+def Client(version=__version__, resource=None,
+           provider=None, **kwargs):
     """Initialize client object based on given version.
 
-    :params url:
     :params version: version of CAL, define at setup.cfg
     :params resource: resource type
+                     (network, compute, object_storage, block_storage)
     :params provider: cloud provider(Openstack, Amazon...)
     :params **kwargs: specific args for resource
     :return: class Client
@@ -33,8 +35,25 @@ def Client(url=None, version=__version__,
                                provider='OpenStack',
                                some_needed_args_for_ComputeClient)
     """
-    try:
-        return _CLIENTS[version][resource](url, provider, **kwargs)
-    except KeyError:
+
+    versions = _CLIENTS.keys()
+    providers = ['OpenStack', 'OpenNebula', 'Amazon']
+    resources = _CLIENTS[version].keys()
+
+    if version not in versions:
         raise exceptions.UnsupportedVersion(
-                                'Unknown client version or subject')
+            'Unknown client version or subject'
+        )
+
+    if provider not in providers:
+        raise exceptions.ProviderNotFound(
+            'Unknow provider'
+        )
+
+    if resource not in resources:
+        raise exceptions.ResourceNotFound(
+            'Unknow resource: compute, network,\
+                        object_storage, block_storage'
+        )
+
+    return _CLIENTS[version][resource](provider, **kwargs)

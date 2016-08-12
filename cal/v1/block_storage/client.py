@@ -7,5 +7,5 @@ class Client(BaseClient):
     sure only one instance of this one is ever created."""
 
     def __init__(self, provider, *args, **kwargs):
-        _path = 'cal.v1.compute.driver'
+        _path = 'cal.v1.block_storage.driver'
         BaseClient.__init__(self, _path, provider)

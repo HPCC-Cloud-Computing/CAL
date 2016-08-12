@@ -24,3 +24,24 @@ class ConnectionRefused(Exception):
 
     def __str__(self):
         return "ConnectionRefused: %s" % repr(self.response)
+
+
+class ResourceNotFound(Exception):
+    """Unknow resource, not 'compute', 'network' or 'storage'"""
+    pass
+
+
+class ProviderNotFound(Exception):
+    """Unknow/Unsupported provider"""
+    pass
+
+
+class ResourceInErrorState(Exception):
+    """Resource is in the error state."""
+
+    def __init__(self, obj):
+        msg = "`%s` resource is in the error state" % obj.__class__.__name__
+        fault_msg = getattr(obj, "fault", {}).get("message")
+        if fault_msg:
+            msg += "due to '%s'" % fault_msg
+        self.message = "%s." % msg
