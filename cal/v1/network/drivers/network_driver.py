@@ -56,22 +56,22 @@ class NetworkQuota(object):
         setattr(self, attr, value)
 
     def get_networks(self):
-        return None
+        pass
 
     def get_security_groups(self):
-        return None
+        pass
 
     def get_floating_ips(self):
-        return None
+        pass
 
     def get_routers(self):
-        return None
+        pass
 
     def get_internet_gateways(self):
-        return None
+        pass
 
     def get_vpn_gateways(self):
-        return None
+        pass
 
     def get_firewall(self):
-        return None
+        pass
