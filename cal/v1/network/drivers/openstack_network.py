@@ -6,7 +6,7 @@
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from neutronclient.v2_0 import client
-from network_driver import NetworkDriver, NetworkQuota
+from cal.v1.network.drivers.network_driver import NetworkDriver, NetworkQuota
 
 
 class OpenstackNetWorkDriver(NetworkDriver):

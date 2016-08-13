@@ -8,7 +8,7 @@ from cal.tests import base
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from neutronclient.v2_0 import client
-from network_driver import OpenstackNetWorkDriver, OpenstackNetworkQuota
+from cal.v1.network.drivers.openstack_network import OpenstackNetWorkDriver, OpenstackNetworkQuota
 
 fake_config_driver = {
     'provider': 'OPENSTACK',
@@ -65,7 +65,7 @@ class OpenstackNetWorkDriverTest(base.TestCase):
         self.fake_driver = OpenstackNetWorkDriver(self.client)
         self.fake_quota = OpenstackNetworkQuota(self.client)
 
-    def test_create(self):
+    def test_create1(self):
         self.mock_object(
             self.fake_driver, 'client.create_network',
             mock.Mock(return_value={'network': fake_network_out}))
@@ -79,3 +79,40 @@ class OpenstackNetWorkDriverTest(base.TestCase):
             {'network': fake_network_in})
         self.fake_driver.client.create_subnet.assert_called_once_with(
             {'subnet': fake_subnet_int})
+
+    def test_create2(self):
+        mock_create_network = mock.Mock(
+            return_value={'network': fake_network_out}
+        )
+        mock_create_subnet = mock.Mock(
+            return_value={'subnet': fake_subnet_out}
+        )
+
+        self.mock_object(self.fake_driver.client,
+                         'create_subnet',
+                         mock_create_network)
+        self.mock_object(self.fake_driver.client,
+                         'create_subnet',
+                         mock_create_subnet)
+        self.fake_driver.create('fake_name', 'fake_cidr')
+
+        mock_create_network.assert_called_once_with(
+            {'network': fake_network_in}
+        )
+        mock_create_subnet.assert_called_once_with(
+            {'subnet': fake_subnet_int}
+        )
+
+    def test_create3(self):
+        self.mock_object(
+            self.fake_driver.client, 'create_network',
+            mock.Mock(return_value={'network': fake_network_out}))
+        self.mock_object(
+            self.fake_driver.client, 'create_subnet',
+            mock.Mock(return_value={'subnet': fake_subnet_out}))
+        self.fake_driver.create('fake_name', 'fake_cidr')
+
+        self.fake_driver.client.create_network.\
+            assert_called_once_with({'network': fake_network_in})
+        self.fake_driver.client.create_subnet.\
+            assert_called_once_with({'subnet': fake_subnet_int})
