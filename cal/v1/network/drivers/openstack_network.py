@@ -119,9 +119,9 @@ class OpenstackNetworkQuota(NetworkQuota):
     def get_networks(self):
         subnets = self.client.list_subnets().get('subnets')
         list_cidrs = []
-        for subnet in subnet:
-            list_cidrs = {"net_id": subnet['id'],
-                          "cidr": "{}".format(subnet['cidr'])}
+        for subnet in subnets:
+            list_cidrs.append({"net_id": subnet['id'],
+                               "cidr": "{}".format(subnet['cidr'])})
         networks = {
             "max": 50,
             "used": len(list_cidrs),
@@ -157,15 +157,17 @@ class OpenstackNetworkQuota(NetworkQuota):
         return floating_ips
 
     def get_routers(self):
+        rts = self.client.list_routers().get('routers')
+        list_routers = []
+        for router in rts:
+            list_routers.append({
+                "router_id": router['id'],
+                "is_gateway": True
+            })
         routers = {
             "max": 50,
-            "used": 1,
-            "list_routers": [
-                {
-                    "router_id": "router01",
-                    "is_gateway": False
-                }
-            ]
+            "used": len(list_routers),
+            "list_routers": list_routers
         }
 
         return routers
