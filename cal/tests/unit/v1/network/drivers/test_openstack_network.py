@@ -23,7 +23,7 @@ fake_config_driver = {
 }
 
 fake_network_in = {'name': '',
-                   'admin_state_up': admin_state_up}
+                   'admin_state_up': 'up'}
 
 fake_network_out = {'id': 'fake_id'}
 
