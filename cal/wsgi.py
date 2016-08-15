@@ -1,19 +1,19 @@
+import logging
 from wsgiref import simple_server
 
 import falcon
-from oslo_log import log as logging
 from oslo_utils import netutils
 import six
 import socket
 
-import cal.conf
+from cal import conf
 from cal.middlewares import DeserializeMiddleware, \
                             FuncMiddleware, \
                             SerializeMiddleware
 from cal import utils
 from cal import v1
 
-CONF = cal.conf.CONF
+CONF = conf.CONF
 
 LOG = logging.getLogger(__name__)
 

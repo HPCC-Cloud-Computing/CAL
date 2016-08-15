@@ -1,14 +1,17 @@
+from cal import conf
 from cal.base import BaseClient
+from cal.v1.network.drivers.base import BaseDriver
+
+CONF = conf.CONF
 
 
-class Client(BaseClient):
+class Client(BaseClient, BaseDriver):
     """Top-level object to access CAL API
     This class must be extended base.Singleton class to make
     sure only one instance of this one is ever created."""
 
     def __init__(self, provider, *args, **kwargs):
-        _path = 'cal.v1.network.driver'
-        BaseClient.__init__(self, _path, provider)
+        BaseClient.__init__(self, CONF.network.driver_path, provider)
 
     def create_network(self, name, *args, **kwargs):
         self.driver.create_network(name, *args, **kwargs)

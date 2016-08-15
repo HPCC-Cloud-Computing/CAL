@@ -1,5 +1,8 @@
 import falcon
+import logging
 import importlib
+
+LOG = logging.getLogger(__name__)
 
 
 class Request(falcon.Request):
@@ -102,4 +105,5 @@ class BaseClient(Singleton):
 
     def set_driver(self, path, provider):
         module = importlib.import_module(path + '.' + provider.lower())
+        LOG.info('Use %s driver for client', provider)
         self.driver = getattr(module, provider)()

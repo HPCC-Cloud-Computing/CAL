@@ -1,9 +1,16 @@
+import logging
+
 from cal import exceptions
+from cal import conf
 from cal.v1.compute import client as compute_client_v1
 from cal.v1.network import client as network_client_v1
 from cal.v1.block_storage import client as block_storage_client_v1
 from cal.v1.object_storage import client as object_storage_client_v1
 from cal.version import __version__
+
+LOG = logging.getLogger(__name__)
+
+CONF = conf.CONF
 
 _CLIENTS = {
     '1.0.0': {
@@ -37,7 +44,7 @@ def Client(version=__version__, resource=None,
     """
 
     versions = _CLIENTS.keys()
-    providers = ['OpenStack', 'OpenNebula', 'Amazon']
+    providers = CONF.providers.supported_providers
     resources = _CLIENTS[version].keys()
 
     if version not in versions:
@@ -45,15 +52,17 @@ def Client(version=__version__, resource=None,
             'Unknown client version or subject'
         )
 
-    if provider not in providers:
+    if provider.lower() not in providers:
         raise exceptions.ProviderNotFound(
             'Unknow provider'
         )
 
-    if resource not in resources:
+    if resource.lower() not in resources:
         raise exceptions.ResourceNotFound(
             'Unknow resource: compute, network,\
                         object_storage, block_storage'
         )
+
+    LOG.info('Instantiating {} client ({})' . format(resource, version))
 
     return _CLIENTS[version][resource](provider, **kwargs)
