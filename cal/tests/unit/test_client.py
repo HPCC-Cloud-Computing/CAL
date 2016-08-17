@@ -3,7 +3,7 @@ import mock
 from cal import client
 from cal import exceptions
 from cal.tests.base import TestCase
-from cal.v1.network import client as network_client
+# from cal.v1.network import client as network_client
 
 
 class TestClient(TestCase):
