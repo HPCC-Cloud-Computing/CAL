@@ -1,11 +1,10 @@
-from cal import conf
+import cal.conf
 from cal.base import BaseClient
-from cal.v1.object_storage.drivers.base import BaseDriver
 
-CONF = conf.CONF
+CONF = cal.conf.CONF
 
 
-class Client(BaseClient, BaseDriver):
+class Client(BaseClient):
     """Top-level object to access CAL API
     This class must be extended base.Singleton class to make
     sure only one instance of this one is ever created."""

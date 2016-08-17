@@ -1,7 +1,7 @@
 import logging
 
+import cal.conf
 from cal import exceptions
-from cal import conf
 from cal.v1.compute import client as compute_client_v1
 from cal.v1.network import client as network_client_v1
 from cal.v1.block_storage import client as block_storage_client_v1
@@ -10,7 +10,7 @@ from cal.version import __version__
 
 LOG = logging.getLogger(__name__)
 
-CONF = conf.CONF
+CONF = cal.conf.CONF
 
 _CLIENTS = {
     '1.0.0': {
@@ -44,13 +44,14 @@ def Client(version=__version__, resource=None,
     """
 
     versions = _CLIENTS.keys()
-    providers = CONF.providers.supported_providers
-    resources = _CLIENTS[version].keys()
 
     if version not in versions:
         raise exceptions.UnsupportedVersion(
             'Unknown client version or subject'
         )
+
+    resources = _CLIENTS[version].keys()
+    providers = CONF.providers.supported_providers
 
     if provider.lower() not in providers:
         raise exceptions.ProviderNotFound(

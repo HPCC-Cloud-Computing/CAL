@@ -6,14 +6,14 @@ from oslo_utils import netutils
 import six
 import socket
 
-from cal import conf
+import cal.conf
 from cal.middlewares import DeserializeMiddleware, \
                             FuncMiddleware, \
                             SerializeMiddleware
 from cal import utils
 from cal import v1
 
-CONF = conf.CONF
+CONF = cal.conf.CONF
 
 LOG = logging.getLogger(__name__)
 
