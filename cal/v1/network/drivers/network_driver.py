@@ -4,7 +4,6 @@
 
 
 class NetworkDriver(object):
-
     """abstract class for network driver"""
 
     def __init__(self):
@@ -12,19 +11,19 @@ class NetworkDriver(object):
         self.provider = "Unknown"
         self.network_quota = NetworkQuota()
 
-    def create():
+    def create(self):
         raise NotImplementedError
 
-    def show():
+    def show(self):
         raise NotImplementedError
 
-    def list():
+    def list(self):
         raise NotImplementedError
 
-    def update():
+    def update(self):
         raise NotImplementedError
 
-    def delete():
+    def delete(self):
         raise NotImplementedError
 
 

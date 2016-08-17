@@ -10,7 +10,6 @@ from cal.v1.network.drivers.network_driver import NetworkDriver, NetworkQuota
 
 
 class OpenstackNetWorkDriver(NetworkDriver):
-
     """docstring for OpenstackNetWorkDriver"""
 
     def __init__(self, auth_url, project_name,
@@ -59,7 +58,7 @@ class OpenstackNetWorkDriver(NetworkDriver):
                   'id': subnet['id'],
                   'cidr': subnet['cidr'],
                   'cloud': self.provider,
-                  'gateway': subnet['gateway_ip'],
+                  'gateway_ip': subnet['gateway_ip'],
                   'security_group': None,
                   'allocation_pools': subnet['allocation_pools'],
                   'dns_nameservers': subnet['dns_nameservers']
@@ -132,26 +131,30 @@ class OpenstackNetworkQuota(NetworkQuota):
         return networks
 
     def get_security_groups(self):
-        security_groups = {
-            "max": 50,
-            "used": 1,
-            "list_security_groups": [
-                {
-                    "security_group_id": "secgroup01",
-                    "rules_max": 50,
-                    "rules_used": 10,
-                    "list_rules": []
-                }
-            ]
-        }
-
-        return security_groups
+        # list_security_groups = self.client.list_security_groups()
+        # security_groups = {
+        #     "max": 50,
+        #     "used": 1,
+        #     "list_security_groups": [
+        #         {
+        #             "security_group_id": "secgroup01",
+        #             "rules_max": 50,
+        #             "rules_used": 10,
+        #             "list_rules": []
+        #         }
+        #     ]
+        # }
+        pass
 
     def get_floating_ips(self):
+        ips = self.client.list_floatingips().get('floatingips')
+        list_ips = []
+        for ip in ips:
+            list_ips.append(ip['floating_ip_address'])
         floating_ips = {
-            "max": 10,
-            "used": 5,
-            "list_floating_ips": []
+            "max": 255,
+            "used": len(list_ips),
+            "list_floating_ips": list_ips
         }
 
         return floating_ips
@@ -173,44 +176,41 @@ class OpenstackNetworkQuota(NetworkQuota):
         return routers
 
     def get_internet_gateways(self):
-        internet_gateways = {
-            "max": 5,
-            "used": 1,
-            "list_internet_gateways": [
-                {"internet_gateway_id": "igw01"}
-            ]
-        }
-
-        return internet_gateways
+        # internet_gateways = {
+        #     "max": 5,
+        #     "used": 1,
+        #     "list_internet_gateways": [
+        #         {"internet_gateway_id": "igw01"}
+        #     ]
+        # }
+        pass
 
     def get_vpn_gateways(self):
-        vpn_gateways = {
-            "max": 5,
-            "used": 1,
-            "list_vpn_gateways": [
-                {
-                    "vpn_gateway_id": "vnp01",
-                    "max_connections": 10,
-                    "used_connections": 1,
-                    "list_connections": []
-                }
-            ]
-        }
-
-        return vpn_gateways
+        # vpn_gateways = {
+        #     "max": 5,
+        #     "used": 1,
+        #     "list_vpn_gateways": [
+        #         {
+        #             "vpn_gateway_id": "vnp01",
+        #             "max_connections": 10,
+        #             "used_connections": 1,
+        #             "list_connections": []
+        #         }
+        #     ]
+        # }
+        pass
 
     def get_firewall(self):
-        firewall = {
-            "max": 50,
-            "used": 1,
-            "list_firewalls": [
-                {
-                    "firewall_id": "fw01",
-                    "rules_max": 50,
-                    "rules_used": 10,
-                    "list_rules": []
-                }
-            ]
-        }
-
-        return firewall
+        # firewall = {
+        #     "max": 50,
+        #     "used": 1,
+        #     "list_firewalls": [
+        #         {
+        #             "firewall_id": "fw01",
+        #             "rules_max": 50,
+        #             "rules_used": 10,
+        #             "list_rules": []
+        #         }
+        #     ]
+        # }
+        pass
