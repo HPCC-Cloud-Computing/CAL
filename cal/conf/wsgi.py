@@ -1,3 +1,4 @@
+"""WSGI Configuration"""
 from oslo_config import cfg
 
 

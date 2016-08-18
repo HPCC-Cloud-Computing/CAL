@@ -1,7 +1,7 @@
+import logging
 from wsgiref import simple_server
 
 import falcon
-from oslo_log import log as logging
 from oslo_utils import netutils
 import six
 import socket

@@ -10,4 +10,4 @@ class Client(BaseClient):
     sure only one instance of this one is ever created."""
 
     def __init__(self, provider, *args, **kwargs):
-        BaseClient.__init__(self, CONF.compute.driver_path, provider)
+        BaseClient.__init__(self, CONF.object_storage.driver_path, provider)

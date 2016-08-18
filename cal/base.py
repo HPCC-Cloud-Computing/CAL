@@ -1,4 +1,8 @@
 import falcon
+import logging
+import importlib
+
+LOG = logging.getLogger(__name__)
 
 
 class Request(falcon.Request):
@@ -89,3 +93,17 @@ class _Singleton(type):
 
 class Singleton(_Singleton('SingletonMeta', (object,), {})):
     pass
+
+
+class BaseClient(Singleton):
+    """Base Client
+    :params path: module path of driver, for e.x: 'cal.v1.network.driver'
+    :params provider: provider for e.x: 'OpenStack'
+    """
+    def __init__(self, path, provider):
+        self.set_driver(path, provider)
+
+    def set_driver(self, path, provider):
+        module = importlib.import_module(path + '.' + provider.lower())
+        LOG.info('Use %s driver for client', provider)
+        self.driver = getattr(module, provider)()

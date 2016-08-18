@@ -6,7 +6,13 @@ network_group = cfg.OptGroup('network',
 
 # some config options here
 
-ALL_OPTS = ()
+driver_path = cfg.StrOpt(
+    'driver_path',
+    default='cal.v1.network.drivers',
+    help='Default path to network drivers',
+)
+
+ALL_OPTS = ([driver_path])
 
 
 def register_opts(conf):
