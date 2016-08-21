@@ -2,6 +2,7 @@ import logging
 
 import cal.conf
 from cal import exceptions
+from cal import utils
 from cal.v1.compute import client as compute_client_v1
 from cal.v1.network import client as network_client_v1
 from cal.v1.block_storage import client as block_storage_client_v1
@@ -23,13 +24,14 @@ _CLIENTS = {
 
 
 def Client(version=__version__, resource=None,
-           provider=None, **kwargs):
+           provider=None, cloud_config=None, **kwargs):
     """Initialize client object based on given version.
 
     :params version: version of CAL, define at setup.cfg
     :params resource: resource type
                      (network, compute, object_storage, block_storage)
     :params provider: cloud provider(Openstack, Amazon...)
+    :params cloud_config: cloud auth config
     :params **kwargs: specific args for resource
     :return: class Client
 
@@ -64,6 +66,9 @@ def Client(version=__version__, resource=None,
                         object_storage, block_storage'
         )
 
+    _cloud_config = utils.pick_host_with_specific_provider(provider,
+                                                           cloud_config)
+
     LOG.info('Instantiating {} client ({})' . format(resource, version))
 
-    return _CLIENTS[version][resource](provider, **kwargs)
+    return _CLIENTS[version][resource](provider, _cloud_config, **kwargs)

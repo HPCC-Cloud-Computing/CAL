@@ -9,8 +9,9 @@ class Client(BaseClient):
     This class must be extended base.Singleton class to make
     sure only one instance of this one is ever created."""
 
-    def __init__(self, provider, *args, **kwargs):
-        BaseClient.__init__(self, CONF.network.driver_path, provider)
+    def __init__(self, provider, cloud_config, *args, **kwargs):
+        BaseClient.__init__(self, CONF.network.driver_path,
+                            provider, cloud_config)
 
     def create_network(self, name, *args, **kwargs):
         self.driver.create_network(name, *args, **kwargs)

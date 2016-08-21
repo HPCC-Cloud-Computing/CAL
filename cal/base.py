@@ -99,11 +99,12 @@ class BaseClient(Singleton):
     """Base Client
     :params path: module path of driver, for e.x: 'cal.v1.network.driver'
     :params provider: provider for e.x: 'OpenStack'
+    :params cloud_config:
     """
-    def __init__(self, path, provider):
-        self.set_driver(path, provider)
+    def __init__(self, path, provider, cloud_config):
+        self.set_driver(path, provider, cloud_config)
 
-    def set_driver(self, path, provider):
+    def set_driver(self, path, provider, cloud_config):
         module = importlib.import_module(path + '.' + provider.lower())
         LOG.info('Use %s driver for client', provider)
-        self.driver = getattr(module, provider)()
+        self.driver = getattr(module, provider)(cloud_config)
