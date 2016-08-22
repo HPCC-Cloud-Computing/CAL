@@ -52,6 +52,11 @@ fake_router = {
     'id': 'fake_router_id1'
 }
 
+fake_security_groups = {
+    'id': 'fake_scg_id',
+    'security_group_rules': []
+}
+
 
 class OpenstackNetWorkDriverTest(base.TestCase):
 
@@ -215,10 +220,56 @@ class OpenstackNetWorkDriverTest(base.TestCase):
             assert_called_once_with()
 
     def test_get_security_groups_quota(self):
+        self.mock_object(
+            self.fake_driver.client, 'get_quotas_tenant',
+            mock.Mock(return_value={
+                'tenant': {
+                    'tenant_id': 'fake_tenant_id'
+                }
+            }))
+        self.mock_object(
+            self.fake_driver.client, 'list_security_groups',
+            mock.Mock(return_value={
+                'security_groups': [fake_security_groups]
+            }))
+
         self.fake_driver.network_quota.get_security_groups()
 
+        self.fake_driver.client.get_quotas_tenant.\
+            assert_called_once_with()
+        self.fake_driver.client.list_security_groups.\
+            assert_called_once_with(tenant_id='fake_tenant_id')
+
+    def test_get_security_groups_unable_to_get_tenant_id(self):
+        self.mock_object(
+            self.fake_driver.client, 'get_quotas_tenant',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+                          self.fake_driver.network_quota.get_security_groups)
+
+        self.fake_driver.client.get_quotas_tenant.\
+            assert_called_once_with()
+
     def test_get_security_groups_unable_to_get_quota(self):
-        pass
+        self.mock_object(
+            self.fake_driver.client, 'get_quotas_tenant',
+            mock.Mock(return_value={
+                'tenant': {
+                    'tenant_id': 'fake_tenant_id'
+                }
+            }))
+        self.mock_object(
+            self.fake_driver.client, 'list_security_groups',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+                          self.fake_driver.network_quota.get_security_groups)
+
+        self.fake_driver.client.get_quotas_tenant.\
+            assert_called_once_with()
+        self.fake_driver.client.list_security_groups.\
+            assert_called_once_with(tenant_id='fake_tenant_id')
 
     def test_get_floating_ips(self):
         self.mock_object(
@@ -271,9 +322,3 @@ class OpenstackNetWorkDriverTest(base.TestCase):
 
     def test_get_internet_gateways(self):
         self.fake_driver.network_quota.get_internet_gateways()
-
-    def test_get_vpn_gateways(self):
-        self.fake_driver.network_quota.get_vpn_gateways()
-
-    def test_get_firewall(self):
-        self.fake_driver.network_quota.get_firewall()

@@ -131,20 +131,23 @@ class OpenstackNetworkQuota(NetworkQuota):
         return networks
 
     def get_security_groups(self):
-        # list_security_groups = self.client.list_security_groups()
-        # security_groups = {
-        #     "max": 50,
-        #     "used": 1,
-        #     "list_security_groups": [
-        #         {
-        #             "security_group_id": "secgroup01",
-        #             "rules_max": 50,
-        #             "rules_used": 10,
-        #             "list_rules": []
-        #         }
-        #     ]
-        # }
-        pass
+        tenant_id = self.client.get_quotas_tenant().get('tenant')['tenant_id']
+        list_security_groups = self.client.list_security_groups(
+            tenant_id=tenant_id).get('security_groups')
+        list_scgs = []
+        for scg in list_security_groups:
+            list_scgs.append({
+                "security_group_id": scg['id'],
+                "rules_max": 50,
+                "rules_used": len(scg['security_group_rules']),
+                "list_rules": scg['security_group_rules']
+            })
+        security_groups = {
+            "max": 50,
+            "used": len(list_security_groups),
+            "list_security_groups": list_scgs
+        }
+        return security_groups
 
     def get_floating_ips(self):
         ips = self.client.list_floatingips().get('floatingips')
@@ -181,36 +184,6 @@ class OpenstackNetworkQuota(NetworkQuota):
         #     "used": 1,
         #     "list_internet_gateways": [
         #         {"internet_gateway_id": "igw01"}
-        #     ]
-        # }
-        pass
-
-    def get_vpn_gateways(self):
-        # vpn_gateways = {
-        #     "max": 5,
-        #     "used": 1,
-        #     "list_vpn_gateways": [
-        #         {
-        #             "vpn_gateway_id": "vnp01",
-        #             "max_connections": 10,
-        #             "used_connections": 1,
-        #             "list_connections": []
-        #         }
-        #     ]
-        # }
-        pass
-
-    def get_firewall(self):
-        # firewall = {
-        #     "max": 50,
-        #     "used": 1,
-        #     "list_firewalls": [
-        #         {
-        #             "firewall_id": "fw01",
-        #             "rules_max": 50,
-        #             "rules_used": 10,
-        #             "list_rules": []
-        #         }
         #     ]
         # }
         pass

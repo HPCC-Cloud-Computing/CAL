@@ -41,9 +41,7 @@ class NetworkQuota(object):
                 "security_groups",
                 "floating_ips",
                 "routers",
-                "internet_gateways",
-                "vpn_gateways",
-                "firewall")
+                "internet_gateways")
 
         for attr in attrs:
             setattr(self, attr, eval("self.get_{}()". format(attr)))
@@ -67,10 +65,4 @@ class NetworkQuota(object):
         pass
 
     def get_internet_gateways(self):
-        pass
-
-    def get_vpn_gateways(self):
-        pass
-
-    def get_firewall(self):
         pass
