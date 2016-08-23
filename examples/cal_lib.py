@@ -8,7 +8,51 @@ import logging
 
 LOG = logging.getLogger('')
 
+_VERSION = '1.0.0'
+_RESOURCES = ['network', 'compute']
+_PROVIDER = 'OpenStack'
+
 
 def run():
     """Run the examples"""
-    pass
+
+    # NOTE(kiennt): Until now, this example isn't finished yet,
+    #               because we don't have any completed driver
+
+    # Get a network client with openstack driver.
+
+    # network_client = client.Client(version=_VERSION,
+    #                                resource=_RESOURCES[0],
+    #                                provider=_PROVIDER)
+
+    # LOG.debug('Init network client(Id of instance: {}) \
+    #           with default config' . format(id(network_client)))
+
+    # Create simple network in OpenStack Cloud Host.
+    # network_client.create_network(*args, **kwargs)
+    # List all network in OpenStack Cloud Host.
+    # net = network_client.list_network(*args, **kwargs)
+    # print('List all network:')
+    # TODO(kiennt): Wait to know the format of
+    #               that list to show and get
+    #               the nearest created network.
+
+    # Show network info with specific id which got from prev.
+    # net = network_client.show_network(net_id)
+
+    # Get a compute client with openstack driver.
+
+    # compute_client = client.Client(version=_VERSION,
+    #                                resource=_RESOURCES[1],
+    #                                provider=_PROVIDER)
+
+    # Create VM.
+    # new_vm = compute_client.create_vm(*args, **kwargs)
+    # List all VM.
+    # vms = compute_client.list_vm(*args, **kwargs)
+    # TODO(kiennt): Print ids.
+    # Show usage resource.
+
+
+if __name__ == "__main__":
+    run()

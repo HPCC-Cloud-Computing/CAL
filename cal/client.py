@@ -55,12 +55,15 @@ def Client(version=__version__, resource=None,
     resources = _CLIENTS[version].keys()
     providers = CONF.providers.supported_providers
 
-    if provider.lower() not in providers:
+    if provider is None:
+        provider = utils.pick_cloud_provider()
+
+    elif provider.lower() not in providers:
         raise exceptions.ProviderNotFound(
             'Unknow provider'
         )
 
-    if resource.lower() not in resources:
+    if((resource is None) or (resource.lower() not in resources)):
         raise exceptions.ResourceNotFound(
             'Unknow resource: compute, network,\
                         object_storage, block_storage'
