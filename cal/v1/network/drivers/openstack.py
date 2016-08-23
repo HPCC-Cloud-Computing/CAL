@@ -6,10 +6,10 @@
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
 from neutronclient.v2_0 import client
-from cal.v1.network.drivers.network_driver import NetworkDriver, NetworkQuota
+from cal.v1.network.drivers.base import BaseDriver, BaseQuota
 
 
-class OpenstackNetWorkDriver(NetworkDriver):
+class OpenstackNetWorkDriver(BaseDriver):
     """docstring for OpenstackNetWorkDriver"""
 
     def __init__(self, auth_url, project_name,
@@ -23,9 +23,11 @@ class OpenstackNetWorkDriver(NetworkDriver):
         self.user_domain_name = kargs.pop('user_domain_name', 'default')
         self.project_domain_name = kargs.pop('project_domain_name', 'default')
         self.driver_name = kargs.pop('driver_name', 'default')
-        self._setup()
+        self.tenant_id = kargs.pop('tenant_id', None)
+        self.limit = kargs.pop('limit', None)
+        self._setup(tenant_id=self.tenant_id, limit=self.limit)
 
-    def _setup(self):
+    def _setup(self, tenant_id, limit):
         auth = v3.Password(auth_url=self.auth_url,
                            user_domain_name=self.user_domain_name,
                            username=self.username,
@@ -34,7 +36,8 @@ class OpenstackNetWorkDriver(NetworkDriver):
                            project_name=self.project_name)
         sess = session.Session(auth=auth)
         self.client = client.Client(session=sess)
-        self.network_quota = OpenstackNetworkQuota(self.client)
+        self.network_quota = OpenstackNetworkQuota(
+            self.client, tenant_id=tenant_id, limit=limit)
 
     def create(self, name, cidr, **kargs):
         admin_state_up = kargs.pop('admin_state_up', True)
@@ -108,12 +111,22 @@ class OpenstackNetWorkDriver(NetworkDriver):
         return self.client.delete_network(network_id)
 
 
-class OpenstackNetworkQuota(NetworkQuota):
+class OpenstackNetworkQuota(BaseQuota):
     """docstring for OpenstackNetworkQuota"""
 
-    def __init__(self, client):
-        super(NetworkQuota, self).__init__()
+    def __init__(self, client, **kargs):
+        super(BaseQuota, self).__init__()
         self.client = client
+        self.tenant_id = kargs.pop('tenant_id', None)
+        self.limit = kargs.pop('limit', None)
+        self._setup()
+
+    def _setup(self):
+        if self.tenant_id is None:
+            self.tenant_id = \
+                self.client.get_quotas_tenant()['tenant']['tenant_id']
+        if self.limit is None:
+            self.limit = self.client.show_quota(self.tenant_id).get('quota')
 
     def get_networks(self):
         subnets = self.client.list_subnets().get('subnets')
@@ -122,7 +135,7 @@ class OpenstackNetworkQuota(NetworkQuota):
             list_cidrs.append({"net_id": subnet['id'],
                                "cidr": "{}".format(subnet['cidr'])})
         networks = {
-            "max": 50,
+            "max": self.limit['network'],
             "used": len(list_cidrs),
             "list_cidrs": list_cidrs,
             "VPCs": None
@@ -131,19 +144,18 @@ class OpenstackNetworkQuota(NetworkQuota):
         return networks
 
     def get_security_groups(self):
-        tenant_id = self.client.get_quotas_tenant().get('tenant')['tenant_id']
         list_security_groups = self.client.list_security_groups(
-            tenant_id=tenant_id).get('security_groups')
+            tenant_id=self.tenant_id).get('security_groups')
         list_scgs = []
         for scg in list_security_groups:
             list_scgs.append({
                 "security_group_id": scg['id'],
-                "rules_max": 50,
+                "rules_max": self.limit['security_group_rule'],
                 "rules_used": len(scg['security_group_rules']),
                 "list_rules": scg['security_group_rules']
             })
         security_groups = {
-            "max": 50,
+            "max": self.limit['security_group'],
             "used": len(list_security_groups),
             "list_security_groups": list_scgs
         }
@@ -155,7 +167,7 @@ class OpenstackNetworkQuota(NetworkQuota):
         for ip in ips:
             list_ips.append(ip['floating_ip_address'])
         floating_ips = {
-            "max": 255,
+            "max": self.limit['security_group'],
             "used": len(list_ips),
             "list_floating_ips": list_ips
         }
@@ -171,7 +183,7 @@ class OpenstackNetworkQuota(NetworkQuota):
                 "is_gateway": True
             })
         routers = {
-            "max": 50,
+            "max": self.limit['router'],
             "used": len(list_routers),
             "list_routers": list_routers
         }
@@ -179,11 +191,13 @@ class OpenstackNetworkQuota(NetworkQuota):
         return routers
 
     def get_internet_gateways(self):
-        # internet_gateways = {
-        #     "max": 5,
-        #     "used": 1,
-        #     "list_internet_gateways": [
-        #         {"internet_gateway_id": "igw01"}
-        #     ]
-        # }
-        pass
+        routers = self.client.list_routers().get('routers')
+        internet_gateways = []
+        for router in routers:
+            egi = router.get('external_gateway_info', None)
+            if egi is not None:
+                internet_gateways.append({
+                    'internet_gateway_id': router['id']
+                })
+
+        return internet_gateways

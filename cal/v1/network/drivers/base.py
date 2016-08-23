@@ -3,34 +3,44 @@
 """
 
 
-class NetworkDriver(object):
+import abc
+import six
+
+
+@six.add_metaclass(abc.ABCMeta)
+class BaseDriver(object):
     """abstract class for network driver"""
 
     def __init__(self):
-        super(NetworkDriver, self).__init__()
+        super(BaseDriver, self).__init__()
         self.provider = "Unknown"
-        self.network_quota = NetworkQuota()
+        self.network_quota = BaseQuota()
 
+    @abc.abstractmethod
     def create(self):
-        raise NotImplementedError
+        pass
 
+    @abc.abstractmethod
     def show(self):
-        raise NotImplementedError
+        pass
 
+    @abc.abstractmethod
     def list(self):
-        raise NotImplementedError
+        pass
 
+    @abc.abstractmethod
     def update(self):
-        raise NotImplementedError
+        pass
 
+    @abc.abstractmethod
     def delete(self):
-        raise NotImplementedError
+        pass
 
 
-class NetworkQuota(object):
+class BaseQuota(object):
     """docstring for QuotaNetwork"""
     def __init__(self):
-        super(NetworkQuota, self).__init__()
+        super(BaseQuota, self).__init__()
         self.get()
 
     def get(self):
