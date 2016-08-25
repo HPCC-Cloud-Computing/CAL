@@ -1,5 +1,5 @@
 from cal.v1.network.drivers.base import BaseDriver
 
 
-class OpenStack(BaseDriver):
+class OpenstackDriver(BaseDriver):
     pass

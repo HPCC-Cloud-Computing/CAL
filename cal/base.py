@@ -2,7 +2,10 @@ import falcon
 import logging
 import importlib
 
+import cal.conf
+
 LOG = logging.getLogger(__name__)
+CONF = cal.conf.CONF
 
 
 class Request(falcon.Request):
@@ -102,9 +105,12 @@ class BaseClient(Singleton):
     :params cloud_config:
     """
     def __init__(self, path, provider, cloud_config):
+        self.driver = None
         self.set_driver(path, provider, cloud_config)
 
     def set_driver(self, path, provider, cloud_config):
-        module = importlib.import_module(path + '.' + provider.lower())
-        LOG.info('Use %s driver for client', provider)
-        self.driver = getattr(module, provider)(cloud_config)
+        _provider = provider.lower()
+        module = importlib.import_module(path + '.' + _provider)
+        LOG.info('Use %s driver for client', _provider)
+        _driver = CONF.providers.driver_mapper[_provider]
+        self.driver = getattr(module, _driver)(cloud_config)

@@ -14,9 +14,16 @@ amazon_group = cfg.OptGroup('amazon',
 opennebula_group = cfg.OptGroup('openebula',
                           title='OpenNebula Hosts')
 
-supported_providers = cfg.ListOpt('supported_providers',
-                    default=['openstack', 'amazon', 'opennebula'],
-                    help='List of supported provider enabled by default')
+driver_mapper = cfg.DictOpt('driver_mapper',
+                            default={
+                                'openstack': 'OpenstackDriver',
+                                'amazon': 'AmazonDriver',
+                                'opennebula': 'OpennebulaDriver',
+                            },
+                            help="""
+                            Dict with key is provider, and value is
+                            Driver class.
+                            """)
 
 # All above configurations is temporary. Will be updated.
 
@@ -82,7 +89,7 @@ on_hosts = cfg.DictOpt(
 )
 
 provider_opts = [
-    supported_providers,
+    driver_mapper,
 ]
 
 openstack_opts = [

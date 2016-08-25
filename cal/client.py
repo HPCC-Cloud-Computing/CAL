@@ -53,20 +53,26 @@ def Client(version=__version__, resource=None,
         )
 
     resources = _CLIENTS[version].keys()
-    providers = CONF.providers.supported_providers
+    providers = CONF.providers.driver_mapper.keys()
 
     if provider is None:
         provider = utils.pick_cloud_provider()
 
     elif provider.lower() not in providers:
         raise exceptions.ProviderNotFound(
-            'Unknow provider'
+            'Unknow provider.'
         )
 
-    if((resource is None) or (resource.lower() not in resources)):
+    if resource is None:
+        raise exceptions.ResourceNotDefined(
+            'Not define Resource, choose one: compute, network,\
+            object_storage, block_storage.'
+        )
+
+    elif resource.lower() not in resources:
         raise exceptions.ResourceNotFound(
             'Unknow resource: compute, network,\
-                        object_storage, block_storage'
+                        object_storage, block_storage.'
         )
 
     _cloud_config = utils.pick_host_with_specific_provider(provider,
