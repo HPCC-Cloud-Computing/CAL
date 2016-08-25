@@ -132,8 +132,11 @@ class OpenstackNetworkQuota(BaseQuota):
         subnets = self.client.list_subnets().get('subnets')
         list_cidrs = []
         for subnet in subnets:
-            list_cidrs.append({"net_id": subnet['id'],
-                               "cidr": "{}".format(subnet['cidr'])})
+            list_cidrs.append({
+                "net_id": subnet['id'],
+                "cidr": "{}".format(subnet['cidr']),
+                "allocation_pools": subnet['allocation_pools']
+            })
         networks = {
             "max": self.limit['network'],
             "used": len(list_cidrs),

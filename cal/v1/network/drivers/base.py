@@ -17,23 +17,23 @@ class BaseDriver(object):
         self.network_quota = BaseQuota()
 
     @abc.abstractmethod
-    def create(self):
+    def create(self, name, cidr, **kargs):
         pass
 
     @abc.abstractmethod
-    def show(self):
+    def show(self, subnet_id):
         pass
 
     @abc.abstractmethod
-    def list(self):
+    def list(self, **search_opts):
         pass
 
     @abc.abstractmethod
-    def update(self):
+    def update(self, network_id, network):
         pass
 
     @abc.abstractmethod
-    def delete(self):
+    def delete(self, network_id):
         pass
 
 

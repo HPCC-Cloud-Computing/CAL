@@ -14,19 +14,19 @@ class FakeDriver(BaseDriver):
     def __init__(self):
         super(FakeDriver, self).__init__()
 
-    def create(self):
+    def create(self, name, cidr, **kargs):
         return 'fake_result'
 
-    def show(self):
+    def show(self, subnet_id):
         return 'fake_result'
 
-    def list(self):
+    def list(self, **search_opts):
         return 'fake_result'
 
-    def update(self):
+    def update(self, network_id, network):
         return 'fake_result'
 
-    def delete(self):
+    def delete(self, network_id):
         return 'fake_result'
 
 
@@ -37,16 +37,16 @@ class FakeDriverError(BaseDriver):
     def __init__(self):
         super(FakeDriverError, self).__init__()
 
-    def create(self):
+    def create(self, name, cidr, **kargs):
         return 'fake_result'
 
-    def show(self):
+    def show(self, subnet_id):
         return 'fake_result'
 
-    def list(self):
+    def list(self, **search_opts):
         return 'fake_result'
 
-    def update(self):
+    def update(self, network_id, network):
         return 'fake_result'
 
 

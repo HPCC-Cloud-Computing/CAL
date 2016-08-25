@@ -57,7 +57,13 @@ fake_subnet_out = {
     'gateway_ip': 'fake_gateway_ip',
     'security_group': None,
     'allocation_pools': 'fake_name_allocation_pools',
-    'dns_nameservers': 'fake_dns_nameservers'
+    'dns_nameservers': 'fake_dns_nameservers',
+    "allocation_pools": [
+        {
+            "start": "192.0.0.2",
+            "end": "192.255.255.254"
+        }
+    ]
 }
 
 fake_router = [
