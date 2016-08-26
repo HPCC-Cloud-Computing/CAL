@@ -204,4 +204,3 @@ class OpenstackNetworkQuota(BaseQuota):
                 })
 
         return internet_gateways
-
