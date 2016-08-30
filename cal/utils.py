@@ -91,7 +91,7 @@ def append_request_id(req, resp, resource, params):
 
 def pick_cloud_provider():
     # Random pick one cloud provider.
-    provider = CONF.providers.driver_mapper.keys()
+    provider = list(CONF.providers.driver_mapper.keys())
     return random.choice(provider)
 
 
@@ -101,7 +101,7 @@ def pick_host_with_specific_provider(provider, cloud_config=None):
         # Now, random choice host from provider hosts.
         # TODO(kiennt): Next phase, pick the most optimized host
         #               of given provider.
-        picked_host_config = hosts[random.choice(hosts.keys())]
+        picked_host_config = hosts[random.choice(list(hosts.keys()))]
         return picked_host_config
     else:
         # TODO(kiennt): Check this cloud config: raise Exception

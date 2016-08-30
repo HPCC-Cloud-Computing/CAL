@@ -62,14 +62,14 @@ os_hosts = cfg.DictOpt(
 
 # Amazon Authenticate Configuration.
 
-amz1_auth_opts = {}
-amz2_auth_opts = {}
+aws1_auth_opts = {}
+aws2_auth_opts = {}
 
-amz_hosts = cfg.DictOpt(
+aws_hosts = cfg.DictOpt(
     'hosts',
     default={
-        'amz1': amz1_auth_opts,
-        'amz2': amz2_auth_opts
+        'aws1': aws1_auth_opts,
+        'aws2': aws2_auth_opts
     },
     help='List of available Amazon Hosts'
 )
@@ -97,7 +97,7 @@ openstack_opts = [
 ]
 
 amazon_opts = [
-    amz_hosts,
+    aws_hosts,
 ]
 
 opennebula_opts = [
