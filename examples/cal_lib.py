@@ -4,7 +4,7 @@ This script shows the basic use of the CAL as a library.
 """
 import logging
 
-# from cal import client
+# from cal.lib import client
 
 LOG = logging.getLogger('')
 
@@ -29,16 +29,16 @@ def run():
     #           with default config' . format(id(network_client)))
 
     # Create simple network in OpenStack Cloud Host.
-    # network_client.create_network(*args, **kwargs)
+    # network_client.create(name, cidr, **kwargs)
     # List all network in OpenStack Cloud Host.
-    # net = network_client.list_network(*args, **kwargs)
+    # net = network_client.list()
     # print('List all network:')
     # TODO(kiennt): Wait to know the format of
     #               that list to show and get
     #               the nearest created network.
 
     # Show network info with specific id which got from prev.
-    # net = network_client.show_network(net_id)
+    # net = network_client.show()
 
     # Get a compute client with openstack driver.
 

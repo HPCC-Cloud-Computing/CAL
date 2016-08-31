@@ -1,7 +1,7 @@
 import mock
 
 import cal.conf
-from cal import client
+from cal.lib import client
 from cal import exceptions
 from cal.tests.base import TestCase
 # from cal.v1.network import client as network_client
