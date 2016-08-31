@@ -1,5 +1,5 @@
 import cal.conf
-from cal.lib.base import BaseClient
+from cal.callib.base import BaseClient
 
 CONF = cal.conf.CONF
 
