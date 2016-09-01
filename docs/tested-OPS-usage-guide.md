@@ -19,7 +19,7 @@
 	- Auth Script: /home/bkcloud16/admin.sh
 	- OPS Admin username/password: admin/bkcloud 
 	- Endpoint URL: http://192.168.50.16:35357/v3/
-##
+ 
 ## OPS AWS EC2 API
 - Environment: KVM VM on Server 192.168.50.16
 - Local Address: 192.168.122.75
