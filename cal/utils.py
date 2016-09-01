@@ -97,7 +97,7 @@ def pick_cloud_provider():
 
 def pick_host_with_specific_provider(provider, cloud_config=None):
     if cloud_config is None:
-        hosts = getattr(CONF, provider.lower())
+        hosts = getattr(CONF, provider.lower())['hosts']
         # Now, random choice host from provider hosts.
         # TODO(kiennt): Next phase, pick the most optimized host
         #               of given provider.
