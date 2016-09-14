@@ -9,25 +9,26 @@ from neutronclient.v2_0 import client
 from cal.v1.network.drivers.base import BaseDriver, BaseQuota
 
 
-class OpenstackNetWorkDriver(BaseDriver):
-    """docstring for OpenstackNetWorkDriver"""
+class OpenstackDriver(BaseDriver):
+    """docstring for OpenstackDriver"""
 
-    def __init__(self, auth_url, project_name,
-                 username, password, **kargs):
-        super(OpenstackNetWorkDriver, self).__init__()
-        self.provider = "OPENSTACK"
-        self.auth_url = auth_url
-        self.project_name = project_name
-        self.username = username
-        self.password = password
-        self.user_domain_name = kargs.pop('user_domain_name', 'default')
-        self.project_domain_name = kargs.pop('project_domain_name', 'default')
-        self.driver_name = kargs.pop('driver_name', 'default')
-        self.tenant_id = kargs.pop('tenant_id', None)
-        self.limit = kargs.pop('limit', None)
-        self._setup(tenant_id=self.tenant_id, limit=self.limit)
+    def __init__(self, cloud_config):
+        super(OpenstackDriver, self).__init__()
+        self.auth_url = cloud_config['os_auth_url']
+        self.project_name = cloud_config['os_project_name']
+        self.username = cloud_config['os_username']
+        self.password = cloud_config['os_password']
+        self.user_domain_name = \
+            cloud_config.get('os_project_domain_name', 'default')
+        self.project_domain_name = \
+            cloud_config.get('os_user_domain_name', 'default')
+        self.driver_name = \
+            cloud_config.get('driver_name', 'default')
+        self.tenant_id = cloud_config.get('tenant_id', None)
+        self.limit = cloud_config.get('limit', None)
+        self._setup()
 
-    def _setup(self, tenant_id, limit):
+    def _setup(self):
         auth = v3.Password(auth_url=self.auth_url,
                            user_domain_name=self.user_domain_name,
                            username=self.username,
@@ -36,8 +37,8 @@ class OpenstackNetWorkDriver(BaseDriver):
                            project_name=self.project_name)
         sess = session.Session(auth=auth)
         self.client = client.Client(session=sess)
-        self.network_quota = OpenstackNetworkQuota(
-            self.client, tenant_id=tenant_id, limit=limit)
+        self.network_quota = OpenstackQuota(
+            self.client, self.tenant_id, self.limit)
 
     def create(self, name, cidr, **kargs):
         admin_state_up = kargs.pop('admin_state_up', True)
@@ -111,20 +112,21 @@ class OpenstackNetWorkDriver(BaseDriver):
         return self.client.delete_network(network_id)
 
 
-class OpenstackNetworkQuota(BaseQuota):
-    """docstring for OpenstackNetworkQuota"""
+class OpenstackQuota(BaseQuota):
+    """docstring for OpenstackQuota"""
 
-    def __init__(self, client, **kargs):
+    def __init__(self, client, tenant_id=None, limit=None):
         super(BaseQuota, self).__init__()
         self.client = client
-        self.tenant_id = kargs.pop('tenant_id', None)
-        self.limit = kargs.pop('limit', None)
+        self.tenant_id = tenant_id
+        self.limit = limit
         self._setup()
 
     def _setup(self):
         if self.tenant_id is None:
             self.tenant_id = \
-                self.client.get_quotas_tenant()['tenant']['tenant_id']
+                self.client.get_quotas_tenant().get('tenant')['tenant_id']
+
         if self.limit is None:
             self.limit = self.client.show_quota(self.tenant_id).get('quota')
 

@@ -21,7 +21,7 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def show(self, subnet_id):
+    def delete(self, network_id):
         pass
 
     @abc.abstractmethod
@@ -29,11 +29,11 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def update(self, network_id, network):
+    def show(self, subnet_id):
         pass
 
     @abc.abstractmethod
-    def delete(self, network_id):
+    def update(self, network_id, network):
         pass
 
 

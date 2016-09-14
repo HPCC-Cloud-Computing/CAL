@@ -6,18 +6,17 @@
 import mock
 from cal.tests import base
 from keystoneauth1.exceptions.base import ClientException
-from cal.v1.network.drivers.openstack import OpenstackNetWorkDriver
+from cal.v1.network.drivers.openstack import OpenstackDriver
 
 fake_config_driver = {
-    'provider': 'OPENSTACK',
-    'auth_url': 'http://controller:5000:v2_0',
-    'username': 'test',
-    'password': 'veryhard',
-    'project_name': 'demo',
-    'endpoint_url': 'http://controller:9696',
-    'driver_name': 'default',
-    'project_domain_name': 'default',
-    'user_domain_name': 'default',
+    'os_auth_url': 'http://controller:5000/v2_0',
+    'os_username': 'test',
+    'os_password': 'veryhard',
+    'os_project_name': 'demo',
+    'os_endpoint_url': 'http://controller:9696',
+    'os_driver_name': 'default',
+    'os_project_domain_name': 'default',
+    'os_user_domain_name': 'default',
     'tenant_id': 'fake_tenant_id',
     'limit': {
         "subnet": 10,
@@ -85,25 +84,13 @@ fake_security_groups = {
 }
 
 
-class OpenstackNetWorkDriverTest(base.TestCase):
+class OpenstackDriverTest(base.TestCase):
 
-    """docstring for OpenstackNetWorkDriverTest"""
+    """docstring for OpenstackDriverTest"""
 
     def setUp(self):
-        super(OpenstackNetWorkDriverTest, self).setUp()
-        self.fake_driver = OpenstackNetWorkDriver(
-            auth_url=fake_config_driver['auth_url'],
-            project_name=fake_config_driver['project_name'],
-            username=fake_config_driver['username'],
-            password=fake_config_driver['password'],
-            project_domain_name=fake_config_driver[
-                'project_domain_name'],
-            user_domain_name=fake_config_driver[
-                'user_domain_name'],
-            tenant_id=fake_config_driver[
-                'tenant_id'],
-            limit=fake_config_driver['limit']
-        )
+        super(OpenstackDriverTest, self).setUp()
+        self.fake_driver = OpenstackDriver(fake_config_driver)
 
     def test_create_successfully(self):
         self.mock_object(
@@ -230,23 +217,23 @@ class OpenstackNetWorkDriverTest(base.TestCase):
         self.fake_driver.network_quota.tenant_id = None
         self.fake_driver.network_quota.limit = None
         self.mock_object(
-            self.fake_driver.client, 'get_quotas_tenant',
+            self.fake_driver.network_quota.client, 'get_quotas_tenant',
             mock.Mock(return_value={
                 'tenant': {
                     'tenant_id': 'fake_tenant_id'
                 }
             }))
         self.mock_object(
-            self.fake_driver.client, 'show_quota',
+            self.fake_driver.network_quota.client, 'show_quota',
             mock.Mock(return_value={
                 'quota': fake_config_driver['limit']
             }))
 
         self.fake_driver.network_quota._setup()
 
-        self.fake_driver.client.get_quotas_tenant.\
+        self.fake_driver.network_quota.client.get_quotas_tenant.\
             assert_called_once_with()
-        self.fake_driver.client.show_quota.\
+        self.fake_driver.network_quota.client.show_quota.\
             assert_called_once_with('fake_tenant_id')
 
     def test_get_networks(self):
