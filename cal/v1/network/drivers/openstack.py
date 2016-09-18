@@ -9,6 +9,9 @@ from neutronclient.v2_0 import client
 from cal.v1.network.drivers.base import BaseDriver, BaseQuota
 
 
+PROVIDER = "OPENSTACK"
+
+
 class OpenstackDriver(BaseDriver):
     """docstring for OpenstackDriver"""
 
@@ -61,7 +64,7 @@ class OpenstackDriver(BaseDriver):
                   'description': None,
                   'id': subnet['id'],
                   'cidr': subnet['cidr'],
-                  'cloud': self.provider,
+                  'cloud': PROVIDER,
                   'gateway_ip': subnet['gateway_ip'],
                   'security_group': None,
                   'allocation_pools': subnet['allocation_pools'],
@@ -77,7 +80,7 @@ class OpenstackDriver(BaseDriver):
                   'description': None,
                   'id': subnet['id'],
                   'cidr': subnet['cidr'],
-                  'cloud': self.provider,
+                  'cloud': PROVIDER,
                   'gateway': subnet['gateway_ip'],
                   'security_group': None,
                   'allocation_pools': subnet['allocation_pools'],
@@ -94,7 +97,7 @@ class OpenstackDriver(BaseDriver):
                    'description': None,
                    'id': subnet['id'],
                    'cidr': subnet['cidr'],
-                   'cloud': self.provider,
+                   'cloud': PROVIDER,
                    'gateway': subnet['gateway_ip'],
                    'security_group': None,
                    'allocation_pools': subnet['allocation_pools'],

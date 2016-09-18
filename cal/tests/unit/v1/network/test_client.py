@@ -1,6 +1,7 @@
 import mock
-from cal.tests import base
 from keystoneauth1.exceptions.base import ClientException
+
+from cal.tests import base
 from cal.v1.network import client
 
 

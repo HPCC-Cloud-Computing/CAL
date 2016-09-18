@@ -13,7 +13,6 @@ class BaseDriver(object):
 
     def __init__(self):
         super(BaseDriver, self).__init__()
-        self.provider = "Unknown"
         self.network_quota = BaseQuota()
 
     @abc.abstractmethod
