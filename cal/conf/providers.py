@@ -59,7 +59,18 @@ os2_auth_opts = {
     'os_project_domain_name': 'default',
     'os_user_domain_name': 'default',
     'os_identity_api_version': '3',
-    'os_image_api_version': '2'
+    'os_image_api_version': '2',
+    'limit': {
+        "subnet": 10,
+        "network": 10,
+        "floatingip": 50,
+        "subnetpool": -1,
+        "security_group_rule": 100,
+        "security_group": 10,
+        "router": 10,
+        "rbac_policy": -1,
+        "port": 50
+    }
 }
 
 os_hosts = cfg.DictOpt(
@@ -124,8 +135,8 @@ def register_opts(conf):
     conf.register_opts(openstack_opts, group=openstack_group)
     conf.register_group(amazon_group)
     conf.register_opts(amazon_opts, group=amazon_group)
-    conf.register_group(opennebula_group)
-    conf.register_opts(opennebula_opts, group=opennebula_group)
+    # conf.register_group(opennebula_group)
+    # conf.register_opts(opennebula_opts, group=opennebula_group)
 
 
 def list_opts():
@@ -133,5 +144,5 @@ def list_opts():
         provider_group: provider_opts,
         openstack_group: openstack_opts,
         amazon_group: amazon_opts,
-        opennebula_group: opennebula_opts
+        # opennebula_group: opennebula_opts
     }
