@@ -38,6 +38,7 @@ os1_auth_opts = {
     'os_user_domain_name': 'default',
     'os_identity_api_version': '3',
     'os_image_api_version': '2',
+    'tenant_id': 'fake_tenant_id',
     'limit': {
         "subnet": 10,
         "network": 10,
@@ -60,6 +61,7 @@ os2_auth_opts = {
     'os_user_domain_name': 'default',
     'os_identity_api_version': '3',
     'os_image_api_version': '2',
+    'tenant_id': 'fake_tenant_id',
     'limit': {
         "subnet": 10,
         "network": 10,
