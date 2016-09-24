@@ -20,9 +20,9 @@ class TestClient(TestCase):
         self.assertRaises(exceptions.ProviderNotFound, client.Client,
                           '1.0.0', 'compute', 'WrongProvider')
 
-    # def test_client_called_with_none_provider(self):
-    #     test_client = client.Client(version='1.0.0', resource='network')
-    #     self.assertIsNotNone(test_client.driver)
+    def test_client_called_with_none_provider(self):
+        test_client = client.Client(version='1.0.0', resource='network')
+        self.assertIsNotNone(test_client.driver)
 
     def test_client_called_with_unsupported_version(self):
         self.assertRaises(exceptions.UnsupportedVersion, client.Client,

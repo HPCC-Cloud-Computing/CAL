@@ -37,7 +37,18 @@ os1_auth_opts = {
     'os_project_domain_name': 'default',
     'os_user_domain_name': 'default',
     'os_identity_api_version': '3',
-    'os_image_api_version': '2'
+    'os_image_api_version': '2',
+    'limit': {
+        "subnet": 10,
+        "network": 10,
+        "floatingip": 50,
+        "subnetpool": -1,
+        "security_group_rule": 100,
+        "security_group": 10,
+        "router": 10,
+        "rbac_policy": -1,
+        "port": 50
+    }
 }
 
 os2_auth_opts = {
@@ -61,15 +72,18 @@ os_hosts = cfg.DictOpt(
 )
 
 # Amazon Authenticate Configuration.
+aws1_auth_opts = {
+    'aws_access_key_id': 'c543fa29eeaf4894a1078ec0860baefd',
+    'aws_secret_access_key': 'd2246a2235ca40ffa7fbf817ae1108ba',
+    'region_name': 'RegionOne',
+    'endpoint_url': 'http://192.168.122.75:8788'
+}
 
-aws1_auth_opts = {}
-aws2_auth_opts = {}
 
 aws_hosts = cfg.DictOpt(
     'hosts',
     default={
-        'aws1': aws1_auth_opts,
-        'aws2': aws2_auth_opts
+        'aws1': aws1_auth_opts
     },
     help='List of available Amazon Hosts'
 )
@@ -82,8 +96,6 @@ on2_auth_opts = {}
 on_hosts = cfg.DictOpt(
     'hosts',
     default={
-        'on1': on1_auth_opts,
-        'on2': on2_auth_opts,
     },
     help='List of available OpenNebula Hosts'
 )

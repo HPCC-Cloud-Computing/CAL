@@ -7,3 +7,4 @@ falcon
 gunicorn
 python-neutronclient
 keystoneauth1
+boto3
