@@ -11,14 +11,10 @@ openstack_group = cfg.OptGroup('openstack',
 amazon_group = cfg.OptGroup('amazon',
                       title='Amazon Hosts')
 
-opennebula_group = cfg.OptGroup('openebula',
-                          title='OpenNebula Hosts')
-
 driver_mapper = cfg.DictOpt('driver_mapper',
                             default={
                                 'openstack': 'OpenstackDriver',
                                 'amazon': 'AmazonDriver',
-                                'opennebula': 'OpennebulaDriver',
                             },
                             help="""
                             Dict with key is provider, and value is
@@ -101,18 +97,6 @@ aws_hosts = cfg.DictOpt(
     help='List of available Amazon Hosts'
 )
 
-# OpenNebula Authenticate Configuration.
-
-on1_auth_opts = {}
-on2_auth_opts = {}
-
-on_hosts = cfg.DictOpt(
-    'hosts',
-    default={
-    },
-    help='List of available OpenNebula Hosts'
-)
-
 provider_opts = [
     driver_mapper,
 ]
@@ -125,10 +109,6 @@ amazon_opts = [
     aws_hosts,
 ]
 
-opennebula_opts = [
-    on_hosts,
-]
-
 
 def register_opts(conf):
     conf.register_group(provider_group)
@@ -137,8 +117,6 @@ def register_opts(conf):
     conf.register_opts(openstack_opts, group=openstack_group)
     conf.register_group(amazon_group)
     conf.register_opts(amazon_opts, group=amazon_group)
-    # conf.register_group(opennebula_group)
-    # conf.register_opts(opennebula_opts, group=opennebula_group)
 
 
 def list_opts():
@@ -146,5 +124,4 @@ def list_opts():
         provider_group: provider_opts,
         openstack_group: openstack_opts,
         amazon_group: amazon_opts,
-        # opennebula_group: opennebula_opts
     }
