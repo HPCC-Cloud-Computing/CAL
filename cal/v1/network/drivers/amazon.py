@@ -116,6 +116,11 @@ class AmazonDriver(BaseDriver):
         # 3 : delete vpc
         return self.client.delete_vpc(VpcId=vpc_id)
 
+    def connect_external_net(self, network_id):
+        pass
+
+    def disconnect_external_net(self, network_id):
+        pass
 
 class AmazonQuota(BaseQuota):
 
