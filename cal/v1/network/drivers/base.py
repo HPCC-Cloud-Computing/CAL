@@ -35,6 +35,14 @@ class BaseDriver(object):
     def update(self, network_id, network):
         pass
 
+    @abc.abstractmethod
+    def connect_external_net(self, network_id):
+        pass
+
+    @abc.abstractmethod
+    def disconnect_external_net(self, network_id):
+        pass
+
 
 class BaseQuota(object):
     """docstring for QuotaNetwork"""
