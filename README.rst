@@ -10,6 +10,9 @@
 .. image:: https://img.shields.io/badge/license-Apache--2.0-blue.svg
     :target: https://raw.githubusercontent.com/cloudcomputinghust/CAL/master/LICENSE
     
+.. image:: https://badge.fury.io/py/calplus.svg
+    :target: https://badge.fury.io/py/calplus
+    
     
 Cloud Abstract Layer (CAL) framework
 ====================================
