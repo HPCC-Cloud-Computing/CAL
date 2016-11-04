@@ -48,7 +48,6 @@ class BaseQuota(object):
     """docstring for QuotaNetwork"""
     def __init__(self):
         super(BaseQuota, self).__init__()
-        self.get()
 
     def get(self):
         """Get quota from Cloud Provider."""

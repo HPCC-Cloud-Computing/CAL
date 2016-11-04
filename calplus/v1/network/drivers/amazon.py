@@ -128,7 +128,7 @@ class AmazonQuota(BaseQuota):
     """docstring for AmazonQuota"""
 
     def __init__(self, client, limit=None):
-        super(BaseQuota, self).__init__()
+        super(AmazonQuota, self).__init__()
         self.client = client
         self.limit = limit
         self._setup()
