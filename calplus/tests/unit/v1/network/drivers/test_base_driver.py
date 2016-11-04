@@ -29,6 +29,12 @@ class FakeDriver(BaseDriver):
     def delete(self, network_id):
         return 'fake_result'
 
+    def connect_external_net(self, network_id):
+        return 'fake_result'
+
+    def disconnect_external_net(self, network_id):
+        return 'fake_result'
+
 
 class FakeDriverError(BaseDriver):
     """docstring for FakeDriverError
@@ -47,6 +53,12 @@ class FakeDriverError(BaseDriver):
         return 'fake_result'
 
     def update(self, network_id, network):
+        return 'fake_result'
+
+    def connect_external_net(self, network_id):
+        return 'fake_result'
+
+    def disconnect_external_net(self, network_id):
         return 'fake_result'
 
 

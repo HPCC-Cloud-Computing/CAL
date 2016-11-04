@@ -149,7 +149,7 @@ class OpenstackDriver(BaseDriver):
         body = {
             "subnet_id": "{}".format(subnet_id)
         }
-        return self.client.add_interface_router(router_id,body)
+        return self.client.add_interface_router(router_id, body)
 
     def disconnect_external_net(self, network_id):
         #just detach all connect to router have external_gateway
@@ -161,7 +161,7 @@ class OpenstackQuota(BaseQuota):
     """docstring for OpenstackQuota"""
 
     def __init__(self, client, tenant_id=None, limit=None):
-        super(BaseQuota, self).__init__()
+        super(OpenstackQuota, self).__init__()
         self.client = client
         self.tenant_id = tenant_id
         self.limit = limit

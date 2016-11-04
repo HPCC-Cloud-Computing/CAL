@@ -122,6 +122,7 @@ class AmazonDriver(BaseDriver):
     def disconnect_external_net(self, network_id):
         pass
 
+
 class AmazonQuota(BaseQuota):
 
     """docstring for AmazonQuota"""
