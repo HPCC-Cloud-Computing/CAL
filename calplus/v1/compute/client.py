@@ -19,7 +19,7 @@ class Client(BaseClient):
                network_id, name, number, **kargs)
 
     def show(self, instance_id):
-        pass
+        return self.driver.show(instance_id)
 
     def list(self, **search_opts):
         pass

@@ -59,7 +59,10 @@ class OpenstackDriver(BaseDriver):
         return server
 
     def show(self, instance_id):
-        pass
+        server = self.client.servers.get(
+            instance_id
+        )
+        return server
 
     def list(self, **search_opts):
         pass
