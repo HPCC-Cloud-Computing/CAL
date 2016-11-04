@@ -77,3 +77,24 @@ class ClientTest(base.TestCase):
 
         self.fake_client.driver.show.\
             assert_called_once_with('fake_id')
+
+    def test_list_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'list',
+            mock.Mock(return_value="list server objects"))
+
+        self.fake_client.list()
+
+        self.fake_client.driver.list.\
+            assert_called_once_with()
+
+    def test_list_unable_to_create(self):
+        self.mock_object(
+            self.fake_client.driver, 'list',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.list)
+
+        self.fake_client.driver.list.\
+            assert_called_once_with()

@@ -65,7 +65,8 @@ class OpenstackDriver(BaseDriver):
         return server
 
     def list(self, **search_opts):
-        pass
+        servers = self.client.servers.list()
+        return servers
 
     def delete(self, instance_id):
         pass

@@ -22,7 +22,7 @@ class Client(BaseClient):
         return self.driver.show(instance_id)
 
     def list(self, **search_opts):
-        pass
+        return self.driver.list(**search_opts)
 
     def delete(self, instance_id):
         pass
