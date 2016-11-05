@@ -102,9 +102,11 @@ class OpenstackDriver(BaseDriver):
         """List all security group"""
         pass
 
-    def add_nic(self, instance_id, new_sg):
+    def add_nic(self, instance_id, net_id):
         """Add a Network Interface Controller"""
-        pass
+        self.client.servers.interface_attach(
+            instance_id, None, net_id, None)
+        return True
 
     def delete_nic(self, instance_id, new_sg):
         """Delete a Network Interface Controller"""

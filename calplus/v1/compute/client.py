@@ -57,11 +57,11 @@ class Client(BaseClient):
         """List all security group"""
         pass
 
-    def add_nic(self, instance_id, new_sg):
+    def add_nic(self, instance_id, net_id):
         """Add a Network Interface Controller"""
-        pass
+        return self.driver.add_nic(instance_id, net_id)
 
-    def delete_nic(self, instance_id, new_sg):
+    def delete_nic(self, instance_id, net_id):
         """Delete a Network Interface Controller"""
         pass
 

@@ -207,3 +207,28 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.resize.\
             assert_called_once_with('fake_id',
                                     'fake_configuration')
+
+    def test_add_nic_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'add_nic',
+            mock.Mock(return_value=True))
+
+        self.fake_client.add_nic('fake_id',
+                                'fake_net_id')
+
+        self.fake_client.driver.add_nic.\
+            assert_called_once_with('fake_id',
+                                    'fake_net_id')
+
+    def test_add_nic_unable_to_create(self):
+        self.mock_object(
+            self.fake_client.driver, 'add_nic',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.add_nic, 'fake_id',
+                          'fake_net_id')
+
+        self.fake_client.driver.add_nic.\
+            assert_called_once_with('fake_id',
+                                    'fake_net_id')
