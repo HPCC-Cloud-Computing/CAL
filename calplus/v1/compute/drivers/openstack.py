@@ -77,7 +77,8 @@ class OpenstackDriver(BaseDriver):
         return True
 
     def start(self, instance_id):
-        pass
+        self.client.servers.start(instance_id)
+        return True
 
     def reboot(self, instance_id):
         pass

@@ -31,7 +31,7 @@ class Client(BaseClient):
         return self.driver.shutdown(instance_id)
 
     def start(self, instance_id):
-        pass
+        return self.driver.start(instance_id)
 
     def reboot(self, instance_id):
         pass
