@@ -161,3 +161,24 @@ class ClientTest(base.TestCase):
 
         self.fake_client.driver.start.\
             assert_called_once_with('fake_id')
+
+    def test_reboot_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'reboot',
+            mock.Mock(return_value=True))
+
+        self.fake_client.reboot('fake_id')
+
+        self.fake_client.driver.reboot.\
+            assert_called_once_with('fake_id')
+
+    def test_reboot_unable_to_create(self):
+        self.mock_object(
+            self.fake_client.driver, 'reboot',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.reboot, 'fake_id')
+
+        self.fake_client.driver.reboot.\
+            assert_called_once_with('fake_id')

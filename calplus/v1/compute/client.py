@@ -34,7 +34,7 @@ class Client(BaseClient):
         return self.driver.start(instance_id)
 
     def reboot(self, instance_id):
-        pass
+        return self.driver.reboot(instance_id)
 
     def resize(self, instance_id, configuration):
         pass

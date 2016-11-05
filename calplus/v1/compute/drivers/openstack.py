@@ -81,7 +81,9 @@ class OpenstackDriver(BaseDriver):
         return True
 
     def reboot(self, instance_id):
-        pass
+        """Soft reboot"""
+        self.client.servers.reboot(instance_id)
+        return True
 
     def resize(self, instance_id, configuration):
         pass
