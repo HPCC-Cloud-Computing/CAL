@@ -104,6 +104,7 @@ class OpenstackDriver(BaseDriver):
 
     def add_nic(self, instance_id, net_id):
         """Add a Network Interface Controller"""
+        #TODO: upgrade with port_id and fixed_ip in future
         self.client.servers.interface_attach(
             instance_id, None, net_id, None)
         return True
