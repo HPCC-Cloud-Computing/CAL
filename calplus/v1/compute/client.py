@@ -25,7 +25,7 @@ class Client(BaseClient):
         return self.driver.list(**search_opts)
 
     def delete(self, instance_id):
-        pass
+        return self.driver.delete(instance_id)
 
     def shutdown(self, instance_id):
         pass
