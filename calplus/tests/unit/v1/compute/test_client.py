@@ -119,3 +119,24 @@ class ClientTest(base.TestCase):
 
         self.fake_client.driver.delete.\
             assert_called_once_with('fake_id')
+
+    def test_shutdown_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'shutdown',
+            mock.Mock(return_value=True))
+
+        self.fake_client.shutdown('fake_id')
+
+        self.fake_client.driver.shutdown.\
+            assert_called_once_with('fake_id')
+
+    def test_shutdown_unable_to_create(self):
+        self.mock_object(
+            self.fake_client.driver, 'shutdown',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.shutdown, 'fake_id')
+
+        self.fake_client.driver.shutdown.\
+            assert_called_once_with('fake_id')

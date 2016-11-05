@@ -28,7 +28,7 @@ class Client(BaseClient):
         return self.driver.delete(instance_id)
 
     def shutdown(self, instance_id):
-        pass
+        return self.driver.shutdown(instance_id)
 
     def start(self, instance_id):
         pass

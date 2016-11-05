@@ -69,12 +69,12 @@ class OpenstackDriver(BaseDriver):
         return servers
 
     def delete(self, instance_id):
-        """If delete successfully, return () """
         self.client.servers.delete(instance_id)
         return True
 
     def shutdown(self, instance_id):
-        pass
+        self.client.servers.stop(instance_id)
+        return True
 
     def start(self, instance_id):
         pass
