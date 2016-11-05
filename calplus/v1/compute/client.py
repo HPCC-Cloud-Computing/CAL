@@ -37,7 +37,13 @@ class Client(BaseClient):
         return self.driver.reboot(instance_id)
 
     def resize(self, instance_id, configuration):
-        pass
+        """
+        In OpenStack
+        :param instance_id:
+        :param configuration: flavor_id
+        :return:
+        """
+        self.driver.resize(instance_id, configuration)
 
     def add_sg(self, instance_id, new_sg):
         """Add a security group"""

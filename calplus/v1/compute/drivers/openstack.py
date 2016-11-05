@@ -85,8 +85,10 @@ class OpenstackDriver(BaseDriver):
         self.client.servers.reboot(instance_id)
         return True
 
-    def resize(self, instance_id, configuration):
-        pass
+    def resize(self, instance_id, flavor_id):
+        self.client.servers.resize(instance_id, flavor_id)
+        self.client.servers.confirm_resize(instance_id)
+        return True
 
     def add_sg(self, instance_id, new_sg):
         """Add a security group"""
