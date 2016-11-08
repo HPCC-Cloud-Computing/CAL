@@ -73,7 +73,7 @@ class Client(BaseClient):
 
     def list_nic(self, instance_id):
         """List all Network Interface Controller"""
-        pass
+        return self.driver.list_nic(instance_id)
 
     def add_private_ip(self, instance_id, new_sg):
         """Add private IP"""

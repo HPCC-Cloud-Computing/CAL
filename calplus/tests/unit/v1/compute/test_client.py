@@ -257,3 +257,24 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.delete_nic.\
             assert_called_once_with('fake_id',
                                     'fake_port_id')
+
+    def test_list_nic_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'list_nic',
+            mock.Mock(return_value=True))
+
+        self.fake_client.list_nic('fake_id')
+
+        self.fake_client.driver.list_nic.\
+            assert_called_once_with('fake_id')
+
+    def test_list_nic_unable_to_list(self):
+        self.mock_object(
+            self.fake_client.driver, 'list_nic',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.list_nic, 'fake_id')
+
+        self.fake_client.driver.list_nic.\
+            assert_called_once_with('fake_id')
