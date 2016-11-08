@@ -61,9 +61,15 @@ class Client(BaseClient):
         """Add a Network Interface Controller"""
         return self.driver.add_nic(instance_id, net_id)
 
-    def delete_nic(self, instance_id, net_id):
-        """Delete a Network Interface Controller"""
-        pass
+    def delete_nic(self, instance_id, attachment_id):
+        """Delete a Network Interface Controller
+
+        In OpenStack
+        :param instance_id:
+        :param attachment_id: port_id
+        :return:
+        """
+        return self.driver.delete_nic(instance_id, attachment_id)
 
     def list_nic(self, instance_id):
         """List all Network Interface Controller"""

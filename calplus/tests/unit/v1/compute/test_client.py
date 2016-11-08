@@ -67,7 +67,7 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.show.\
             assert_called_once_with('fake_id')
 
-    def test_show_unable_to_create(self):
+    def test_show_unable_to_show(self):
         self.mock_object(
             self.fake_client.driver, 'show',
             mock.Mock(side_effect=ClientException))
@@ -88,7 +88,7 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.list.\
             assert_called_once_with()
 
-    def test_list_unable_to_create(self):
+    def test_list_unable_to_list(self):
         self.mock_object(
             self.fake_client.driver, 'list',
             mock.Mock(side_effect=ClientException))
@@ -109,7 +109,7 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.delete.\
             assert_called_once_with('fake_id')
 
-    def test_delete_unable_to_create(self):
+    def test_delete_unable_to_delete(self):
         self.mock_object(
             self.fake_client.driver, 'delete',
             mock.Mock(side_effect=ClientException))
@@ -130,7 +130,7 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.shutdown.\
             assert_called_once_with('fake_id')
 
-    def test_shutdown_unable_to_create(self):
+    def test_shutdown_unable_to_shutdown(self):
         self.mock_object(
             self.fake_client.driver, 'shutdown',
             mock.Mock(side_effect=ClientException))
@@ -151,7 +151,7 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.start.\
             assert_called_once_with('fake_id')
 
-    def test_start_unable_to_create(self):
+    def test_start_unable_to_start(self):
         self.mock_object(
             self.fake_client.driver, 'start',
             mock.Mock(side_effect=ClientException))
@@ -172,7 +172,7 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.reboot.\
             assert_called_once_with('fake_id')
 
-    def test_reboot_unable_to_create(self):
+    def test_reboot_unable_to_reboot(self):
         self.mock_object(
             self.fake_client.driver, 'reboot',
             mock.Mock(side_effect=ClientException))
@@ -195,7 +195,7 @@ class ClientTest(base.TestCase):
             assert_called_once_with('fake_id',
                                     'fake_configuration')
 
-    def test_resize_unable_to_create(self):
+    def test_resize_unable_to_resize(self):
         self.mock_object(
             self.fake_client.driver, 'resize',
             mock.Mock(side_effect=ClientException))
@@ -220,7 +220,7 @@ class ClientTest(base.TestCase):
             assert_called_once_with('fake_id',
                                     'fake_net_id')
 
-    def test_add_nic_unable_to_create(self):
+    def test_add_nic_unable_to_add(self):
         self.mock_object(
             self.fake_client.driver, 'add_nic',
             mock.Mock(side_effect=ClientException))
@@ -232,3 +232,28 @@ class ClientTest(base.TestCase):
         self.fake_client.driver.add_nic.\
             assert_called_once_with('fake_id',
                                     'fake_net_id')
+
+    def test_delete_nic_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'delete_nic',
+            mock.Mock(return_value=True))
+
+        self.fake_client.delete_nic('fake_id',
+                                'fake_port_id')
+
+        self.fake_client.driver.delete_nic.\
+            assert_called_once_with('fake_id',
+                                    'fake_port_id')
+
+    def test_delete_nic_unable_to_delete(self):
+        self.mock_object(
+            self.fake_client.driver, 'delete_nic',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.delete_nic, 'fake_id',
+                          'fake_port_id')
+
+        self.fake_client.driver.delete_nic.\
+            assert_called_once_with('fake_id',
+                                    'fake_port_id')
