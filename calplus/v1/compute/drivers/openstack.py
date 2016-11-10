@@ -88,7 +88,11 @@ class OpenstackDriver(BaseDriver):
 
     def resize(self, instance_id, flavor_id):
         self.client.servers.resize(instance_id, flavor_id)
-        self.client.servers.confirm_resize(instance_id)
+        try:
+            self.client.servers.confirm_resize(instance_id)
+        except:
+            self.client.servers.revert_resize(instance_id)
+            return False
         return True
 
     def add_sg(self, instance_id, new_sg):
