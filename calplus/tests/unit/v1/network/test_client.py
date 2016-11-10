@@ -250,3 +250,24 @@ class ClientTest(base.TestCase):
 
         self.fake_client.driver.allocate_public_ip.\
             assert_called_once_with()
+
+    def test_list_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'list_public_ip',
+            mock.Mock(return_value='fake_list_ip'))
+
+        self.fake_client.list_public_ip()
+
+        self.fake_client.driver.list_public_ip.\
+            assert_called_once_with()
+
+    def test_list_public_ip_unable_to_list(self):
+        self.mock_object(
+            self.fake_client.driver, 'list_public_ip',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.list_public_ip)
+
+        self.fake_client.driver.list_public_ip.\
+            assert_called_once_with()

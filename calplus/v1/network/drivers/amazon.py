@@ -126,6 +126,9 @@ class AmazonDriver(BaseDriver):
         self.client.allocate_address(Domain='vpc')
         return True
 
+    def list_public_ip(self, **search_opts):
+        pass
+
 
 class AmazonQuota(BaseQuota):
 

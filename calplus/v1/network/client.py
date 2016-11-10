@@ -58,3 +58,6 @@ class Client(BaseClient):
          False: can't get new IP by quota or commitment
         """
         return self.driver.allocate_public_ip()
+
+    def list_public_ip(self, **search_opts):
+        return self.driver.list_public_ip(**search_opts)

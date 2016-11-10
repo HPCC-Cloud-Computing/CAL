@@ -165,6 +165,9 @@ class OpenstackDriver(BaseDriver):
             return False
         return True
 
+    def list_public_ip(self, **search_opts):
+        pass
+
 
 class OpenstackQuota(BaseQuota):
 

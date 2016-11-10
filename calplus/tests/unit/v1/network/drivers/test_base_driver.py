@@ -38,6 +38,9 @@ class FakeDriver(BaseDriver):
     def allocate_public_ip(self, network_id):
         return 'fake_result'
 
+    def list_public_ip(self, **search_opts):
+        return 'fake_result'
+
 
 class FakeDriverError(BaseDriver):
     """docstring for FakeDriverError

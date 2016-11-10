@@ -47,6 +47,10 @@ class BaseDriver(object):
     def allocate_public_ip(self, network_id):
         pass
 
+    @abc.abstractmethod
+    def list_public_ip(self, **search_opts):
+        pass
+
 
 class BaseQuota(object):
     """docstring for QuotaNetwork"""
