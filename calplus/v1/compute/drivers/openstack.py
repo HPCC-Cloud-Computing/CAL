@@ -4,6 +4,7 @@
 
 
 from datetime import datetime
+import six
 
 from keystoneauth1.identity import v3
 from keystoneauth1 import session
@@ -49,7 +50,7 @@ class OpenstackDriver(BaseDriver):
     def create(self, image_id, flavor_id,
                network_id, name=None, number=1, **kargs):
         if name is None:
-            name = unicode(datetime.now())
+            name = six.text_type(datetime.now())
         server = self.client.servers.create(
             name=name,
             image=image_id,
