@@ -50,5 +50,5 @@ class Client(BaseClient):
     def disconnect_external_net(self, network_id):
         return self.driver.disconnect_external_net(network_id)
 
-    def allocate_public_ip(self, network_id):
-        return self.driver.allocate_public_ip(network_id)
+    def allocate_public_ip(self):
+        return self.driver.allocate_public_ip()

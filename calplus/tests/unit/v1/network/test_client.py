@@ -235,10 +235,10 @@ class ClientTest(base.TestCase):
             self.fake_client.driver, 'allocate_public_ip',
             mock.Mock(return_value=True))
 
-        self.fake_client.allocate_public_ip('fake_id')
+        self.fake_client.allocate_public_ip()
 
         self.fake_client.driver.allocate_public_ip.\
-            assert_called_once_with('fake_id')
+            assert_called_once_with()
 
     def test_allocate_public_ip_unable_to_allocate(self):
         self.mock_object(
@@ -246,7 +246,7 @@ class ClientTest(base.TestCase):
             mock.Mock(side_effect=ClientException))
 
         self.assertRaises(ClientException,
-            self.fake_client.allocate_public_ip, 'fake_id')
+            self.fake_client.allocate_public_ip)
 
         self.fake_client.driver.allocate_public_ip.\
-            assert_called_once_with('fake_id')
+            assert_called_once_with()
