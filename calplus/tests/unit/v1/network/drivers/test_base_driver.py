@@ -35,10 +35,13 @@ class FakeDriver(BaseDriver):
     def disconnect_external_net(self, network_id):
         return 'fake_result'
 
+    def allocate_public_ip(self, network_id):
+        return 'fake_result'
+
 
 class FakeDriverError(BaseDriver):
     """docstring for FakeDriverError
-        This class didn't implement delete function
+        This class didn't implement some functions
     """
     def __init__(self):
         super(FakeDriverError, self).__init__()

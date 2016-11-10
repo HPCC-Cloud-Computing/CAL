@@ -43,6 +43,10 @@ class BaseDriver(object):
     def disconnect_external_net(self, network_id):
         pass
 
+    @abc.abstractmethod
+    def allocate_public_ip(self, network_id):
+        pass
+
 
 class BaseQuota(object):
     """docstring for QuotaNetwork"""
