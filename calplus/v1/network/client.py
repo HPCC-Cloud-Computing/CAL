@@ -51,4 +51,10 @@ class Client(BaseClient):
         return self.driver.disconnect_external_net(network_id)
 
     def allocate_public_ip(self):
+        """
+
+        :return:
+         True : got new Public IP
+         False: can't get new IP by quota or commitment
+        """
         return self.driver.allocate_public_ip()

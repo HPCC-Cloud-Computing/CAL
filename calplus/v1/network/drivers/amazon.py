@@ -122,6 +122,10 @@ class AmazonDriver(BaseDriver):
     def disconnect_external_net(self, network_id):
         pass
 
+    def allocate_public_ip(self):
+        self.client.allocate_address(Domain='vpc')
+        return True
+
 
 class AmazonQuota(BaseQuota):
 

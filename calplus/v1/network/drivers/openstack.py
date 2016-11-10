@@ -155,6 +155,16 @@ class OpenstackDriver(BaseDriver):
         #just detach all connect to router have external_gateway
         pass
 
+    def allocate_public_ip(self):
+        external_net = self._check_external_network()
+        if external_net:
+            create_dict = {'floating_network_id': external_net,
+                           'tenant_id': self.network_quota.tenant_id}
+            self.client.create_floatingip({'floatingip': create_dict})
+        else:
+            return False
+        return True
+
 
 class OpenstackQuota(BaseQuota):
 
