@@ -1,5 +1,4 @@
-""" OpenstackDriver for Network
-    based on NetworkDriver
+""" Some test for BaseDriver
 """
 
 

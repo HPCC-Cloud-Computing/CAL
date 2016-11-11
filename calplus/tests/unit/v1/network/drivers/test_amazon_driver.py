@@ -1,5 +1,5 @@
 """ AmazonDriver for Network
-    based on BaseDriver
+    based on BaseDriver for Network Resource
 """
 
 

@@ -1,5 +1,5 @@
 """ OpenstackDriver for Network
-    based on NetworkDriver
+    based on BaseDriver for Network Resource
 """
 
 

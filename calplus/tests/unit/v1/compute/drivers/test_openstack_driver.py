@@ -1,5 +1,5 @@
 """ OpenstackDriver for Compute
-    based on BaseDriver fror Compute Resource
+    based on BaseDriver for Compute Resource
 """
 
 
