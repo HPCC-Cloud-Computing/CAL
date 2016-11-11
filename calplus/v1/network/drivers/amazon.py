@@ -143,7 +143,8 @@ class AmazonDriver(BaseDriver):
         return return_format
 
     def release_public_ip(self, public_ip_id):
-        pass
+        self.client.release_address(AllocationId=public_ip_id)
+        return True
 
 
 class AmazonQuota(BaseQuota):

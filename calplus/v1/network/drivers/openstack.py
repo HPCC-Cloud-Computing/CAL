@@ -182,7 +182,8 @@ class OpenstackDriver(BaseDriver):
         return return_format
 
     def release_public_ip(self, public_ip_id):
-        pass
+        self.client.delete_floatingip(public_ip_id)
+        return True
 
 
 class OpenstackQuota(BaseQuota):

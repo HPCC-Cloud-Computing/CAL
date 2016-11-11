@@ -434,3 +434,29 @@ class AmazonDriverTest(base.TestCase):
 
         self.fake_driver.client.describe_addresses.\
             assert_called_once_with()
+
+    def test_release_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'release_address',
+            mock.Mock(return_value='fake_response_metadata'))
+
+        self.fake_driver.release_public_ip('fake_allocation_id')
+
+        self.fake_driver.client.release_address.\
+            assert_called_once_with(AllocationId='fake_allocation_id')
+
+    def test_release_public_ip_unable_to_release(self):
+        self.mock_object(
+            self.fake_driver.client, 'release_address',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )
+            )
+        )
+
+        self.assertRaises(ClientError,
+            self.fake_driver.release_public_ip, 'fake_allocation_id')
+
+        self.fake_driver.client.release_address.\
+            assert_called_once_with(AllocationId='fake_allocation_id')

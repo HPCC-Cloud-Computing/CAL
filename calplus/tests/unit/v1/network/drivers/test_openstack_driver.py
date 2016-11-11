@@ -468,3 +468,28 @@ class OpenstackDriverTest(base.TestCase):
 
         self.fake_driver.client.list_floatingips. \
             assert_called_once_with()
+
+    def test_release_public_ips(self):
+        self.mock_object(
+            self.fake_driver.client, 'delete_floatingip',
+            mock.Mock(return_value=())
+        )
+        #NOTE: return_value is neutronclient.v2_0.client._TupleWithMeta
+        # printable : ()
+
+        self.fake_driver.release_public_ip('fake_floating_id')
+
+        self.fake_driver.client.delete_floatingip. \
+            assert_called_once_with('fake_floating_id')
+
+    def test_release_public_ips_unable_to_release(self):
+        self.mock_object(
+            self.fake_driver.client, 'delete_floatingip',
+            mock.Mock(side_effect=ClientException)
+        )
+
+        self.assertRaises(ClientException,
+            self.fake_driver.release_public_ip, 'fake_floating_id')
+
+        self.fake_driver.client.delete_floatingip. \
+            assert_called_once_with('fake_floating_id')
