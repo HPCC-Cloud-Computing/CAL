@@ -1,4 +1,4 @@
-.. image:: https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=driver
+.. image:: https://travis-ci.org/cloudcomputinghust/CAL.svg?branch=master
     :target: https://travis-ci.org/cloudcomputinghust/CAL
     
 .. image:: https://coveralls.io/repos/github/cloudcomputinghust/CAL/badge.svg?branch=master
