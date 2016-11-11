@@ -181,6 +181,9 @@ class OpenstackDriver(BaseDriver):
             })
         return return_format
 
+    def release_public_ip(self, public_ip_id):
+        pass
+
 
 class OpenstackQuota(BaseQuota):
 

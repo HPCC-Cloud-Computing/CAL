@@ -271,3 +271,24 @@ class ClientTest(base.TestCase):
 
         self.fake_client.driver.list_public_ip.\
             assert_called_once_with()
+
+    def test_release_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'release_public_ip',
+            mock.Mock(return_value=True))
+
+        self.fake_client.release_public_ip('fake_public_ip_id')
+
+        self.fake_client.driver.release_public_ip.\
+            assert_called_once_with('fake_public_ip_id')
+
+    def test_release_public_ip_unable_to_release(self):
+        self.mock_object(
+            self.fake_client.driver, 'release_public_ip',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.release_public_ip, 'fake_public_ip_id')
+
+        self.fake_client.driver.release_public_ip.\
+            assert_called_once_with('fake_public_ip_id')

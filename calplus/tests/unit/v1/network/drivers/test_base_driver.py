@@ -40,6 +40,9 @@ class FakeDriver(BaseDriver):
     def list_public_ip(self, **search_opts):
         return 'fake_result'
 
+    def release_public_ip(self, public_ip_id):
+        return 'fake_result'
+
 
 class FakeDriverError(BaseDriver):
     """docstring for FakeDriverError

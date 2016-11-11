@@ -61,3 +61,6 @@ class Client(BaseClient):
 
     def list_public_ip(self, **search_opts):
         return self.driver.list_public_ip(**search_opts)
+
+    def release_public_ip(self, public_ip_id):
+        return self.driver.release_public_ip(public_ip_id)
