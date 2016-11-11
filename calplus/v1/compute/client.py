@@ -83,13 +83,14 @@ class Client(BaseClient):
         """Delete private IP"""
         pass
 
-    def add_public_ip(self, instance_id, new_sg):
-        """Add a external IP"""
-        pass
+    def associate_public_ip(self, instance_id, public_ip_id, private_ip=None):
+        """Associate a external IP"""
+        return self.driver.associate_public_ip(
+            instance_id, public_ip_id, private_ip)
 
-    def delete_public_ip(self, instance_id, new_sg):
-        """Delete a external IP"""
-        pass
+    def disassociate_public_ip(self, public_ip_id):
+        """"Disassociate a external IP"""
+        return self.driver.disassociate_public_ip(public_ip_id)
 
     def list_ip(self, instance_id, new_sg):
         """Add all IPs"""

@@ -279,3 +279,50 @@ class ClientTest(base.TestCase):
 
         self.fake_client.driver.list_nic.\
             assert_called_once_with('fake_id')
+
+    def test_associate_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'associate_public_ip',
+            mock.Mock(return_value=True))
+
+        self.fake_client.associate_public_ip(
+                'fake_id', 'fake_public_ip_id')
+
+        self.fake_client.driver.associate_public_ip.\
+            assert_called_once_with(
+                'fake_id', 'fake_public_ip_id', None)
+
+    def test_associate_public_ip_unable_to_associate(self):
+        self.mock_object(
+            self.fake_client.driver, 'associate_public_ip',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+                        self.fake_client.associate_public_ip,
+                        'fake_id', 'fake_public_ip_id')
+
+        self.fake_client.driver.associate_public_ip.\
+            assert_called_once_with(
+                'fake_id', 'fake_public_ip_id', None)
+
+    def test_disassociate_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_client.driver, 'disassociate_public_ip',
+            mock.Mock(return_value=True))
+
+        self.fake_client.disassociate_public_ip(
+                'fake_public_ip_id')
+
+        self.fake_client.driver.disassociate_public_ip.\
+            assert_called_once_with('fake_public_ip_id')
+
+    def test_disassociate_public_ip_unable_to_disassociate(self):
+        self.mock_object(
+            self.fake_client.driver, 'disassociate_public_ip',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_client.disassociate_public_ip, 'fake_public_ip_id')
+
+        self.fake_client.driver.disassociate_public_ip.\
+            assert_called_once_with('fake_public_ip_id')
