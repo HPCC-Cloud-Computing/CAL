@@ -138,11 +138,24 @@ class OpenstackDriver(BaseDriver):
 
     def associate_public_ip(self, instance_id, public_ip_id, private_ip=None):
         """Associate a external IP"""
-        pass
+        floating_ip = self.client.floating_ips.get(public_ip_id)
+        floating_ip = floating_ip.to_dict()
+        address = floating_ip.get('ip')
+
+        self.client.servers.add_floating_ip(instance_id, address, private_ip)
+
+        return True
 
     def disassociate_public_ip(self, public_ip_id):
         """Disassociate a external IP"""
-        pass
+        floating_ip = self.client.floating_ips.get(public_ip_id)
+        floating_ip = floating_ip.to_dict()
+        instance_id = floating_ip.get('instance_id')
+        address = floating_ip.get('ip')
+
+        self.client.servers.remove_floating_ip(instance_id, address)
+
+        return True
 
     def list_ip(self, instance_id, new_sg):
         """Add all IPs"""

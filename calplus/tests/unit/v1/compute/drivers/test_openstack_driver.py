@@ -34,6 +34,32 @@ fake_config_driver = {
 }
 
 
+class FakeFloatingIPNotAssociate(object):
+
+    def to_dict(self):
+        dict = {
+            'instance_id': None,
+            'ip': 'fake_public_ip',
+            'fixed_ip': None,
+            'id': 'fake_public_ip_id',
+            'pool': 'provider-net'
+        }
+        return dict
+
+
+class FakeFloatingIP(object):
+
+    def to_dict(self):
+        dict = {
+            'instance_id': 'fake_instance_id',
+            'ip': 'fake_public_ip',
+            'fixed_ip': 'fake_privte_ip',
+            'id': 'fake_public_ip_id',
+            'pool': 'provider-net'
+        }
+        return dict
+
+
 class OpenstackDriverTest(base.TestCase):
 
     """docstring for OpenstackDriverTest"""
@@ -398,3 +424,112 @@ class OpenstackDriverTest(base.TestCase):
 
         self.fake_driver.client.servers.interface_list. \
             assert_called_once_with('fake_id')
+
+    def test_associate_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client.floating_ips, 'get',
+            mock.Mock(return_value=FakeFloatingIPNotAssociate()))
+        # NOTE: return_value is novaclient.v2.floating_ips.FloatingIP
+        self.mock_object(
+            self.fake_driver.client.servers, 'add_floating_ip',
+            mock.Mock(return_value=()))
+
+        self.fake_driver.associate_public_ip(
+            'fake_id', 'fake_public_ip_id')
+
+        self.fake_driver.client.floating_ips.get. \
+            assert_called_once_with('fake_public_ip_id')
+        self.fake_driver.client.servers.add_floating_ip. \
+            assert_called_once_with(
+                'fake_id', 'fake_public_ip', None
+            )
+
+    def test_associate_public_ip_unable_to_get_floating_ip(self):
+        self.mock_object(
+            self.fake_driver.client.floating_ips, 'get',
+            mock.Mock(side_effect=ClientException))
+        self.mock_object(
+            self.fake_driver.client.servers, 'add_floating_ip',
+            mock.Mock())
+
+        self.assertRaises(ClientException,
+            self.fake_driver.associate_public_ip,
+                          'fake_id', 'fake_public_ip_id')
+
+        self.fake_driver.client.floating_ips.get. \
+            assert_called_once_with('fake_public_ip_id')
+        self.assertFalse(
+            self.fake_driver.client.servers.add_floating_ip.called)
+
+    def test_associate_public_ip_unable_to_add_floating_ip(self):
+        self.mock_object(
+            self.fake_driver.client.floating_ips, 'get',
+            mock.Mock(return_value=FakeFloatingIPNotAssociate()))
+        # NOTE: return_value is novaclient.v2.floating_ips.FloatingIP
+        self.mock_object(
+            self.fake_driver.client.servers, 'add_floating_ip',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_driver.associate_public_ip,
+                          'fake_id', 'fake_public_ip_id')
+
+        self.fake_driver.client.floating_ips.get. \
+            assert_called_once_with('fake_public_ip_id')
+        self.fake_driver.client.servers.add_floating_ip. \
+            assert_called_once_with(
+                'fake_id', 'fake_public_ip', None
+            )
+
+    def test_disassociate_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client.floating_ips, 'get',
+            mock.Mock(return_value=FakeFloatingIP()))
+        # NOTE: return_value is novaclient.v2.floating_ips.FloatingIP
+        self.mock_object(
+            self.fake_driver.client.servers, 'remove_floating_ip',
+            mock.Mock(return_value=()))
+
+        self.fake_driver.disassociate_public_ip('fake_public_ip_id')
+
+        self.fake_driver.client.floating_ips.get. \
+            assert_called_once_with('fake_public_ip_id')
+        self.fake_driver.client.servers.remove_floating_ip. \
+            assert_called_once_with(
+                'fake_instance_id', 'fake_public_ip'
+            )
+
+    def test_disassociate_public_ip_unable_to_get_floating_ip(self):
+        self.mock_object(
+            self.fake_driver.client.floating_ips, 'get',
+            mock.Mock(side_effect=ClientException))
+        self.mock_object(
+            self.fake_driver.client.servers, 'remove_floating_ip',
+            mock.Mock())
+
+        self.assertRaises(ClientException,
+            self.fake_driver.disassociate_public_ip, 'fake_public_ip_id')
+
+        self.fake_driver.client.floating_ips.get. \
+            assert_called_once_with('fake_public_ip_id')
+        self.assertFalse(
+            self.fake_driver.client.servers.remove_floating_ip.called)
+
+    def test_disassociate_public_ip_unable_to_remove_floating_ip(self):
+        self.mock_object(
+            self.fake_driver.client.floating_ips, 'get',
+            mock.Mock(return_value=FakeFloatingIP()))
+        # NOTE: return_value is novaclient.v2.floating_ips.FloatingIP
+        self.mock_object(
+            self.fake_driver.client.servers, 'remove_floating_ip',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_driver.disassociate_public_ip, 'fake_public_ip_id')
+
+        self.fake_driver.client.floating_ips.get. \
+            assert_called_once_with('fake_public_ip_id')
+        self.fake_driver.client.servers.remove_floating_ip. \
+            assert_called_once_with(
+                'fake_instance_id', 'fake_public_ip'
+            )
