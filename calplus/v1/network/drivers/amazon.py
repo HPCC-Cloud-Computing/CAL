@@ -136,7 +136,10 @@ class AmazonDriver(BaseDriver):
         ips = result.get('Addresses')
         return_format = []
         for ip in ips:
-            return_format.append(ip.get('PublicIp'))
+            return_format.append({
+                'public_ip': ip.get('PublicIp'),
+                'id': ip.get('AllocationId')
+            })
         return return_format
 
 

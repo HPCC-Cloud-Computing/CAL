@@ -175,7 +175,10 @@ class OpenstackDriver(BaseDriver):
         ips = result.get('floatingips')
         return_format = []
         for ip in ips:
-            return_format.append(ip.get('floating_ip_address'))
+            return_format.append({
+                'public_ip': ip.get('floating_ip_address'),
+                'id': ip.get('id')
+            })
         return return_format
 
 
