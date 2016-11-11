@@ -87,12 +87,12 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def associate_public_ip(self, instance_id, new_sg):
+    def associate_public_ip(self, instance_id, public_ip_id, private_ip=None):
         """Associate a external IP"""
         pass
 
     @abc.abstractmethod
-    def disassociate_public_ip(self, instance_id, new_sg):
+    def disassociate_public_ip(self, public_ip_id):
         """Disassociate a external IP"""
         pass
 
