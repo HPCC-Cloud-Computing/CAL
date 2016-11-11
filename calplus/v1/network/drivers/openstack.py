@@ -166,7 +166,17 @@ class OpenstackDriver(BaseDriver):
         return True
 
     def list_public_ip(self, **search_opts):
-        pass
+        """
+
+        :param search_opts:
+        :return: list PublicIP
+        """
+        result = self.client.list_floatingips(**search_opts)
+        ips = result.get('floatingips')
+        return_format = []
+        for ip in ips:
+            return_format.append(ip.get('floating_ip_address'))
+        return return_format
 
 
 class OpenstackQuota(BaseQuota):

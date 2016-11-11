@@ -127,7 +127,17 @@ class AmazonDriver(BaseDriver):
         return True
 
     def list_public_ip(self, **search_opts):
-        pass
+        """
+
+        :param search_opts:
+        :return: list PublicIP
+        """
+        result = self.client.describe_addresses(**search_opts)
+        ips = result.get('Addresses')
+        return_format = []
+        for ip in ips:
+            return_format.append(ip.get('PublicIp'))
+        return return_format
 
 
 class AmazonQuota(BaseQuota):

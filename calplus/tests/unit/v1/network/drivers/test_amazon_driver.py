@@ -137,6 +137,33 @@ fake_allocate_ip_out = {
     }
 }
 
+fake_list_ip_out = {
+    'Addresses': [
+        {
+            'PublicIp': '192.168.122.224',
+            'Domain': 'vpc',
+            'AllocationId': 'eipalloc-8f665a3d'
+        }, {
+            'PublicIp': '192.168.122.225',
+            'Domain': 'vpc',
+            'AllocationId': 'eipalloc-65972269'
+        }, {
+            'PublicIp': '192.168.122.222',
+            'Domain': 'vpc',
+            'AllocationId': 'eipalloc-1267a078'
+        }
+    ],
+    'ResponseMetadata': {
+        'HTTPStatusCode': 200,
+        'RequestId': 'req-30d6aad8-7bac-41b8-8d14-be054559cf1d',
+        'HTTPHeaders': {
+            'date': 'Thu, 10 Nov 2016 20:48:25 GMT',
+            'content-length': '1083',
+            'content-type': 'text/xml'
+        }
+    }
+}
+
 
 class AmazonDriverTest(base.TestCase):
 
@@ -381,3 +408,29 @@ class AmazonDriverTest(base.TestCase):
 
         self.fake_driver.client.allocate_address.\
             assert_called_once_with(Domain='vpc')
+
+    def test_list_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_addresses',
+            mock.Mock(return_value=fake_list_ip_out))
+
+        self.fake_driver.list_public_ip()
+
+        self.fake_driver.client.describe_addresses.\
+            assert_called_once_with()
+
+    def test_list_public_ip_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_addresses',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )
+            )
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.list_public_ip)
+
+        self.fake_driver.client.describe_addresses.\
+            assert_called_once_with()

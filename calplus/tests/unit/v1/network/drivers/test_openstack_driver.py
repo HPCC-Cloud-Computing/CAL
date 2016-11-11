@@ -88,6 +88,36 @@ create_dict_allocate_ip = {
     'tenant_id': 'fake_tenant_id'
 }
 
+fake_list_ip_out = {
+    'floatingips': [
+        {
+            'router_id': None,
+            'status': 'DOWN',
+            'description': '',
+            'dns_name': '',
+            'dns_domain': '',
+            'floating_network_id': 'f6a49644-97ad-404c-8a17-b2a9edfdfa67',
+            'fixed_ip_address': None,
+            'floating_ip_address': u'192.168.50.247',
+            'tenant_id': '5e2c3426fcc047d1b81326045a6438d9',
+            'port_id': None,
+            'id': u'974e99ab-97f8-45ef-bee2-3e81da5a1e58'
+        }, {
+            'router_id': None,
+            'status': 'DOWN',
+            'description': '',
+            'dns_name': '',
+            'dns_domain': '',
+            'floating_network_id': 'f6a49644-97ad-404c-8a17-b2a9edfdfa67',
+            'fixed_ip_address': None,
+            'floating_ip_address': '192.168.50.249',
+            'tenant_id': '5e2c3426fcc047d1b81326045a6438d9',
+            'port_id': None,
+            'id': 'ace7fe07-c5ca-4fbc-987d-76ef8c75b14b'
+        }
+    ]
+}
+
 
 class OpenstackDriverTest(base.TestCase):
 
@@ -413,3 +443,28 @@ class OpenstackDriverTest(base.TestCase):
             assert_called_once_with({
                 'floatingip': create_dict_allocate_ip
             })
+
+    def test_list_public_ips(self):
+        self.mock_object(
+            self.fake_driver.client, 'list_floatingips',
+            mock.Mock(return_value=fake_list_ip_out)
+        )
+        #NOTE: in fact, return_value is neutronclient.v2_0.client._DictWithMeta
+        # printable with format like fake_list_ip_out
+
+        self.fake_driver.list_public_ip()
+
+        self.fake_driver.client.list_floatingips. \
+            assert_called_once_with()
+
+    def test_list_public_ips_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.client, 'list_floatingips',
+            mock.Mock(side_effect=ClientException)
+        )
+
+        self.assertRaises(ClientException,
+                          self.fake_driver.list_public_ip)
+
+        self.fake_driver.client.list_floatingips. \
+            assert_called_once_with()
