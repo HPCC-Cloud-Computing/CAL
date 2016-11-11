@@ -136,12 +136,12 @@ class OpenstackDriver(BaseDriver):
         """Delete private IP"""
         pass
 
-    def add_public_ip(self, instance_id, new_sg):
-        """Add a external IP"""
+    def associate_public_ip(self, instance_id, new_sg):
+        """Associate a external IP"""
         pass
 
-    def delete_public_ip(self, instance_id, new_sg):
-        """Delete a external IP"""
+    def disassociate_public_ip(self, instance_id, new_sg):
+        """Disassociate a external IP"""
         pass
 
     def list_ip(self, instance_id, new_sg):

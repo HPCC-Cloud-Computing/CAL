@@ -70,12 +70,12 @@ class FakeDriver(BaseDriver):
         """Delete private IP"""
         return 'fake_result'
 
-    def add_public_ip(self, instance_id, new_sg):
-        """Add a external IP"""
+    def associate_public_ip(self, instance_id, new_sg):
+        """Associate a external IP"""
         return 'fake_result'
 
-    def delete_public_ip(self, instance_id, new_sg):
-        """Delete a external IP"""
+    def disassociate_public_ip(self, instance_id, new_sg):
+        """Disassociate a external IP"""
         return 'fake_result'
 
     def list_ip(self, instance_id, new_sg):
