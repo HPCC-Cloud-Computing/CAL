@@ -88,7 +88,7 @@ class BaseDriver(object):
 
     @abc.abstractmethod
     def add_public_ip(self, instance_id, new_sg):
-        """Add a external IP"""
+        """Add an external IP"""
         pass
 
     @abc.abstractmethod

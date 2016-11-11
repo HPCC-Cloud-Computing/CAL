@@ -14,9 +14,9 @@ class Client(BaseClient):
                             provider, cloud_config)
 
     def create(self, image, flavor,
-               network_id, name, number, **kargs):
+               network_id, name, number, **kwargs):
         return self.driver.create(image, flavor,
-               network_id, name, number, **kargs)
+               network_id, name, number, **kwargs)
 
     def show(self, instance_id):
         return self.driver.show(instance_id)

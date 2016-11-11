@@ -4,6 +4,7 @@
 
 
 import mock
+
 from keystoneauth1.exceptions.base import ClientException
 
 from calplus.tests import base
