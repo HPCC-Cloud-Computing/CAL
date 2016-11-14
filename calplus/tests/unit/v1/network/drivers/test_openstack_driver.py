@@ -55,7 +55,6 @@ fake_subnet_out = {
     'cloud': 'OPENSTACK',
     'gateway_ip': 'fake_gateway_ip',
     'security_group': None,
-    'allocation_pools': 'fake_name_allocation_pools',
     'dns_nameservers': 'fake_dns_nameservers',
     "allocation_pools": [
         {
