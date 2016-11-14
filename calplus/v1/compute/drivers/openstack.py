@@ -157,9 +157,9 @@ class OpenstackDriver(BaseDriver):
 
         return True
 
-    def list_ip(self, instance_id, new_sg):
+    def list_ip(self, instance_id):
         """Add all IPs"""
-        pass
+        return dict(self.client.servers.ips(instance_id))
 
 
 class OpenstackQuota(BaseQuota):

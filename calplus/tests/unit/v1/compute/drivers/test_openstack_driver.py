@@ -533,3 +533,26 @@ class OpenstackDriverTest(base.TestCase):
             assert_called_once_with(
                 'fake_instance_id', 'fake_public_ip'
             )
+
+    def test_list_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client.servers, 'ips',
+            mock.Mock(return_value={'Int-net': 'fake_list'}))
+        # NOTE: in fact: mock.Mock is novaclient.base.DictWithMeta
+        # printable: show a dict
+
+        self.fake_driver.list_ip('fake_id')
+
+        self.fake_driver.client.servers.ips. \
+            assert_called_once_with('fake_id')
+
+    def test_list_ip_unable_to_delete(self):
+        self.mock_object(
+            self.fake_driver.client.servers, 'ips',
+            mock.Mock(side_effect=ClientException))
+
+        self.assertRaises(ClientException,
+            self.fake_driver.list_ip, 'fake_id')
+
+        self.fake_driver.client.servers.ips. \
+            assert_called_once_with('fake_id')

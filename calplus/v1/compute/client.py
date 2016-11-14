@@ -92,6 +92,6 @@ class Client(BaseClient):
         """"Disassociate a external IP"""
         return self.driver.disassociate_public_ip(public_ip_id)
 
-    def list_ip(self, instance_id, new_sg):
+    def list_ip(self, instance_id):
         """Add all IPs"""
-        pass
+        return self.driver.list_ip(instance_id)

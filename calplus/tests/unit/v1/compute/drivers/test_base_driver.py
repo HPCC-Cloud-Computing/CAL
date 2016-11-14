@@ -78,7 +78,7 @@ class FakeDriver(BaseDriver):
         """Disassociate a external IP"""
         return 'fake_result'
 
-    def list_ip(self, instance_id, new_sg):
+    def list_ip(self, instance_id):
         """Add all IPs"""
         return 'fake_result'
 

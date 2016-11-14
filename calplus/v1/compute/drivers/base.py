@@ -97,7 +97,7 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def list_ip(self, instance_id, new_sg):
+    def list_ip(self, instance_id):
         """Add all IPs"""
         pass
 
