@@ -35,6 +35,7 @@ os1_auth_opts = {
     'os_identity_api_version': '3',
     'os_image_api_version': '2',
     'tenant_id': 'fake_tenant_id',
+    'os_novaclient_version': '2.1',
     'limit': {
         "subnet": 10,
         "network": 10,

@@ -112,6 +112,7 @@ class BaseQuota(object):
         """Get quota from Cloud Provider."""
 
         # get all network quota from Cloud Provider.
+        #TODO: We need to improve this by survey for compute quota
         attrs = ("vcpus",
                  "instances",
                  "ram")
