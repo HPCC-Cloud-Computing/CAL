@@ -43,3 +43,24 @@ class Client(BaseClient):
 
     def update(self, network_id, network):
         return self.driver.update(network_id, network)
+
+    def connect_external_net(self, network_id):
+        return self.driver.connect_external_net(network_id)
+
+    def disconnect_external_net(self, network_id):
+        return self.driver.disconnect_external_net(network_id)
+
+    def allocate_public_ip(self):
+        """
+
+        :return:
+         True : got new Public IP
+         False: can't get new IP by quota or commitment
+        """
+        return self.driver.allocate_public_ip()
+
+    def list_public_ip(self, **search_opts):
+        return self.driver.list_public_ip(**search_opts)
+
+    def release_public_ip(self, public_ip_id):
+        return self.driver.release_public_ip(public_ip_id)

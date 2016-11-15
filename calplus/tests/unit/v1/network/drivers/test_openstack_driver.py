@@ -1,5 +1,5 @@
 """ OpenstackDriver for Network
-    based on NetworkDriver
+    based on BaseDriver for Network Resource
 """
 
 
@@ -55,7 +55,6 @@ fake_subnet_out = {
     'cloud': 'OPENSTACK',
     'gateway_ip': 'fake_gateway_ip',
     'security_group': None,
-    'allocation_pools': 'fake_name_allocation_pools',
     'dns_nameservers': 'fake_dns_nameservers',
     "allocation_pools": [
         {
@@ -81,6 +80,41 @@ fake_router = [
 fake_security_groups = {
     'id': 'fake_scg_id',
     'security_group_rules': []
+}
+
+create_dict_allocate_ip = {
+    'floating_network_id': 'fake_id',
+    'tenant_id': 'fake_tenant_id'
+}
+
+fake_list_ip_out = {
+    'floatingips': [
+        {
+            'router_id': None,
+            'status': 'DOWN',
+            'description': '',
+            'dns_name': '',
+            'dns_domain': '',
+            'floating_network_id': 'f6a49644-97ad-404c-8a17-b2a9edfdfa67',
+            'fixed_ip_address': None,
+            'floating_ip_address': u'192.168.50.247',
+            'tenant_id': '5e2c3426fcc047d1b81326045a6438d9',
+            'port_id': None,
+            'id': u'974e99ab-97f8-45ef-bee2-3e81da5a1e58'
+        }, {
+            'router_id': None,
+            'status': 'DOWN',
+            'description': '',
+            'dns_name': '',
+            'dns_domain': '',
+            'floating_network_id': 'f6a49644-97ad-404c-8a17-b2a9edfdfa67',
+            'fixed_ip_address': None,
+            'floating_ip_address': '192.168.50.249',
+            'tenant_id': '5e2c3426fcc047d1b81326045a6438d9',
+            'port_id': None,
+            'id': 'ace7fe07-c5ca-4fbc-987d-76ef8c75b14b'
+        }
+    ]
 }
 
 
@@ -353,3 +387,108 @@ class OpenstackDriverTest(base.TestCase):
 
         self.fake_driver.client.list_routers.\
             assert_called_once_with()
+
+    def test_allocate_public_ip(self):
+        self.mock_object(
+            self.fake_driver, '_check_external_network',
+            mock.Mock(return_value='fake_id')
+        )
+        self.mock_object(
+            self.fake_driver.client, 'create_floatingip',
+            mock.Mock(return_value=True))
+
+        self.fake_driver.allocate_public_ip()
+
+        self.fake_driver._check_external_network. \
+            assert_called_once_with()
+        self.fake_driver.client.create_floatingip.\
+            assert_called_once_with({
+                'floatingip': create_dict_allocate_ip
+            })
+
+    def test_allocate_public_ip_without_external_net(self):
+        self.mock_object(
+            self.fake_driver, '_check_external_network',
+            mock.Mock(return_value=None)
+        )
+        self.mock_object(
+            self.fake_driver.client, 'create_floatingip',
+            mock.Mock()
+        )
+
+        self.fake_driver.allocate_public_ip()
+
+        self.fake_driver._check_external_network. \
+            assert_called_once_with()
+        self.assertEqual(False,
+                         self.fake_driver.client.create_floatingip.called)
+
+    def test_allocate_public_ip_unable_to_allocate(self):
+        self.mock_object(
+            self.fake_driver, '_check_external_network',
+            mock.Mock(return_value='fake_id')
+        )
+        self.mock_object(
+            self.fake_driver.client, 'create_floatingip',
+            mock.Mock(side_effect=ClientException)
+        )
+
+        self.assertRaises(ClientException,
+                          self.fake_driver.allocate_public_ip)
+
+        self.fake_driver._check_external_network. \
+            assert_called_once_with()
+        self.fake_driver.client.create_floatingip.\
+            assert_called_once_with({
+                'floatingip': create_dict_allocate_ip
+            })
+
+    def test_list_public_ips(self):
+        self.mock_object(
+            self.fake_driver.client, 'list_floatingips',
+            mock.Mock(return_value=fake_list_ip_out)
+        )
+        #NOTE: in fact, return_value is neutronclient.v2_0.client._DictWithMeta
+        # printable with format like fake_list_ip_out
+
+        self.fake_driver.list_public_ip()
+
+        self.fake_driver.client.list_floatingips. \
+            assert_called_once_with()
+
+    def test_list_public_ips_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.client, 'list_floatingips',
+            mock.Mock(side_effect=ClientException)
+        )
+
+        self.assertRaises(ClientException,
+                          self.fake_driver.list_public_ip)
+
+        self.fake_driver.client.list_floatingips. \
+            assert_called_once_with()
+
+    def test_release_public_ips(self):
+        self.mock_object(
+            self.fake_driver.client, 'delete_floatingip',
+            mock.Mock(return_value=())
+        )
+        #NOTE: return_value is neutronclient.v2_0.client._TupleWithMeta
+        # printable : ()
+
+        self.fake_driver.release_public_ip('fake_floating_id')
+
+        self.fake_driver.client.delete_floatingip. \
+            assert_called_once_with('fake_floating_id')
+
+    def test_release_public_ips_unable_to_release(self):
+        self.mock_object(
+            self.fake_driver.client, 'delete_floatingip',
+            mock.Mock(side_effect=ClientException)
+        )
+
+        self.assertRaises(ClientException,
+            self.fake_driver.release_public_ip, 'fake_floating_id')
+
+        self.fake_driver.client.delete_floatingip. \
+            assert_called_once_with('fake_floating_id')

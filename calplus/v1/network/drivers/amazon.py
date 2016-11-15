@@ -116,13 +116,43 @@ class AmazonDriver(BaseDriver):
         # 3 : delete vpc
         return self.client.delete_vpc(VpcId=vpc_id)
 
+    def connect_external_net(self, network_id):
+        pass
+
+    def disconnect_external_net(self, network_id):
+        pass
+
+    def allocate_public_ip(self):
+        self.client.allocate_address(Domain='vpc')
+        return True
+
+    def list_public_ip(self, **search_opts):
+        """
+
+        :param search_opts:
+        :return: list PublicIP
+        """
+        result = self.client.describe_addresses(**search_opts)
+        ips = result.get('Addresses')
+        return_format = []
+        for ip in ips:
+            return_format.append({
+                'public_ip': ip.get('PublicIp'),
+                'id': ip.get('AllocationId')
+            })
+        return return_format
+
+    def release_public_ip(self, public_ip_id):
+        self.client.release_address(AllocationId=public_ip_id)
+        return True
+
 
 class AmazonQuota(BaseQuota):
 
     """docstring for AmazonQuota"""
 
     def __init__(self, client, limit=None):
-        super(BaseQuota, self).__init__()
+        super(AmazonQuota, self).__init__()
         self.client = client
         self.limit = limit
         self._setup()
