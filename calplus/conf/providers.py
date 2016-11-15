@@ -61,9 +61,7 @@ amazon_opts = [
     cfg.StrOpt('region_name',
                default='localhost'),
     cfg.StrOpt('endpoint_url',
-               default='admin'),
-    cfg.StrOpt('region_name',
-               default='localhost'),
+               default='http://localhost:35357/v3/'),
     cfg.DictOpt('limit',
                 default={
                     "subnet": 10,
