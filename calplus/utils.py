@@ -97,12 +97,14 @@ def pick_cloud_provider():
 
 def pick_host_with_specific_provider(provider, cloud_config=None):
     if cloud_config is None:
-        hosts = getattr(CONF, provider.lower())['hosts']
-        # Now, random choice host from provider hosts.
-        # TODO(kiennt): Next phase, pick the most optimized host
-        #               of given provider.
-        picked_host_config = hosts[random.choice(list(hosts.keys()))]
-        return picked_host_config
+        enable_drivers = CONF.providers.enable_drivers
+        for driver in enable_drivers:
+            type = CONF[driver].get('type_driver', None)
+            if type == provider:
+                #First choice
+                # TODO(daidv || kiennt): pick the most optimized host
+                return CONF[driver]
+        return None
     else:
         # TODO(kiennt): Check this cloud config: raise Exception
         #               if the given config is invalid (Must be a
