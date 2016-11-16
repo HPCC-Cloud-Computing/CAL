@@ -3,7 +3,7 @@ from oslo_config import cfg
 
 
 # Openstack Authenticate Configuration.
-openstack_group = cfg.OptGroup('openstack1',
+openstack_group = cfg.OptGroup('openstack',
                          title='OpenStack Hosts')
 
 openstack_opts = [
@@ -46,7 +46,7 @@ openstack_opts = [
 ]
 
 # Amazon Authenticate Configuration.
-amazon_group = cfg.OptGroup('amazon1',
+amazon_group = cfg.OptGroup('amazon',
                       title='Amazon Hosts')
 
 amazon_opts = [
@@ -55,13 +55,13 @@ amazon_opts = [
     cfg.StrOpt('type_driver',
                default='amazon'),
     cfg.StrOpt('aws_access_key_id',
-               default='localhost'),
+               default='AWS_ACCESS_KEY_ID'),
     cfg.StrOpt('aws_secret_access_key',
-               default='admin'),
+               default='AWS_SECRET_ACCESS_KEY'),
     cfg.StrOpt('region_name',
-               default='localhost'),
+               default='us-east-1'),
     cfg.StrOpt('endpoint_url',
-               default='http://localhost:35357/v3/'),
+               default='http://localhost:8788'),
     cfg.DictOpt('limit',
                 default={
                     "subnet": 10,
