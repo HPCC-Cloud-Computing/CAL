@@ -97,7 +97,7 @@ def pick_cloud_provider():
 
 def pick_host_with_specific_provider(provider, cloud_config=None):
     if cloud_config is None:
-        enable_drivers = CONF.providers.enable_drivers
+        enable_drivers = CONF.providers.enable_drivers.keys()
         for driver in enable_drivers:
             type = CONF[driver].get('type_driver', None)
             if type == provider:

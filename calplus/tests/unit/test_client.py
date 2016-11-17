@@ -1,5 +1,4 @@
 import mock
-from oslo_config import cfg
 
 import calplus.conf
 from calplus import client
@@ -73,50 +72,3 @@ class TestClient(TestCase):
             cloud_config=fake_aws_auth_opts
         )
         self.assertIsNotNone(test_client.driver)
-
-    def test_client_called_realize_all_driver(self):
-        def dict_to_opts_list(dict):
-            """
-            Convert cloud config to opts list
-            :param dict:
-            :return:
-            """
-            result = []
-            keys = dict.keys()
-            for key in keys:
-                if isinstance(dict[key], str):
-                    result.append(
-                        cfg.StrOpt(key, default=dict[key])
-                    )
-                else:
-                    result.append(
-                        cfg.DictOpt(key, default=dict[key])
-                    )
-            return result
-
-        # Add new aws host
-        amazon_group2 = cfg.OptGroup('amazon2',
-                                     title='Amazon Hosts')
-        CONF.register_group(amazon_group2)
-        list_opts = dict_to_opts_list(fake_aws_auth_opts)
-        CONF.register_opts(list_opts, group=amazon_group2)
-
-        enable_drivers = cfg.ListOpt(
-            'enable_drivers',
-            default=[
-                'openstack',
-                'amazon',
-                amazon_group2.name
-            ]
-        )
-        CONF.unregister_opt(cfg.ListOpt('enable_drivers'), 'providers')
-        CONF.register_opt(enable_drivers, 'providers')
-
-        #Test check list enable drivers
-        enable_drivers = CONF.providers.enable_drivers
-        expect_list = ['openstack', 'amazon', 'amazon2']
-        trusty_list = []
-        for driver in enable_drivers:
-            if hasattr(CONF, driver):
-                trusty_list.append(driver)
-        self.assertTrue(len(expect_list and trusty_list) == 3)

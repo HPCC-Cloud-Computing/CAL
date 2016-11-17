@@ -80,15 +80,6 @@ amazon_opts = [
 provider_group = cfg.OptGroup('providers',
                               title='Supported Providers')
 
-enable_drivers = cfg.ListOpt(
-    'enable_drivers',
-    default=[
-        openstack_group.name,
-        amazon_group.name
-    ],
-    help='List of available Driver Hosts'
-)
-
 driver_mapper = cfg.DictOpt('driver_mapper',
                             default={
                                 'openstack': 'OpenstackDriver',
@@ -98,6 +89,15 @@ driver_mapper = cfg.DictOpt('driver_mapper',
                             Dict with key is provider, and value is
                             Driver class.
                             """)
+
+enable_drivers = cfg.DictOpt(
+    'enable_drivers',
+    default={
+        openstack_group.name: 'openstack',
+        amazon_group.name: 'amazon'
+    },
+    help='List of enable drivers, format: section_name:driver_mapper'
+)
 
 provider_opts = [
     driver_mapper,

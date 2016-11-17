@@ -17,8 +17,12 @@ import mock
 from oslo_config import cfg
 import six
 
+import calplus.conf
 from calplus.conf import opts
 from calplus.tests import base
+
+
+CONF = calplus.conf.CONF
 
 
 class ConfTestCase(base.TestCase):
@@ -68,3 +72,30 @@ class ConfTestCase(base.TestCase):
         mock_conf.items.return_value = [('foo', 'bar')]
         opts._append_config_options([mock_module], opt)
         self.assertEqual({'foo': ['b', 'a', 'r']}, opt)
+
+    def test_load_config_file_to_realize_all_driver(self):
+        CONF(['--config-file',
+              'calplus/tests/fake_config_file.conf'])
+        # TODO: Maybe we need remove example group,
+        # such as: openstack and amazon
+
+        # ensure all driver groups have been registered
+        sections = CONF.list_all_sections()
+        for section in sections:
+            CONF.register_group(cfg.OptGroup(section))
+
+        # ensure all of enable drivers configured exact opts
+        enable_drivers = CONF.providers.enable_drivers
+        for driver in enable_drivers.keys():
+            if enable_drivers.get(driver) == 'openstack':
+                CONF.register_opts(
+                    calplus.conf.providers.openstack_opts, driver)
+            elif enable_drivers.get(driver) == 'amazon':
+                CONF.register_opts(
+                    calplus.conf.providers.amazon_opts, driver)
+            else:
+                continue
+
+        self.assertEqual(CONF.openstack1['driver_name'], 'HUST')
+        self.assertEqual(CONF.openstack2['driver_name'], 'SOICT')
+        self.assertEqual(CONF.amazon['driver_name'], 'Amazon')
