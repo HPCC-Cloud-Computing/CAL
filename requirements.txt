@@ -9,3 +9,4 @@ python-neutronclient
 keystoneauth1
 boto3
 python-novaclient
+python-cinderclient
