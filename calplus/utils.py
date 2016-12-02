@@ -3,7 +3,6 @@ try:
     import simplejson as json
 except ImportError:
     import json
-import random
 
 import falcon
 from falcon import Response
@@ -87,28 +86,3 @@ def append_request_id(req, resp, resource, params):
 
     if request_id not in resource.req_ids:
         resource.req_ids.append(request_id)
-
-
-def pick_cloud_provider():
-    # Random pick one cloud provider.
-    provider = list(CONF.providers.driver_mapper.keys())
-    return random.choice(provider)
-
-
-def pick_host_with_specific_provider(provider, cloud_config=None):
-    if cloud_config is None:
-        enable_drivers = CONF.providers.enable_drivers.keys()
-        for driver in enable_drivers:
-            type = CONF[driver].get('type_driver', None)
-            if type == provider:
-                #First choice
-                # TODO(daidv || kiennt): pick the most optimized host
-                return CONF[driver]
-        return None
-    else:
-        # TODO(kiennt): Check this cloud config: raise Exception
-        #               if the given config is invalid (Must be a
-        #               dict with the same keys like the one in
-        #               conf/providers.py), or connection to this
-        #               host is refused, broken...
-        return cloud_config

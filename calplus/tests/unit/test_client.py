@@ -4,8 +4,7 @@ import calplus.conf
 from calplus import client
 from calplus import exceptions
 from calplus.tests.base import TestCase
-from calplus.utils import pick_host_with_specific_provider
-# from calplus.v1.network import client as network_client
+from calplus.provider import Provider
 
 CONF = calplus.conf.CONF
 
@@ -30,6 +29,9 @@ fake_aws_auth_opts = {
     }
 }
 
+wrong_driver = Provider('wrong_type', 'fake_config')
+right_driver = Provider('openstack', 'fake_config')
+
 
 class TestClient(TestCase):
 
@@ -39,36 +41,21 @@ class TestClient(TestCase):
         self.mock_client = mock_client
 
     def test_client_called_with_unsupported_provider(self):
-        self.assertRaises(exceptions.ProviderNotFound, client.Client,
-                          '1.0.0', 'compute', 'WrongProvider')
+        self.assertRaises(exceptions.TypeProviderNotFound, client.Client,
+                          '1.0.0', 'compute', wrong_driver)
 
     def test_client_called_with_none_provider(self):
-        test_client = client.Client(version='1.0.0', resource='network')
-        self.assertIsNotNone(test_client.driver)
+        self.assertRaises(exceptions.ProviderNotDefined, client.Client,
+                          '1.0.0', 'compute')
 
     def test_client_called_with_unsupported_version(self):
         self.assertRaises(exceptions.UnsupportedVersion, client.Client,
-                          'wrong_version', 'compute', 'OpenStack')
+                          'wrong_version', 'compute', right_driver)
 
     def test_client_called_with_none_resource(self):
         self.assertRaises(exceptions.ResourceNotDefined, client.Client,
-                          '1.0.0', None, 'OpenStack')
+                          '1.0.0', None, right_driver)
 
     def test_client_called_with_unknow_resource(self):
         self.assertRaises(exceptions.ResourceNotFound, client.Client,
-                          '1.0.0', 'wrong_resource', 'OpenStack')
-
-    def test_client_called_with_not_found_host_of_provider(self):
-        # I called directly bellow function because
-        # We need a provider is neither ops nor aws
-        host = pick_host_with_specific_provider('Other')
-        self.assertIsNone(host)
-
-    def test_client_called_with_cloud_config(self):
-        test_client = client.Client(
-            version='1.0.0',
-            resource='network',
-            provider='amazon',
-            cloud_config=fake_aws_auth_opts
-        )
-        self.assertIsNotNone(test_client.driver)
+                          '1.0.0', 'wrong_resource', right_driver)
