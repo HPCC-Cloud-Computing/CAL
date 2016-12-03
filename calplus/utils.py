@@ -6,8 +6,10 @@ except ImportError:
 
 import falcon
 from falcon import Response
+from oslo_config import cfg
 
 import calplus.conf
+from calplus.provider import Provider
 
 CONF = calplus.conf.CONF
 
@@ -86,3 +88,33 @@ def append_request_id(req, resp, resource, params):
 
     if request_id not in resource.req_ids:
         resource.req_ids.append(request_id)
+
+
+def set_config_file(file_path):
+    CONF(['--config-file', file_path])
+
+
+def get_list_providers():
+    # ensure all driver groups have been registered
+    sections = CONF.list_all_sections()
+    for section in sections:
+        CONF.register_group(cfg.OptGroup(section))
+
+    # ensure all of enable drivers configured exact opts
+    enable_drivers = CONF.providers.enable_drivers
+    list_providers = []
+    for driver in enable_drivers.keys():
+        type_driver = enable_drivers.get(driver)
+        if type_driver == 'openstack':
+            CONF.register_opts(
+                calplus.conf.providers.openstack_opts, driver)
+        elif type_driver == 'amazon':
+            CONF.register_opts(
+                calplus.conf.providers.amazon_opts, driver)
+        else:
+            continue
+        list_providers.append(
+            Provider(type_driver, CONF.get(driver))
+        )
+
+    return list_providers
