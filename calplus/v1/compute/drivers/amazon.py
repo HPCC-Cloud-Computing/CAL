@@ -98,13 +98,19 @@ class AmazonDriver(BaseDriver):
         pass
 
     def add_nic(self, instance_id, net_id):
-        pass
+        """Add a Network Interface Controller"""
+        return self.client.attach_network_interface(
+            instance_id, net_id, 1)
 
     def delete_nic(self, instance_id, AttachmentId):
-        pass
+        """Delete a Network Interface Controller"""
+        return self.client.detach_network_interface(AttachmentId)
 
     def list_nic(self, instance_id):
-        pass
+        """List all Network Interface Controller"""
+        output = self.client.describe_instances(InstanceIds=[instance_id])
+        output = output.get("Reservations")[0].get("Instances")[0]
+        return output.get("NetworkInterfaces")
 
     def add_private_ip(self):
         """Add private IP"""

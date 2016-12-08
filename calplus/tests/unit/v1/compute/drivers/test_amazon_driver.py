@@ -351,3 +351,75 @@ class AmazonDriverTest(base.TestCase):
 
         self.assertRaises(ClientError,
                           self.fake_driver.reboot, 'fake_id')
+
+    def test_add_nic_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'attach_network_interface',
+            mock.Mock(return_value=mock.Mock))
+
+        self.fake_driver.add_nic('fake_id', 'fake_net_id')
+
+        self.fake_driver.client.attach_network_interface. \
+            assert_called_once_with('fake_id', 'fake_net_id', 1)
+
+    def test_add_nic_unable_to_add(self):
+        self.mock_object(
+            self.fake_driver.client, 'attach_network_interface',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )))
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.add_nic, 'fake_id', 'fake_net_id')
+
+        self.fake_driver.client.attach_network_interface. \
+            assert_called_once_with('fake_id', 'fake_net_id', 1)
+
+    def test_delete_nic_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'detach_network_interface',
+            mock.Mock(return_value=mock.Mock))
+
+        self.fake_driver.delete_nic('fake_id', 'fake_attachment_id')
+
+        self.fake_driver.client.detach_network_interface. \
+            assert_called_once_with('fake_attachment_id')
+
+    def test_delete_nic_unable_to_delete(self):
+        self.mock_object(
+            self.fake_driver.client, 'detach_network_interface',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )))
+
+        self.assertRaises(ClientError,
+            self.fake_driver.delete_nic, 'fake_id', 'fake_attachment_id')
+
+        self.fake_driver.client.detach_network_interface. \
+            assert_called_once_with('fake_attachment_id')
+
+    def test_list_nic_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_instances',
+            mock.Mock(return_value=fake_describe_return))
+
+        self.fake_driver.list_nic('fake_id')
+
+        self.fake_driver.client.describe_instances. \
+            assert_called_once_with(InstanceIds=['fake_id'])
+
+    def test_list_nic_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_instances',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )))
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.list_nic, 'fake_id')
+
+        self.fake_driver.client.describe_instances. \
+            assert_called_once_with(InstanceIds=['fake_id'])
