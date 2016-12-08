@@ -3,12 +3,13 @@ try:
     import simplejson as json
 except ImportError:
     import json
-import random
 
 import falcon
 from falcon import Response
+from oslo_config import cfg
 
 import calplus.conf
+from calplus.provider import Provider
 
 CONF = calplus.conf.CONF
 
@@ -89,24 +90,31 @@ def append_request_id(req, resp, resource, params):
         resource.req_ids.append(request_id)
 
 
-def pick_cloud_provider():
-    # Random pick one cloud provider.
-    provider = list(CONF.providers.driver_mapper.keys())
-    return random.choice(provider)
+def set_config_file(file_path):
+    CONF(['--config-file', file_path])
 
 
-def pick_host_with_specific_provider(provider, cloud_config=None):
-    if cloud_config is None:
-        hosts = getattr(CONF, provider.lower())['hosts']
-        # Now, random choice host from provider hosts.
-        # TODO(kiennt): Next phase, pick the most optimized host
-        #               of given provider.
-        picked_host_config = hosts[random.choice(list(hosts.keys()))]
-        return picked_host_config
-    else:
-        # TODO(kiennt): Check this cloud config: raise Exception
-        #               if the given config is invalid (Must be a
-        #               dict with the same keys like the one in
-        #               conf/providers.py), or connection to this
-        #               host is refused, broken...
-        return cloud_config
+def get_list_providers():
+    # ensure all driver groups have been registered
+    sections = CONF.list_all_sections()
+    for section in sections:
+        CONF.register_group(cfg.OptGroup(section))
+
+    # ensure all of enable drivers configured exact opts
+    enable_drivers = CONF.providers.enable_drivers
+    list_providers = []
+    for driver in enable_drivers.keys():
+        type_driver = enable_drivers.get(driver)
+        if type_driver == 'openstack':
+            CONF.register_opts(
+                calplus.conf.providers.openstack_opts, driver)
+        elif type_driver == 'amazon':
+            CONF.register_opts(
+                calplus.conf.providers.amazon_opts, driver)
+        else:
+            continue
+        list_providers.append(
+            Provider(type_driver, CONF.get(driver))
+        )
+
+    return list_providers
