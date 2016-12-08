@@ -231,3 +231,28 @@ class AmazonDriverTest(base.TestCase):
 
         self.fake_driver.client.describe_instances. \
             assert_called_once_with(InstanceIds=['fake_id'])
+
+    def test_list_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_instances',
+            mock.Mock(return_value=fake_describe_return))
+
+        self.fake_driver.list()
+
+        self.fake_driver.client.describe_instances. \
+            assert_called_once_with()
+
+    def test_list_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_instances',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.list)
+
+        self.fake_driver.client.describe_instances. \
+            assert_called_once_with()

@@ -62,7 +62,9 @@ class AmazonDriver(BaseDriver):
         return servers.get("Reservations")[0].get("Instances")[0]
 
     def list(self, **search_opts):
-        pass
+        # TODO: reformat search_opts for client boto
+        servers = self.client.describe_instances()
+        return servers.get("Reservations")[0].get("Instances")
 
     def delete(self, instance_id):
         pass
