@@ -71,13 +71,16 @@ class AmazonDriver(BaseDriver):
         return server.terminate()
 
     def shutdown(self, instance_id):
-        pass
+        server = self.resource.Instance(instance_id)
+        return server.stop()
 
     def start(self, instance_id):
-        pass
+        server = self.resource.Instance(instance_id)
+        return server.start()
 
     def reboot(self, instance_id):
-        pass
+        server = self.resource.Instance(instance_id)
+        return server.reboot()
 
     def resize(self, instance_id, configuration):
         pass

@@ -294,3 +294,60 @@ class AmazonDriverTest(base.TestCase):
 
         self.assertRaises(ClientError,
                           self.fake_driver.delete, 'fake_id')
+
+    def test_shutdown_successfully(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(return_value=FakeInstance()))
+
+        self.fake_driver.shutdown('fake_id')
+
+    def test_shutdown_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.shutdown, 'fake_id')
+
+    def test_start_successfully(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(return_value=FakeInstance()))
+
+        self.fake_driver.start('fake_id')
+
+    def test_start_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.start, 'fake_id')
+
+    def test_reboot_successfully(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(return_value=FakeInstance()))
+
+        self.fake_driver.reboot('fake_id')
+
+    def test_reboot_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.reboot, 'fake_id')
