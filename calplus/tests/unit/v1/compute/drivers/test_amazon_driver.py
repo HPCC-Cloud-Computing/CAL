@@ -37,6 +37,90 @@ fake_error_code = {
     }
 }
 
+fake_describe_return = {
+    'Reservations': [
+        {
+            'Groups': [],
+            'Instances': [
+                {
+                    'AmiLaunchIndex': 0,
+                    'ImageId': 'ami-2624df94',
+                    'InstanceId': 'i-72827591',
+                    'InstanceType': 'm1.ec2api-alt',
+                    'KernelId': 'aki-512bee3f',
+                    'KeyName': '',
+                    'LaunchTime': 'fake_time',
+                    'NetworkInterfaces': [
+                        {
+                            'Attachment': {
+                                'AttachTime': 'fake_time',
+                                'AttachmentId': 'eni-attach-ce1477aa',
+                                'DeleteOnTermination': True,
+                                'DeviceIndex': 0,
+                                'Status': 'attached'
+                            },
+                            'Description': '',
+                            'Groups': [
+                                {
+                                    'GroupId': 'sg-9ed2e7ec',
+                                    'GroupName': 'default'
+                                }
+                            ],
+                            'MacAddress': 'fa:16:3e:27:af:a2',
+                            'NetworkInterfaceId': 'eni-ce1477aa',
+                            'OwnerId': '3b91bb4e974a4729b3596f8cebb9b559',
+                            'PrivateIpAddress': '10.10.10.76',
+                            'PrivateIpAddresses': [
+                                {
+                                    'Primary': True,
+                                    'PrivateIpAddress': '10.10.10.76'
+                                }
+                            ],
+                            'SourceDestCheck': True,
+                            'Status': 'in-use',
+                            'SubnetId': 'subnet-b3a91954',
+                            'VpcId': 'vpc-9ed2e7ec'
+                        }
+                    ],
+                    'Placement': {
+                        'AvailabilityZone': ''
+                    },
+                    'PrivateDnsName': 'r-atxu9l73-0',
+                    'PrivateIpAddress': '10.10.10.76',
+                    'PublicDnsName': '',
+                    'RamdiskId': 'ari-b7e05ed6',
+                    'RootDeviceName': '/dev/vda',
+                    'RootDeviceType': 'instance-store',
+                    'SecurityGroups': [
+                        {
+                            'GroupId': 'sg-9ed2e7ec',
+                            'GroupName': 'default'
+                        }
+                    ],
+                    'SourceDestCheck': True,
+                    'State': {
+                        'Code': 0,
+                        'Name': 'error'
+                    },
+                    'SubnetId': 'subnet-b3a91954',
+                    'VpcId': 'vpc-9ed2e7ec'
+                }
+            ],
+            'OwnerId': '3b91bb4e974a4729b3596f8cebb9b559',
+            'ReservationId': 'r-atxu9l73'
+        }
+    ],
+    'ResponseMetadata': {
+        'HTTPHeaders': {
+            'content-length': '2971',
+            'content-type': 'text/xml',
+            'date': 'Wed, 07 Dec 2016 16:17:11 GMT'
+        },
+        'HTTPStatusCode': 200,
+        'RequestId': 'req-646be08c-9104-4855-a0d9-62013ba9566d'
+    }
+}
+
 
 class AmazonDriverTest(base.TestCase):
 
@@ -122,3 +206,28 @@ class AmazonDriverTest(base.TestCase):
                     'Name': mock.ANY
                 }
             )
+
+    def test_show_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_instances',
+            mock.Mock(return_value=fake_describe_return))
+
+        self.fake_driver.show('fake_id')
+
+        self.fake_driver.client.describe_instances. \
+            assert_called_once_with(InstanceIds=['fake_id'])
+
+    def test_show_unable_to_show(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_instances',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.show, 'fake_id')
+
+        self.fake_driver.client.describe_instances. \
+            assert_called_once_with(InstanceIds=['fake_id'])

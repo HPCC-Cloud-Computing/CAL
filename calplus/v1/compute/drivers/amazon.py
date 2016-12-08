@@ -58,7 +58,8 @@ class AmazonDriver(BaseDriver):
         return server
 
     def show(self, instance_id):
-        pass
+        servers = self.client.describe_instances(InstanceIds=[instance_id])
+        return servers.get("Reservations")[0].get("Instances")[0]
 
     def list(self, **search_opts):
         pass
