@@ -129,7 +129,13 @@ class AmazonDriver(BaseDriver):
         pass
 
     def list_ip(self, instance_id):
-        pass
+        """Add all IPs"""
+        output = self.client.describe_instances(InstanceIds=[instance_id])
+        output = output.get("Reservations")[0].get("Instances")[0]
+        ips = {}
+        ips['PrivateIp'] = output.get("PrivateIpAddress")
+        ips['PublicIp'] = output.get("PublicIpAddress")
+        return ips
 
 
 class AmazonQuota(BaseQuota):
