@@ -67,7 +67,8 @@ class AmazonDriver(BaseDriver):
         return servers.get("Reservations")[0].get("Instances")
 
     def delete(self, instance_id):
-        pass
+        server = self.resource.Instance(instance_id)
+        return server.terminate()
 
     def shutdown(self, instance_id):
         pass

@@ -122,6 +122,25 @@ fake_describe_return = {
 }
 
 
+class FakeInstance(object):
+    """In fact, this class is boto3.resources.factory.ec2.Instance
+    """
+    def __init__(self):
+        super(FakeInstance, self).__init__()
+
+    def terminate(self):
+        pass
+
+    def stop(self):
+        pass
+
+    def start(self):
+        pass
+
+    def reboot(self):
+        pass
+
+
 class AmazonDriverTest(base.TestCase):
 
     """docstring for AmazonDriverTest"""
@@ -256,3 +275,22 @@ class AmazonDriverTest(base.TestCase):
 
         self.fake_driver.client.describe_instances. \
             assert_called_once_with()
+
+    def test_delete_successfully(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(return_value=FakeInstance()))
+
+        self.fake_driver.delete('fake_id')
+
+    def test_delete_unable_to_list(self):
+        self.mock_object(
+            self.fake_driver.resource, 'Instance',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.delete, 'fake_id')
