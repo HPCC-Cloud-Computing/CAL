@@ -43,7 +43,7 @@ class ProviderNotDefined(Exception):
     pass
 
 
-class TypeProviderNotFound(Exception):
+class ProviderTypeNotFound(Exception):
     """Unknow/Unsupported provider"""
     pass
 

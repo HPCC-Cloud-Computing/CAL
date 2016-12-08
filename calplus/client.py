@@ -55,16 +55,16 @@ def Client(version=__version__, resource=None, provider=None, **kwargs):
             'Not define Provider for Client'
         )
 
-    support_providers = CONF.providers.driver_mapper.keys()
+    support_types = CONF.providers.driver_mapper.keys()
 
-    if provider.type not in support_providers:
-        raise exceptions.TypeProviderNotFound(
+    if provider.type not in support_types:
+        raise exceptions.ProviderTypeNotFound(
             'Unknow provider.'
         )
 
     resources = _CLIENTS[version].keys()
 
-    if resource is None:
+    if not resource:
         raise exceptions.ResourceNotDefined(
             'Not define Resource, choose one: compute, network,\
             object_storage, block_storage.'
