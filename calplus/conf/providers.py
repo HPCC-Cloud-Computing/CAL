@@ -8,7 +8,7 @@ openstack_group = cfg.OptGroup('openstack',
 
 openstack_opts = [
     cfg.StrOpt('driver_name',
-               default='OpenStackHUST'),
+               default='OpenStackHPCC'),
     cfg.StrOpt('os_auth_url',
                default='localhost'),
     cfg.StrOpt('os_project_name',

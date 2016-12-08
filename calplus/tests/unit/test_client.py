@@ -41,7 +41,7 @@ class TestClient(TestCase):
         self.mock_client = mock_client
 
     def test_client_called_with_unsupported_provider(self):
-        self.assertRaises(exceptions.TypeProviderNotFound, client.Client,
+        self.assertRaises(exceptions.ProviderTypeNotFound, client.Client,
                           '1.0.0', 'compute', wrong_driver)
 
     def test_client_called_with_none_provider(self):
