@@ -82,8 +82,12 @@ class AmazonDriver(BaseDriver):
         server = self.resource.Instance(instance_id)
         return server.reboot()
 
-    def resize(self, instance_id, configuration):
-        pass
+    def resize(self, instance_id, instance_type):
+        return self.modify_instance_attribute(
+            InstanceId=instance_id,
+            Attribute='instanceType',
+            Value=instance_type
+        )
 
     def add_sg(self, instance_id, new_sg):
         """Add a security group"""

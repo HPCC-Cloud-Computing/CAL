@@ -60,6 +60,13 @@ class FakeFloatingIP(object):
         return dict
 
 
+class FakeFlavor(object):
+
+    def __init__(self, id):
+        super(FakeFlavor, self).__init__()
+        self.id = id
+
+
 class OpenstackDriverTest(base.TestCase):
 
     """docstring for OpenstackDriverTest"""
@@ -259,6 +266,10 @@ class OpenstackDriverTest(base.TestCase):
 
     def test_resize_successfully(self):
         self.mock_object(
+            self.fake_driver.client.flavors, 'find',
+            mock.Mock(return_value=FakeFlavor('fake_flavor_id')))
+        # in fact: return_value is novaclient.v2.flavors.Flavor
+        self.mock_object(
             self.fake_driver.client.servers, 'resize',
             mock.Mock(return_value=()))
         # in fact: return_value is novaclient.base.TupleWithMeta
@@ -273,8 +284,10 @@ class OpenstackDriverTest(base.TestCase):
             mock.Mock())
 
         self.assertEqual(True,
-            self.fake_driver.resize('fake_id', 'fake_flavor_id'))
+            self.fake_driver.resize('fake_id', 'fake_flavor_name'))
 
+        self.fake_driver.client.flavors.find. \
+            assert_called_once_with(name='fake_flavor_name')
         self.fake_driver.client.servers.resize. \
             assert_called_once_with('fake_id', 'fake_flavor_id')
         self.fake_driver.client.servers.confirm_resize. \
@@ -282,7 +295,38 @@ class OpenstackDriverTest(base.TestCase):
         self.assertFalse(
             self.fake_driver.client.servers.revert_resize.called)
 
+    def test_resize_can_not_find_flavor(self):
+        self.mock_object(
+            self.fake_driver.client.flavors, 'find',
+            mock.Mock(side_effect=ClientException))
+        # Detail: NotFound will be raise
+        self.mock_object(
+            self.fake_driver.client.servers, 'resize',
+            mock.Mock())
+        self.mock_object(
+            self.fake_driver.client.servers, 'confirm_resize',
+            mock.Mock())
+        self.mock_object(
+            self.fake_driver.client.servers, 'revert_resize',
+            mock.Mock())
+
+        self.assertRaises(ClientException,
+            self.fake_driver.resize, 'fake_id', 'fake_flavor_name')
+
+        self.fake_driver.client.flavors.find. \
+            assert_called_once_with(name='fake_flavor_name')
+        self.assertFalse(
+            self.fake_driver.client.servers.resize.called)
+        self.assertFalse(
+            self.fake_driver.client.servers.confirm_resize.called)
+        self.assertFalse(
+            self.fake_driver.client.servers.revert_resize.called)
+
     def test_resize_can_not_confirm_resize(self):
+        self.mock_object(
+            self.fake_driver.client.flavors, 'find',
+            mock.Mock(return_value=FakeFlavor('fake_flavor_id')))
+        # in fact: return_value is novaclient.v2.flavors.Flavor
         self.mock_object(
             self.fake_driver.client.servers, 'resize',
             mock.Mock(return_value=()))
@@ -298,8 +342,10 @@ class OpenstackDriverTest(base.TestCase):
             mock.Mock(return_value=()))
 
         self.assertEqual(False,
-            self.fake_driver.resize('fake_id', 'fake_flavor_id'))
+            self.fake_driver.resize('fake_id', 'fake_flavor_name'))
 
+        self.fake_driver.client.flavors.find. \
+            assert_called_once_with(name='fake_flavor_name')
         self.fake_driver.client.servers.resize. \
             assert_called_once_with('fake_id', 'fake_flavor_id')
         self.fake_driver.client.servers.confirm_resize. \
@@ -308,6 +354,10 @@ class OpenstackDriverTest(base.TestCase):
             assert_called_once_with('fake_id')
 
     def test_resize_can_not_resize(self):
+        self.mock_object(
+            self.fake_driver.client.flavors, 'find',
+            mock.Mock(return_value=FakeFlavor('fake_flavor_id')))
+        # in fact: return_value is novaclient.v2.flavors.Flavor
         self.mock_object(
             self.fake_driver.client.servers, 'resize',
             mock.Mock(side_effect=ClientException))
@@ -321,8 +371,10 @@ class OpenstackDriverTest(base.TestCase):
             mock.Mock())
 
         self.assertRaises(ClientException,
-            self.fake_driver.resize, 'fake_id', 'fake_flavor_id')
+            self.fake_driver.resize, 'fake_id', 'fake_flavor_name')
 
+        self.fake_driver.client.flavors.find. \
+            assert_called_once_with(name='fake_flavor_name')
         self.fake_driver.client.servers.resize. \
             assert_called_once_with('fake_id', 'fake_flavor_id')
         self.assertFalse(
@@ -331,6 +383,10 @@ class OpenstackDriverTest(base.TestCase):
             self.fake_driver.client.servers.revert_resize.called)
 
     def test_resize_can_not_revert(self):
+        self.mock_object(
+            self.fake_driver.client.flavors, 'find',
+            mock.Mock(return_value=FakeFlavor('fake_flavor_id')))
+        # in fact: return_value is novaclient.v2.flavors.Flavor
         self.mock_object(
             self.fake_driver.client.servers, 'resize',
             mock.Mock(return_value=()))
@@ -346,8 +402,10 @@ class OpenstackDriverTest(base.TestCase):
             mock.Mock(side_effect=ClientException))
 
         self.assertRaises(ClientException,
-            self.fake_driver.resize, 'fake_id', 'fake_flavor_id')
+            self.fake_driver.resize, 'fake_id', 'fake_flavor_name')
 
+        self.fake_driver.client.flavors.find. \
+            assert_called_once_with(name='fake_flavor_name')
         self.fake_driver.client.servers.resize. \
             assert_called_once_with('fake_id', 'fake_flavor_id')
         self.fake_driver.client.servers.confirm_resize. \

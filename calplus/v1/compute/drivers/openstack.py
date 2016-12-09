@@ -88,8 +88,9 @@ class OpenstackDriver(BaseDriver):
         self.client.servers.reboot(instance_id)
         return True
 
-    def resize(self, instance_id, flavor_id):
-        self.client.servers.resize(instance_id, flavor_id)
+    def resize(self, instance_id, flavor_name):
+        flavor = self.client.flavors.find(name=flavor_name)
+        self.client.servers.resize(instance_id, flavor.id)
         try:
             self.client.servers.confirm_resize(instance_id)
         except:
