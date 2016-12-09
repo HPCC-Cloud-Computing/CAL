@@ -111,7 +111,7 @@ class OpenstackDriver(BaseDriver):
 
     def add_nic(self, instance_id, net_id):
         """Add a Network Interface Controller"""
-        #TODO: upgrade with port_id and fixed_ip in future
+        # TODO: upgrade with port_id and fixed_ip in future
         self.client.servers.interface_attach(
             instance_id, None, net_id, None)
         return True
@@ -124,15 +124,15 @@ class OpenstackDriver(BaseDriver):
     def list_nic(self, instance_id):
         """List all Network Interface Controller
         """
-        #NOTE: interfaces a list of novaclient.v2.servers.Server
+        # NOTE: interfaces a list of novaclient.v2.servers.Server
         interfaces = self.client.servers.interface_list(instance_id)
         return interfaces
 
-    def add_private_ip(self, instance_id, new_sg):
+    def add_private_ip(self):
         """Add private IP"""
         pass
 
-    def delete_private_ip(self, instance_id, new_sg):
+    def delete_private_ip(self):
         """Delete private IP"""
         pass
 

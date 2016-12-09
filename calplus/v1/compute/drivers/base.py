@@ -62,12 +62,12 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def add_nic(self, instance_id, new_sg):
+    def add_nic(self, instance_id, net_id):
         """Add a Network Interface Controller"""
         pass
 
     @abc.abstractmethod
-    def delete_nic(self, instance_id, new_sg):
+    def delete_nic(self, instance_id, attachment_id):
         """Delete a Network Interface Controller"""
         pass
 
@@ -77,12 +77,12 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def add_private_ip(self, instance_id, new_sg):
+    def add_private_ip(self):
         """Add private IP"""
         pass
 
     @abc.abstractmethod
-    def delete_private_ip(self, instance_id, new_sg):
+    def delete_private_ip(self):
         """Delete private IP"""
         pass
 
