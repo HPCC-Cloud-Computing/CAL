@@ -19,6 +19,7 @@ class ConnectionRefused(Exception):
     """
     Connection refused: the server refused the connection.
     """
+
     def __init__(self, response=None):
         self.response = response
 
@@ -57,3 +58,8 @@ class ResourceInErrorState(Exception):
         if fault_msg:
             msg += "due to '%s'" % fault_msg
         self.message = "%s." % msg
+
+
+class ProviderNotValidate(Exception):
+    """Authentication provider false"""
+    pass

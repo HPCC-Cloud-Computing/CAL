@@ -1,27 +1,22 @@
-def get_all_driver(cloud=None):
-    """Get driver from Manager driver extension via broker
+from calplus.exceptions import ProviderNotValidate
+
+
+def validate_driver(check_function):
     """
-    list_drivers = []
-    return list_drivers
-
-
-def filter(list_drivers, request):
-    if request.environ['calplus.cloud']:
-        # just get driver belong to special cloud
-        pass
-    return list_drivers
-
-
-def validate_driver(f):
-    """Check driver on"""
-
-    def check_driver(request):
-        drivers = get_all_driver()
-        drivers = filter(drivers, request)
-
-        if drivers:
-            return f(request, drivers)
-        else:
-            raise Exception('Driver is not found')
-
-    return check_driver
+    # TODO(daidv): in future, we should support check_function as an object
+    and we will get all function start with test_*
+    then check validation for all of them.
+    It will be great help for callib user
+    do NOT need add all of testcases in only a function
+    :param check_function:
+    :return:
+    """
+    def check_decorator(func):
+        def func_wrapper(*args, **kwargs):
+            check = check_function()
+            if check:
+                return func(*args, **kwargs)
+            else:
+                raise ProviderNotValidate()
+        return func_wrapper
+    return check_decorator
