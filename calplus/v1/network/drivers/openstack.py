@@ -86,7 +86,8 @@ class OpenstackDriver(BaseDriver):
                   'gateway_ip': subnet['gateway_ip'],
                   'security_group': None,
                   'allocation_pools': subnet['allocation_pools'],
-                  'dns_nameservers': subnet['dns_nameservers']
+                  'dns_nameservers': subnet['dns_nameservers'],
+                  'network_id': subnet['network_id']
                   }
 
         return result
@@ -102,7 +103,8 @@ class OpenstackDriver(BaseDriver):
                   'gateway': subnet['gateway_ip'],
                   'security_group': None,
                   'allocation_pools': subnet['allocation_pools'],
-                  'dns_nameservers': subnet['dns_nameservers']
+                  'dns_nameservers': subnet['dns_nameservers'],
+                  'network_id': subnet['network_id']
                   }
 
         return result
@@ -119,7 +121,8 @@ class OpenstackDriver(BaseDriver):
                    'gateway': subnet['gateway_ip'],
                    'security_group': None,
                    'allocation_pools': subnet['allocation_pools'],
-                   'dns_nameservers': subnet['dns_nameservers']
+                   'dns_nameservers': subnet['dns_nameservers'],
+                   'network_id': subnet['network_id']
                    }
             result.append(sub)
 
@@ -149,11 +152,15 @@ class OpenstackDriver(BaseDriver):
         body = {
             "subnet_id": "{}".format(subnet_id)
         }
-        return self.client.add_interface_router(router_id, body)
+        self.client.add_interface_router(router_id, body)
+        return router_id
 
-    def disconnect_external_net(self, network_id):
-        #just detach all connect to router have external_gateway
-        pass
+    def disconnect_external_net(self, router_id, subnet_id):
+        body = {
+            "subnet_id": "{}".format(subnet_id)
+        }
+        self.client.remove_interface_router(router_id, body)
+        return True
 
     def allocate_public_ip(self):
         external_net = self._check_external_network()
@@ -176,6 +183,7 @@ class OpenstackDriver(BaseDriver):
         return_format = []
         for ip in ips:
             return_format.append({
+                'fixed_ip': ip.get('floating_ip_address'),
                 'public_ip': ip.get('floating_ip_address'),
                 'id': ip.get('id')
             })

@@ -61,7 +61,8 @@ fake_subnet_out = {
             "start": "192.0.0.2",
             "end": "192.255.255.254"
         }
-    ]
+    ],
+    'network_id': 'fake_network_id'
 }
 
 fake_router = [
