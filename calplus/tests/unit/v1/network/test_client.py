@@ -210,13 +210,14 @@ class ClientTest(base.TestCase):
     def test_disconnect_external_net_successfully(self):
         self.mock_object(
             self.fake_client.driver, 'disconnect_external_net',
-            mock.Mock(return_value=None))
-        #TODO: alter None with exact return format
+            mock.Mock(return_value=True))
 
-        self.fake_client.disconnect_external_net('fake_id')
+        self.fake_client.disconnect_external_net(
+            'fake_gateway_id', 'fake_id'
+        )
 
         self.fake_client.driver.disconnect_external_net.\
-            assert_called_once_with('fake_id')
+            assert_called_once_with('fake_gateway_id', 'fake_id')
 
     def test_disconnect_external_net_unable_to_disconnect(self):
         self.mock_object(
@@ -224,10 +225,11 @@ class ClientTest(base.TestCase):
             mock.Mock(side_effect=ClientException))
 
         self.assertRaises(ClientException,
-            self.fake_client.disconnect_external_net, 'fake_id')
+            self.fake_client.disconnect_external_net,
+                          'fake_gateway_id', 'fake_id')
 
         self.fake_client.driver.disconnect_external_net.\
-            assert_called_once_with('fake_id')
+            assert_called_once_with('fake_gateway_id', 'fake_id')
 
     def test_allocate_public_ip_successfully(self):
         self.mock_object(
