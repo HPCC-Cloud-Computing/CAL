@@ -75,7 +75,9 @@ class OpenstackDriver(BaseDriver):
         sub = {"network_id": network_id,
                "ip_version": ip_version,
                "cidr": cidr,
-               "name": name}
+               "name": name,
+               "dns_nameservers": ['8.8.8.8', '8.8.4.4']
+               }
         subnet = self.client.create_subnet({'subnet': sub}).get('subnet')
 
         result = {'name': subnet['name'],

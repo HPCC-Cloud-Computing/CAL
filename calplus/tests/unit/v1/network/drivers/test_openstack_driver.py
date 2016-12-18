@@ -44,7 +44,8 @@ fake_subnet_int = {
     "network_id": 'fake_id',
     "ip_version": 4,
     "cidr": 'fake_cidr',
-    "name": 'fake_name'
+    "name": 'fake_name',
+    "dns_nameservers": ['8.8.8.8', '8.8.4.4']
 }
 
 fake_subnet_out = {
