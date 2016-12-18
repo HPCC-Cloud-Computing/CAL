@@ -123,8 +123,11 @@ class AmazonDriver(BaseDriver):
         pass
 
     def allocate_public_ip(self):
-        self.client.allocate_address(Domain='vpc')
-        return True
+        ip = self.client.allocate_address(Domain='vpc')
+        return {
+                'public_ip': ip.get('PublicIp'),
+                'id': ip.get('AllocationId')
+        }
 
     def list_public_ip(self, **search_opts):
         """

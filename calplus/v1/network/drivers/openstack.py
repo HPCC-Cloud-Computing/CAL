@@ -167,10 +167,14 @@ class OpenstackDriver(BaseDriver):
         if external_net:
             create_dict = {'floating_network_id': external_net,
                            'tenant_id': self.network_quota.tenant_id}
-            self.client.create_floatingip({'floatingip': create_dict})
+            result = self.client.create_floatingip({'floatingip': create_dict})
+            ip = result.get('floatingip')
+            return {
+                'public_ip': ip.get('floating_ip_address'),
+                'id': ip.get('id')
+            }
         else:
-            return False
-        return True
+            return external_net
 
     def list_public_ip(self, **search_opts):
         """

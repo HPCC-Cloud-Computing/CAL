@@ -118,6 +118,19 @@ fake_list_ip_out = {
     ]
 }
 
+fake_ip_out = {
+    'floatingip': {
+        'router_id': None,
+        'status': 'DOWN',
+        'tenant_id': '68bd0e01301f4ab99d4cba5137b8d9c1',
+        'floating_network_id': '45eb76e7-f844-40cf-a34b-fa0df5fb01e0',
+        'fixed_ip_address': None,
+        'floating_ip_address': '192.168.50.221',
+        'port_id': None,
+        'id': '437a44f0-b661-412c-af90-921538f21e23'
+    }
+}
+
 
 class OpenstackDriverTest(base.TestCase):
 
@@ -396,7 +409,7 @@ class OpenstackDriverTest(base.TestCase):
         )
         self.mock_object(
             self.fake_driver.client, 'create_floatingip',
-            mock.Mock(return_value=True))
+            mock.Mock(return_value=fake_ip_out))
 
         self.fake_driver.allocate_public_ip()
 
