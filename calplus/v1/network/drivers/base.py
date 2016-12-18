@@ -40,7 +40,7 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def disconnect_external_net(self, network_id):
+    def disconnect_external_net(self, gateway_id, subnet_id):
         pass
 
     @abc.abstractmethod

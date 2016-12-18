@@ -47,8 +47,15 @@ class Client(BaseClient):
     def connect_external_net(self, network_id):
         return self.driver.connect_external_net(network_id)
 
-    def disconnect_external_net(self, network_id):
-        return self.driver.disconnect_external_net(network_id)
+    def disconnect_external_net(self, gateway_id, network_id):
+        """
+        In OPS: gateway_id is router_id, network_id is subnet_id
+        IN AWS: gateway_id is itself, network_id is subnet_id
+        :param gateway_id:
+        :param network_id:
+        :return:
+        """
+        return self.driver.disconnect_external_net(gateway_id, network_id)
 
     def allocate_public_ip(self):
         """
