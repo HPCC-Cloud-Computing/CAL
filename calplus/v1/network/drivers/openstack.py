@@ -183,7 +183,6 @@ class OpenstackDriver(BaseDriver):
         return_format = []
         for ip in ips:
             return_format.append({
-                'fixed_ip': ip.get('floating_ip_address'),
                 'public_ip': ip.get('floating_ip_address'),
                 'id': ip.get('id')
             })
