@@ -57,7 +57,8 @@ class OpenstackDriver(BaseDriver):
             name=name,
             image=image_id,
             flavor=flavor_id,
-            nics=[{'net-id': network_id}]
+            nics=[{'net-id': network_id}],
+            **kargs
         )
         return server
 

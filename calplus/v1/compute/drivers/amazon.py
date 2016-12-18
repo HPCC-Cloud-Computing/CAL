@@ -53,7 +53,8 @@ class AmazonDriver(BaseDriver):
             MaxCount=number,
             InstanceType=flavor_id,
             SubnetId=network_id,
-            IamInstanceProfile=profile
+            IamInstanceProfile=profile,
+            **kargs
         )
         return server
 
