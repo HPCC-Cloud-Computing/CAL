@@ -164,6 +164,36 @@ fake_list_ip_out = {
     }
 }
 
+fake_sg_out = {
+    'SecurityGroups': [
+        {
+            'IpPermissionsEgress': [{
+                'ToPort': -1,
+                'IpProtocol': '-1',
+                'FromPort': -1}],
+            'Description': 'Default VPC security group',
+            'IpPermissions': [{
+                'ToPort': 65534,
+                'IpProtocol': 'tcp',
+                'IpRanges': [{'CidrIp': '0.0.0.0/0'}],
+                'FromPort': 1}
+            ],
+            'GroupName': 'default',
+            'VpcId': 'vpc-5eed72c5',
+            'OwnerId': '49f8b55803654dcd8564dd4280a2dbc0',
+            'GroupId': 'fake_group_id'}
+    ],
+    'ResponseMetadata': {
+        'HTTPStatusCode': 200,
+        'RequestId': 'req-30d6aad8-7bac-41b8-8d14-be054559cf1d',
+        'HTTPHeaders': {
+            'date': 'Thu, 10 Nov 2016 20:48:25 GMT',
+            'content-length': '1083',
+            'content-type': 'text/xml'
+        }
+    }
+}
+
 
 class AmazonDriverTest(base.TestCase):
 
@@ -180,6 +210,23 @@ class AmazonDriverTest(base.TestCase):
         self.mock_object(
             self.fake_driver.client, 'create_subnet',
             mock.Mock(return_value=fake_subnet_out))
+        self.mock_object(
+            self.fake_driver.client, 'describe_security_groups',
+            mock.Mock(return_value=fake_sg_out))
+        self.mock_object(
+            self.fake_driver.client, 'authorize_security_group_ingress',
+            mock.Mock(return_value=True))
+        self.mock_object(
+            self.fake_driver.client, 'create_dhcp_options',
+            mock.Mock(return_value={
+                'DhcpOptions': {
+                    'DhcpOptionsId': 'fake_DhcpOptionsId'
+                }
+            }))
+        self.mock_object(
+            self.fake_driver.client, 'associate_dhcp_options',
+            mock.Mock(return_value=True))
+
         self.fake_driver.create('fake_name', '10.10.10.0/24')
 
         self.fake_driver.client.create_vpc.\
@@ -191,6 +238,34 @@ class AmazonDriverTest(base.TestCase):
             assert_called_once_with(
                 VpcId='vpc-5eed72c5',
                 CidrBlock='10.10.10.0/24'
+            )
+        self.fake_driver.client.describe_security_groups. \
+            assert_called_once_with(
+                Filters=[{
+                    'Name': 'vpc-id',
+                    'Values': ['vpc-5eed72c5']
+                }])
+        self.fake_driver.client.authorize_security_group_ingress. \
+            assert_called_once_with(
+                GroupId='fake_group_id',
+                IpPermissions=[{
+                    'ToPort': 65534,
+                    'IpProtocol': 'tcp',
+                    'IpRanges': [{'CidrIp': '0.0.0.0/0'}],
+                    'FromPort': 1
+                }]
+            )
+        self.fake_driver.client.create_dhcp_options. \
+            assert_called_once_with(
+                DhcpConfigurations=[{
+                    'Key': 'domain-name-servers',
+                    'Values': ['8.8.8.8', '8.8.4.4']},
+                ]
+            )
+        self.fake_driver.client.associate_dhcp_options. \
+            assert_called_once_with(
+                DhcpOptionsId='fake_DhcpOptionsId',
+                VpcId='vpc-5eed72c5'
             )
 
     def test_create_unable_to_create_vpc(self):
@@ -204,6 +279,18 @@ class AmazonDriverTest(base.TestCase):
         )
         self.mock_object(
             self.fake_driver.client, 'create_subnet', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'describe_security_groups', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'authorize_security_group_ingress', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'create_dhcp_options', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'associate_dhcp_options', mock.Mock())
 
         self.assertRaises(ClientError, self.fake_driver.create,
                           'fake_name', '10.10.10.0/24')
@@ -214,6 +301,14 @@ class AmazonDriverTest(base.TestCase):
                 InstanceTenancy='default'
             )
         self.assertFalse(self.fake_driver.client.create_subnet.called)
+        self.assertFalse(
+            self.fake_driver.client.describe_security_groups.called)
+        self.assertFalse(
+            self.fake_driver.client.authorize_security_group_ingress.called)
+        self.assertFalse(
+            self.fake_driver.client.create_dhcp_options.called)
+        self.assertFalse(
+            self.fake_driver.client.associate_dhcp_options.called)
 
     def test_create_unable_to_create_subnet(self):
         self.mock_object(
@@ -225,6 +320,18 @@ class AmazonDriverTest(base.TestCase):
                 fake_error_code,
                 'operation_name'
             )))
+        self.mock_object(
+            self.fake_driver.client,
+            'describe_security_groups', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'authorize_security_group_ingress', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'create_dhcp_options', mock.Mock())
+        self.mock_object(
+            self.fake_driver.client,
+            'associate_dhcp_options', mock.Mock())
 
         self.assertRaises(ClientError, self.fake_driver.create,
                           'fake_name', '10.10.10.0/24')
@@ -239,6 +346,14 @@ class AmazonDriverTest(base.TestCase):
                 VpcId='vpc-5eed72c5',
                 CidrBlock='10.10.10.0/24'
             )
+        self.assertFalse(
+            self.fake_driver.client.describe_security_groups.called)
+        self.assertFalse(
+            self.fake_driver.client.authorize_security_group_ingress.called)
+        self.assertFalse(
+            self.fake_driver.client.create_dhcp_options.called)
+        self.assertFalse(
+            self.fake_driver.client.associate_dhcp_options.called)
 
     def test_show_successfully(self):
         self.mock_object(

@@ -36,6 +36,49 @@ class AmazonDriver(BaseDriver):
         )
         self.quota = None
 
+    def _get_or_create_gateway(self):
+        gateways = self.client.describe_internet_gateways()['InternetGateways']
+        for gateway in gateways:
+            if not gateway.get('Attachments'):
+                return gateway
+
+        return self.client.create_internet_gateway().get('InternetGateway')
+
+    def _add_route_to_allow_subnet_connect_internet(self, vpc_id, subnet_id):
+
+        gateways = self.client.describe_internet_gateways(
+            Filters=[{
+                'Name': 'attachment.vpc-id',
+                'Values': [
+                    vpc_id,
+                ]
+            }]
+        )
+        gateway_id = gateways.get('InternetGateways')[0]['InternetGatewayId']
+
+        routetables = self.client.describe_route_tables(
+            Filters=[{
+                'Name': 'vpc-id',
+                'Values': [
+                    vpc_id,
+                ]
+            }]
+        )
+        route_id = routetables.get('RouteTables')[0].get('RouteTableId')
+
+        self.client.associate_route_table(
+            RouteTableId=route_id,
+            SubnetId=subnet_id
+        )
+
+        self.client.create_route(
+            RouteTableId=routetables,
+            GatewayId=gateway_id,
+            DestinationCidrBlock='0.0.0.0/0'
+        )
+
+        return True
+
     def create(self, name, cidr, **kargs):
 
         # step1: create vpc
@@ -49,6 +92,32 @@ class AmazonDriver(BaseDriver):
             CidrBlock=cidr
         ).get('Subnet')
 
+        # TODO: this is teriable thing. we should develop
+        # sg manage in compute driver ASAP
+        group_id = self.client.describe_security_groups(
+            Filters=[{
+                'Name': 'vpc-id',
+                'Values': [vpc.get('VpcId')]
+            }]).get('SecurityGroups')[0].get('GroupId')
+        self.client.authorize_security_group_ingress(
+            GroupId=group_id,
+            IpPermissions=[{
+                'ToPort': 65534,
+                'IpProtocol': 'tcp',
+                'IpRanges': [{'CidrIp': '0.0.0.0/0'}],
+                'FromPort': 1
+            }])
+
+        dhcp = self.client.create_dhcp_options(
+            DhcpConfigurations=[{
+                'Key': 'domain-name-servers',
+                'Values': ['8.8.8.8', '8.8.4.4']},
+            ]).get('DhcpOptions')
+        self.client.associate_dhcp_options(
+            DhcpOptionsId=dhcp.get('DhcpOptionsId'),
+            VpcId=vpc.get('VpcId')
+        )
+
         result = {'name': subnet['SubnetId'],
                   'description': None,
                   'id': subnet['SubnetId'],
@@ -57,7 +126,8 @@ class AmazonDriver(BaseDriver):
                   'gateway_ip': None,
                   'security_group': None,
                   'allocation_pools': None,
-                  'dns_nameservers': None
+                  'dns_nameservers': None,
+                  'network_id': subnet['VpcId']
                   }
 
         return result
@@ -74,7 +144,8 @@ class AmazonDriver(BaseDriver):
                   'gateway_ip': None,
                   'security_group': None,
                   'allocation_pools': None,
-                  'dns_nameservers': None
+                  'dns_nameservers': None,
+                  'network_id': subnet['VpcId']
                   }
 
         return result
@@ -91,7 +162,8 @@ class AmazonDriver(BaseDriver):
                    'gateway_ip': None,
                    'security_group': None,
                    'allocation_pools': None,
-                   'dns_nameservers': None
+                   'dns_nameservers': None,
+                   'network_id': subnet['VpcId']
                    }
             result.append(sub)
 
@@ -116,11 +188,32 @@ class AmazonDriver(BaseDriver):
         # 3 : delete vpc
         return self.client.delete_vpc(VpcId=vpc_id)
 
-    def connect_external_net(self, network_id):
-        pass
+    def connect_external_net(self, subnet_id):
+        # 1: get subnet to get VpcId
+        subnet = self.show(subnet_id)
+        # 2: get free gateway or create it
+        gateway = self._get_or_create_gateway()
+        # 3: attach Vpc - gateway
+        self.client.attach_internet_gateway(
+            InternetGatewayId=gateway.get('InternetGatewayId'),
+            VpcId=subnet.get('network_id')
+        )
+        # 4: associate routetable with subnet
+        # add new route to route table inside Vpc
+        self._add_route_to_allow_subnet_connect_internet(
+            subnet.get('network_id'),
+            subnet_id
+        )
 
-    def disconnect_external_net(self, network_id):
-        pass
+        return gateway.get('InternetGatewayId')
+
+    def disconnect_external_net(self, gateway_id, subnet_id):
+        subnet = self.show(subnet_id)
+        self.client.detach_internet_gateway(
+            InternetGatewayId=gateway_id,
+            VpcId=subnet.get('network_id')
+        )
+        return True
 
     def allocate_public_ip(self):
         ip = self.client.allocate_address(Domain='vpc')

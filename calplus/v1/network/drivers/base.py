@@ -28,7 +28,7 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def show(self, subnet_id):
+    def show(self, network_id):
         pass
 
     @abc.abstractmethod
@@ -40,7 +40,7 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def disconnect_external_net(self, gateway_id, subnet_id):
+    def disconnect_external_net(self, gateway_id, network_id):
         pass
 
     @abc.abstractmethod

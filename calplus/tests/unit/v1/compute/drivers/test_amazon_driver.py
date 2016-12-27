@@ -121,6 +121,41 @@ fake_describe_return = {
     }
 }
 
+fake_associate_address_out = {
+    'AssociationId': 'eipassoc-990e6800',
+    'ResponseMetadata': {
+        'HTTPHeaders': {
+            'content-length': '2971',
+            'content-type': 'text/xml',
+            'date': 'Wed, 07 Dec 2016 16:17:11 GMT'
+        },
+        'HTTPStatusCode': 200,
+        'RequestId': 'req-646be08c-9104-4855-a0d9-62013ba9566d'
+    }
+}
+
+fake_describe_address_out = {
+    'Addresses': [{
+        'Domain': 'vpc',
+        'InstanceId': 'i-c008336b',
+        'NetworkInterfaceId': 'eni-004cf108',
+        'AssociationId': 'fake_association_id',
+        'NetworkInterfaceOwnerId': '49f8b55803654dcd8564dd4280a2dbc0',
+        'PublicIp': '192.168.50.203',
+        'AllocationId': 'fake_allocation_id',
+        'PrivateIpAddress': '12.13.17.4'
+    }],
+    'ResponseMetadata': {
+        'HTTPHeaders': {
+            'content-length': '2971',
+            'content-type': 'text/xml',
+            'date': 'Wed, 07 Dec 2016 16:17:11 GMT'
+        },
+        'HTTPStatusCode': 200,
+        'RequestId': 'req-646be08c-9104-4855-a0d9-62013ba9566d'
+    }
+}
+
 
 class FakeInstance(object):
     """In fact, this class is boto3.resources.factory.ec2.Instance
@@ -423,6 +458,108 @@ class AmazonDriverTest(base.TestCase):
 
         self.fake_driver.client.describe_instances. \
             assert_called_once_with(InstanceIds=['fake_id'])
+
+    def test_associate_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'associate_address',
+            mock.Mock(return_value=fake_associate_address_out))
+
+        self.fake_driver.associate_public_ip('fake_id', 'fake_allocation_id')
+
+        self.fake_driver.client.associate_address. \
+            assert_called_once_with(
+                InstanceId='fake_id',
+                AllocationId='fake_allocation_id'
+            )
+
+    def test_associate_public_ip_unable_to_associate(self):
+        self.mock_object(
+            self.fake_driver.client, 'associate_address',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )))
+
+        self.assertRaises(ClientError,
+            self.fake_driver.associate_public_ip,
+                'fake_id', 'fake_allocation_id')
+
+        self.fake_driver.client.associate_address. \
+            assert_called_once_with(
+                InstanceId='fake_id',
+                AllocationId='fake_allocation_id'
+            )
+
+    def test_disassociate_public_ip_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_addresses',
+            mock.Mock(return_value=fake_describe_address_out))
+        self.mock_object(
+            self.fake_driver.client, 'disassociate_address',
+            mock.Mock(return_value='fake_response'))
+
+        self.fake_driver.disassociate_public_ip('fake_allocation_id')
+
+        self.fake_driver.client.describe_addresses. \
+            assert_called_once_with(
+                AllocationIds=[
+                    'fake_allocation_id'
+                ]
+            )
+        self.fake_driver.client.disassociate_address. \
+            assert_called_once_with(
+                AssociationId='fake_association_id'
+            )
+
+    def test_disassociate_public_ip_unable_to_describe_address(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_addresses',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )))
+        self.mock_object(
+            self.fake_driver.client, 'disassociate_address',
+            mock.Mock())
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.disassociate_public_ip,
+                          'fake_allocation_id')
+
+        self.fake_driver.client.describe_addresses. \
+            assert_called_once_with(
+                AllocationIds=[
+                    'fake_allocation_id'
+                ]
+            )
+        self.assertFalse(
+            self.fake_driver.client.disassociate_address.called)
+
+    def test_disassociate_public_ip_unable_to_disassociate_address(self):
+        self.mock_object(
+            self.fake_driver.client, 'describe_addresses',
+            mock.Mock(return_value=fake_describe_address_out))
+        self.mock_object(
+            self.fake_driver.client, 'disassociate_address',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code,
+                'operation_name'
+            )))
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.disassociate_public_ip,
+                          'fake_allocation_id')
+
+        self.fake_driver.client.describe_addresses. \
+            assert_called_once_with(
+                AllocationIds=[
+                    'fake_allocation_id'
+                ]
+            )
+        self.fake_driver.client.disassociate_address. \
+            assert_called_once_with(
+                AssociationId='fake_association_id'
+            )
 
     def test_list_ip_successfully(self):
         self.mock_object(

@@ -125,13 +125,23 @@ class AmazonDriver(BaseDriver):
         """Delete private IP"""
         pass
 
-    def associate_public_ip(self, instance_id, public_ip_id, private_ip=None):
+    def associate_public_ip(self, instance_id, allocation_id, private_ip=None):
         """Associate a external IP"""
-        pass
+        return self.client.associate_address(
+            InstanceId=instance_id,
+            AllocationId=allocation_id
+        )
 
-    def disassociate_public_ip(self, public_ip_id):
+    def disassociate_public_ip(self, allocation_id):
         """Disassociate a external IP"""
-        pass
+        addresses = self.client.describe_addresses(
+            AllocationIds=[
+                allocation_id,
+            ]
+        )
+        association_id = addresses.get('Addresses')[0].get('AssociationId')
+
+        return self.client.disassociate_address(AssociationId=association_id)
 
     def list_ip(self, instance_id):
         """Add all IPs"""
