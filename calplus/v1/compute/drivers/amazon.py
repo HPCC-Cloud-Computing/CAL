@@ -56,7 +56,7 @@ class AmazonDriver(BaseDriver):
             IamInstanceProfile=profile,
             **kargs
         )
-        return server
+        return server[0].id
 
     def show(self, instance_id):
         servers = self.client.describe_instances(InstanceIds=[instance_id])

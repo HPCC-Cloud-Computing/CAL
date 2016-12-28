@@ -60,7 +60,7 @@ class OpenstackDriver(BaseDriver):
             nics=[{'net-id': network_id}],
             **kargs
         )
-        return server
+        return server.to_dict().get('id')
 
     def show(self, instance_id):
         server = self.client.servers.get(

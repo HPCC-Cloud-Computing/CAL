@@ -162,6 +162,7 @@ class FakeInstance(object):
     """
     def __init__(self):
         super(FakeInstance, self).__init__()
+        self.id = 'fake_id'
 
     def terminate(self):
         pass
@@ -187,7 +188,7 @@ class AmazonDriverTest(base.TestCase):
     def test_create_successfully(self):
         self.mock_object(
             self.fake_driver.resource, 'create_instances',
-            mock.Mock(return_value=mock.Mock))
+            mock.Mock(return_value=[FakeInstance()]))
 
         self.fake_driver.create(
             'fake_image_id',
@@ -212,7 +213,7 @@ class AmazonDriverTest(base.TestCase):
     def test_create_without_instance_name(self):
         self.mock_object(
             self.fake_driver.resource, 'create_instances',
-            mock.Mock(return_value=mock.Mock))
+            mock.Mock(return_value=[FakeInstance()]))
 
         self.fake_driver.create(
             'fake_image_id',

@@ -67,6 +67,19 @@ class FakeFlavor(object):
         self.id = id
 
 
+class FakeServer(object):
+    """in fact: mock.Mock is novaclient.v2.servers.Server
+    """
+    def __init__(self):
+        super(FakeServer, self).__init__()
+        self.id = 'fake_id'
+
+    def to_dict(self):
+        return {
+            'id': self.id
+        }
+
+
 class OpenstackDriverTest(base.TestCase):
 
     """docstring for OpenstackDriverTest"""
@@ -78,8 +91,7 @@ class OpenstackDriverTest(base.TestCase):
     def test_create_successfully(self):
         self.mock_object(
             self.fake_driver.client.servers, 'create',
-            mock.Mock(return_value=mock.Mock))
-        #NOTE: in fact: mock.Mock is novaclient.v2.servers.Server
+            mock.Mock(return_value=FakeServer()))
 
         self.fake_driver.create(
             'fake_image_id',
@@ -99,8 +111,7 @@ class OpenstackDriverTest(base.TestCase):
     def test_create_without_instance_name(self):
         self.mock_object(
             self.fake_driver.client.servers, 'create',
-            mock.Mock(return_value=mock.Mock))
-        # NOTE: in fact: mock.Mock is novaclient.v2.servers.Server
+            mock.Mock(return_value=FakeServer()))
 
         self.fake_driver.create(
             'fake_image_id',
