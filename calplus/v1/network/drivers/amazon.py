@@ -72,7 +72,7 @@ class AmazonDriver(BaseDriver):
         )
 
         self.client.create_route(
-            RouteTableId=routetables,
+            RouteTableId=route_id,
             GatewayId=gateway_id,
             DestinationCidrBlock='0.0.0.0/0'
         )

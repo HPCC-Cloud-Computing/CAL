@@ -1,6 +1,7 @@
 CHANGES
 =======
 
+* reformat: list IP address for an instance
 * Reformat: Create server only return its ID
 * Update AWS driver: Add associate public ip && default sg
 * Add dns nameservers for network OpenStack
