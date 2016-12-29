@@ -161,7 +161,21 @@ class OpenstackDriver(BaseDriver):
 
     def list_ip(self, instance_id):
         """Add all IPs"""
-        return dict(self.client.servers.ips(instance_id))
+        ips = {
+            'PrivateIps': [],
+            'PublicIps': []
+        }
+        server = self.client.servers.get(instance_id).to_dict()
+        addrs = server.get('addresses')
+        for key in addrs.keys():
+            ips_on_net = addrs.get(key)
+            for ip in ips_on_net:
+                if ip.get('OS-EXT-IPS:type') == 'fixed':
+                    ips['PrivateIps'].append(ip.get('addr'))
+                else:
+                    ips['PublicIps'].append(ip.get('addr'))
+
+        return ips
 
 
 class OpenstackQuota(BaseQuota):

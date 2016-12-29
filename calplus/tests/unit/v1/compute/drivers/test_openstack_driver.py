@@ -76,7 +76,31 @@ class FakeServer(object):
 
     def to_dict(self):
         return {
-            'id': self.id
+            'id': self.id,
+            'addresses': {
+                'OPS1_ExtNet': [
+                    {
+                        'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:73:a7:a2',
+                        'version': 4,
+                        'addr': '10.0.1.15',
+                        'OS-EXT-IPS:type': 'fixed'
+                    },
+                    {
+                        'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:73:a7:a2',
+                        'version': 4,
+                        'addr': '192.168.50.212',
+                        'OS-EXT-IPS:type': 'floating'
+                    }
+                ],
+                'OPS1_IntNet': [
+                    {
+                        'OS-EXT-IPS-MAC:mac_addr': 'fa:16:3e:db:94:31',
+                        'version': 4,
+                        'addr': '100.100.200.3',
+                        'OS-EXT-IPS:type': 'fixed'
+                    }
+                ]
+            }
         }
 
 
@@ -605,23 +629,22 @@ class OpenstackDriverTest(base.TestCase):
 
     def test_list_ip_successfully(self):
         self.mock_object(
-            self.fake_driver.client.servers, 'ips',
-            mock.Mock(return_value={'Int-net': 'fake_list'}))
-        # NOTE: in fact: mock.Mock is novaclient.base.DictWithMeta
-        # printable: show a dict
+            self.fake_driver.client.servers, 'get',
+            mock.Mock(return_value=FakeServer()))
+        # NOTE: in fact: novaclient.v2.servers.Server
 
         self.fake_driver.list_ip('fake_id')
 
-        self.fake_driver.client.servers.ips. \
+        self.fake_driver.client.servers.get. \
             assert_called_once_with('fake_id')
 
-    def test_list_ip_unable_to_delete(self):
+    def test_list_ip_unable_to_list(self):
         self.mock_object(
-            self.fake_driver.client.servers, 'ips',
+            self.fake_driver.client.servers, 'get',
             mock.Mock(side_effect=ClientException))
 
         self.assertRaises(ClientException,
             self.fake_driver.list_ip, 'fake_id')
 
-        self.fake_driver.client.servers.ips. \
+        self.fake_driver.client.servers.get. \
             assert_called_once_with('fake_id')

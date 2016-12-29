@@ -148,8 +148,8 @@ class AmazonDriver(BaseDriver):
         output = self.client.describe_instances(InstanceIds=[instance_id])
         output = output.get("Reservations")[0].get("Instances")[0]
         ips = {}
-        ips['PrivateIp'] = output.get("PrivateIpAddress")
-        ips['PublicIp'] = output.get("PublicIpAddress")
+        ips['PrivateIps'] = output.get("PrivateIpAddress")
+        ips['PublicIps'] = output.get("PublicIpAddress")
         return ips
 
 

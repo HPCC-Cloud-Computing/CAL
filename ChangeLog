@@ -1,11 +1,87 @@
 CHANGES
 =======
 
+* Reformat: Create server only return its ID
+* Update AWS driver: Add associate public ip && default sg
+* Add dns nameservers for network OpenStack
+* Fix pep8
+* Fix missing parameter
+* Put **karg to real create function, it is useful for using cloudinit
+* reformat allocate_public_ip return
+* revert list public ip format
+* OPS: Update network return formart
+* Update setup.cfg for release
+* Update validate driver
+* Update compute driver: resize with flavor_name instead of using flavor_id
+* Fix some wrong parameters
+* Fix code review | #48 pull request
+* Update AWS compute driver: Add list IPs
+* Update AWS compute driver: Add manage NIC
+* Update AWS compute driver: Add shutdown, start, reboot
+* Update AWS compute driver: Add delete instance
+* Update AWS compute driver: Add list instances
+* Update AWS compute driver: Add show instance
+* Init amazon compute driver
+* Add set config file and get list provider fucntion
+* Remove ramdom get provider function
+* Remove type_driver in config file
+* Add load config file test: - Restruct config file, e.g.: enable_drivers = amazon:amazon,openstack1:openstack - Test load file config
+* Add test for multi provider
+* Update example config
+* Remove unused method and add new unit test for conf
+* Add test for pick_host_with_specific_provider
+* Modify provider config
+* ignore etc/calplus/calplus.conf.sample file
+* Fix pep8 error
+* Update OPS compute driver: list IPs for instance
+* Update OPS compute driver: - Complete associate_public_ip function - Complete disassociate_public_ip function
+* Update OPS compute driver: - Add associate_public_ip to client - Add disassociate_public_ip to client
+* Update OPS compute driver: Update parameters
+* Update compute driver: - rename add_public_ip -> associate_public_ip - rename delete_public_ip -> disassociate_public_ip
+* Update OPS network driver: Update release publicIP for OPS and AWS
+* Update OPS network driver: Init release publicIP function
+* Update OPS network driver: update return format list PublicIP
+* Update OPS network driver: list PublicIP
+* Fix missing latest pull request - Add novalclient version to provider config - Add #TODO survey compute quota - Add oslo-generator-config
+* Code review fixed
+* Revert "Change travis-ci branch"
+* Fix description for test module
+* Update OPS network driver: Init list_public_ip function
+* Update OPS compute driver: add testing - P3
+* Update OPS compute driver: add testing for create function - P2
+* Update OPS compute driver: add testing for create function
+* unicode -> six.text_type: for all of py2 and py3
+* Add allocate_public_ip function for OPS and AWS
+* Update OPS network: remove network_id in parameters allocate function
+* Update openstack network driver: connect, disconnect ext-net and allocate PublicIP
+* Update openstack network driver: allocate an publicIP
+* Update openstack compute driver: list all of NICs
+* Update openstack compute driver: Add delete NIC for instance
+* Add TODO for add_nic
+* Update openstack compute driver: add_nic function
+* Update openstack compute driver: resize function
+* Update openstack compute driver: reboot function
+* Update openstack compute driver: start function
+* Update openstack compute driver: shutdown function
+* Update openstack compute driver: delete function
+* Update openstack compute driver: list function
+* Update openstack compute driver: show function
+* Init openstack compute driver: create function
+* Add compute base driver
+* Change travis-ci branch
+* Just call get() when we update quotas
+* Fix loss testing
+* add connect_external_net openstack network
+* Add connect to network for network driver
+* Update README.rst
+* - add new author - publish to pypi v1.0.1 alpha 3 - rename CAL to CALplus
 * publish to pypi
 * Rename README.md to README.rst
 * Update README.md
 * Update README.md
 * Update setup.cfg
+* add connect_external_net openstack network
+* Add connect to network for network driver
 * Create .codeclimate.yml
 * Update README.md
 * Update README.md
