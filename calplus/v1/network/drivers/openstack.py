@@ -134,7 +134,9 @@ class OpenstackDriver(BaseDriver):
         # Now we can't update network, I'm trying again
         return None
 
-    def delete(self, network_id):
+    def delete(self, subnet_id):
+        subnet = self.client.show_subnet(subnet_id)
+        network_id = subnet.get('subnet').get('network_id')
         return self.client.delete_network(network_id)
 
     def connect_external_net(self, subnet_id):

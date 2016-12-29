@@ -243,22 +243,55 @@ class OpenstackDriverTest(base.TestCase):
 
     def test_delete_successfully(self):
         self.mock_object(
+            self.fake_driver.client, 'show_subnet',
+            mock.Mock(return_value={
+                'subnet': fake_subnet_out
+            })
+        )
+        self.mock_object(
             self.fake_driver.client, 'delete_network',
             mock.Mock(return_value=()))
 
-        self.fake_driver.delete('fake_network_id')
+        self.fake_driver.delete('fake_subnet_id')
 
+        self.fake_driver.client.show_subnet. \
+            assert_called_once_with('fake_subnet_id')
         self.fake_driver.client.delete_network.\
             assert_called_once_with('fake_network_id')
 
+    def test_delete_unable_to_show_subnet(self):
+        self.mock_object(
+            self.fake_driver.client, 'show_subnet',
+            mock.Mock(side_effect=ClientException)
+        )
+        self.mock_object(
+            self.fake_driver.client, 'delete_network',
+            mock.Mock())
+
+        self.assertRaises(ClientException, self.fake_driver.delete,
+                          'fake_subnet_id')
+
+        self.fake_driver.client.show_subnet. \
+            assert_called_once_with('fake_subnet_id')
+        self.assertFalse(
+            self.fake_driver.client.delete_network.called)
+
     def test_delete_unable_to_detete_network(self):
+        self.mock_object(
+            self.fake_driver.client, 'show_subnet',
+            mock.Mock(return_value={
+                'subnet': fake_subnet_out
+            })
+        )
         self.mock_object(
             self.fake_driver.client, 'delete_network',
             mock.Mock(side_effect=ClientException))
 
         self.assertRaises(ClientException, self.fake_driver.delete,
-                          'fake_network_id')
+                          'fake_subnet_id')
 
+        self.fake_driver.client.show_subnet. \
+            assert_called_once_with('fake_subnet_id')
         self.fake_driver.client.delete_network.\
             assert_called_once_with('fake_network_id')
 
