@@ -98,7 +98,7 @@ class Singleton(_Singleton('SingletonMeta', (object,), {})):
     pass
 
 
-class BaseClient(Singleton):
+class BaseClient(object):
     """Base Client
     :params path: module path of driver, for e.x: 'calplus.v1.network.driver'
     :params provider: provider for e.x: 'OpenStack'
