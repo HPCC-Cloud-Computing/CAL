@@ -13,39 +13,81 @@ class Client(BaseClient):
         BaseClient.__init__(self, CONF.object_storage.driver_path,
                             provider, cloud_config)
 
-    def list_containers(self):
-        pass
+    def create_container(self, container, **kwargs):
+        """Create container
 
-    def create_container(self, container_name):
-        pass
-
-    def get_container(self, container_name):
-        pass
+        :params container(string): container name.
+        :params **kwargs(dict): extend args for specific driver.
+        """
+        return self.driver.create_container(container, **kwargs)
 
     def delete_container(self, container):
-        pass
+        """Delete container
+
+        :params container: container name/container instance.
+        """
+        return self.driver.delete_container(container)
+
+    def list_containers(self):
+        """List owned containers
+        """
+        return self.driver.list_container()
+
+    def get_container(self, container):
+        """Get container data
+
+        :params: container: container name/container instance.
+        """
+        return self.driver.get_container(container)
+
+    def update_container(self, container, **kwargs):
+        """Update container metadata
+
+        :params: container: container name/container instance.
+        :params: **kwargs(dict): extend args for specific driver.
+        """
+        return self.driver.update_container(container, **kwargs)
+
+    def create_object(self, container, obj, contents,
+                      content_length=None, **kwargs):
+        """Create object
+
+        :params: container: container name/container instance.
+        :params: obj: object name.
+        :params: content: object content.
+        :params: content_length(int): content length.
+        :params: **kwargs(dict): extend args for specific driver.
+        """
+        return self.driver.create_object(container, obj,
+                                         contents, content_length, **kwargs)
+
+    def get_object(self, container, obj, **kwargs):
+        """Get specific object
+
+        :params: container: container name/container instance.
+        :params: obj: object name/object instance.
+        """
+        return self.driver.get_object(container, obj, **kwargs)
 
     def list_container_objects(self, container):
-        pass
+        """List container objects
 
-    def get_object(self, container_name, object_name):
-        pass
+        :params: container: container name/container instance.
+        """
+        return self.driver.list_container_objects(container)
 
-    def download_object(self, obj, destination_path, overwrite_existing=False,
-                        delete_on_failure=True):
-        pass
+    def update_object(self, container, obj, **kwargs):
+        """Update object metadata
 
-    def download_object_as_stream(self, obj, chunk_size=None):
-        pass
+        :params: container: container name/container instance.
+        :params: obj: object name/object instance.
+        """
+        return self.driver.update_object(container, obj, **kwargs)
 
-    def upload_object(self, file_path, container, object_name, extra=None,
-                      verify_hash=True, headers=None):
-        pass
+    def copy_object(self, container, obj, **kwargs):
+        """Copy object
 
-    def upload_object_via_stream(self, iterator, container,
-                                 object_name, extra=None, headers=None):
-        pass
-
-    def delete_object(self, obj):
-        pass
-
+        :params: container: container name/container instance.
+        :params: obj: object name/object instance.
+        """
+        return self.driver.copy_object(container, obj, **kwargs)
