@@ -58,6 +58,7 @@ class BaseDriver(object):
 
 class BaseQuota(object):
     """docstring for QuotaNetwork"""
+
     def __init__(self):
         super(BaseQuota, self).__init__()
 
@@ -66,10 +67,10 @@ class BaseQuota(object):
 
         # get all network quota from Cloud Provider.
         attrs = ("networks",
-                "security_groups",
-                "floating_ips",
-                "routers",
-                "internet_gateways")
+                 "security_groups",
+                 "floating_ips",
+                 "routers",
+                 "internet_gateways")
 
         for attr in attrs:
             setattr(self, attr, eval("self.get_{}()". format(attr)))
