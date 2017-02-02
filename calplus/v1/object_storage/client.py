@@ -16,15 +16,15 @@ class Client(BaseClient):
     def create_container(self, container, **kwargs):
         """Create container
 
-        :params container(string): container name.
-        :params **kwargs(dict): extend args for specific driver.
+        :param container(string): container name.
+        :param **kwargs(dict): extend args for specific driver.
         """
         return self.driver.create_container(container, **kwargs)
 
     def delete_container(self, container):
         """Delete container
 
-        :params container: container name/container instance.
+        :param container: container name.
         """
         return self.driver.delete_container(container)
 
@@ -33,61 +33,72 @@ class Client(BaseClient):
         """
         return self.driver.list_container()
 
-    def get_container(self, container):
-        """Get container data
+    def stat_container(self, container):
+        """Stat container metadata
 
-        :params: container: container name/container instance.
+        :param container: container name.
         """
-        return self.driver.get_container(container)
+        return self.driver.stat_container(container)
 
-    def update_container(self, container, **kwargs):
+    def update_container(self, container, headers, **kwargs):
         """Update container metadata
 
-        :params: container: container name/container instance.
-        :params: **kwargs(dict): extend args for specific driver.
+        :param container: container name.
+        :param headers(dict): additional headers to include in the request.
+        :param **kwargs(dict): extend args for specific driver.
         """
         return self.driver.update_container(container, **kwargs)
 
-    def create_object(self, container, obj, contents,
+    def upload_object(self, container, obj, contents,
                       content_length=None, **kwargs):
-        """Create object
+        """Upload object
 
-        :params: container: container name/container instance.
-        :params: obj: object name.
-        :params: content: object content.
-        :params: content_length(int): content length.
-        :params: **kwargs(dict): extend args for specific driver.
+        :param container: container name.
+        :param obj: object name.
+        :param contents: object content.
+        :param content_length(int): content length.
+        :param **kwargs(dict): extend args for specific driver.
         """
-        return self.driver.create_object(container, obj,
-                                         contents, content_length, **kwargs)
+        return self.driver.download_object(container, obj, contents=contents,
+                                           content_length=content_length,
+                                           **kwargs)
 
-    def get_object(self, container, obj, **kwargs):
-        """Get specific object
+    def download_object(self, container, obj, **kwargs):
+        """Download specific object
 
-        :params: container: container name/container instance.
-        :params: obj: object name/object instance.
+        :param container: container name.
+        :param obj: object name.
         """
-        return self.driver.get_object(container, obj, **kwargs)
+        return self.driver.download_object(container, obj, **kwargs)
+
+    def stat_object(self, container, obj):
+        """Stat object metadata
+
+        :param container: container name.
+        :param obj: object name.
+        """
+        return self.driver.stat_object(container, obj)
 
     def list_container_objects(self, container):
         """List container objects
 
-        :params: container: container name/container instance.
+        :param container: container name.
         """
         return self.driver.list_container_objects(container)
 
-    def update_object(self, container, obj, **kwargs):
+    def update_object(self, container, obj, headers, **kwargs):
         """Update object metadata
 
-        :params: container: container name/container instance.
-        :params: obj: object name/object instance.
+        :param container: container name.
+        :param obj: object name.
+        :param headers(dict): additional headers to include in the request.
         """
         return self.driver.update_object(container, obj, **kwargs)
 
     def copy_object(self, container, obj, **kwargs):
         """Copy object
 
-        :params: container: container name/container instance.
-        :params: obj: object name/object instance.
+        :param container: container name.
+        :param obj: object name.
         """
         return self.driver.copy_object(container, obj, **kwargs)
