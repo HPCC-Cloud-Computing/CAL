@@ -1,6 +1,3 @@
-"""BaseAbstract Class and BaseQuota Class for all object storage driver
-   which we want to implement.
-"""
 import abc
 import six
 
@@ -9,53 +6,120 @@ import six
 class BaseDriver(object):
     """BaseAbstract Class for object storage driver"""
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         super(BaseDriver, self).__init__()
-        self.obj_storage_quota = BaseQuota()
 
     @abc.abstractmethod
     def create_container(self, container, **kwargs):
+        """Create container
+
+        :param container(string): container name..
+        :param **kwargs(dict): extend args for specific driver
+        """
         pass
 
     @abc.abstractmethod
     def delete_container(self, container):
+        """Delete container
+
+        :param container: container name.
+        """
         pass
 
     @abc.abstractmethod
     def list_containers(self):
+        """List containers"""
         pass
 
     @abc.abstractmethod
-    def get_container(self, container):
+    def stat_container(self, container):
+        """Get container
+
+        :param container: container name.
+        """
         pass
 
     @abc.abstractmethod
-    def update_container(self, container, **kwargs):
+    def update_container(self, container, headers, **kwargs):
+        """Update container
+
+        :param container: container name.
+        :param headers(dict): additional headers to include in the request.
+        :param **kwargs: extend args for specific driver.
+        """
         pass
 
     @abc.abstractmethod
-    def create_object(self, container, obj, contents,
+    def upload_object(self, container, obj, contents,
                       content_length=None, **kwargs):
+        """Upload object
+
+        :param container: container name.
+        :param obj: object name.
+        :param contents: object content.
+        :param content_length(int): content length.
+        :param **kwargs(dict): extend args for specific driver.
+        """
         pass
 
     @abc.abstractmethod
-    def get_object(self, container, opj, **kwargs):
+    def download_object(self, container, obj, **kwargs):
+        """Download object
+
+        :param container: container name.
+        :param obj: object name/object instance.
+        :param **kwargs(dict): extend args for specific driver.
+        """
+        pass
+
+    @abc.abstractmethod
+    def stat_object(self, container, obj):
+        """Stat object
+
+        :params container: container name.
+        :params object: object name/object instance.
+        """
         pass
 
     @abc.abstractmethod
     def delete_object(self, container, obj, **kwargs):
+        """Delete object
+
+        :param container: container name.
+        :param obj: object name/object instance.
+        :param **kwargs
+        """
         pass
 
     @abc.abstractmethod
     def list_container_objects(self, container):
+        """List container objects
+
+        :param container: container name.
+        """
         pass
 
     @abc.abstractmethod
-    def update_object(self, container, obj, **kwargs):
+    def update_object(self, container, obj, headers, **kwargs):
+        """Update object
+
+        :param container(string): container name.
+        :param obj: object name/object instance.
+        :param headers(dict): additional headers to include in the request.
+        """
         pass
 
     @abc.abstractmethod
-    def copy_object(self, container, obj, **kwargs):
+    def copy_object(self, container, obj, destination=None, **kwargs):
+        """Copy object
+
+        :param container: container name.
+        :param obj: object name/object instance.
+        :param destination: The container and object name of the destination
+                            object in the form of /container/object; if None,
+                            the copy will use the source as the destination.
+        :param **kwargs(dict): extend args for specific driver.
+        """
         pass
 
 
