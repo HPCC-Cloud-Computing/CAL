@@ -4,7 +4,7 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class BaseDriver(object):
-    """BaseAbstract Class for object storage driver"""
+    """The base class that all Driver classes should inherit from."""
 
     def __init__(self):
         super(BaseDriver, self).__init__()
@@ -124,7 +124,7 @@ class BaseDriver(object):
 
 
 class BaseQuota(object):
-    """docstring for QuotaObjectStorage"""
+    """The base class that all Quota classes should inherit from."""
 
     def __init__(self):
         super(BaseQuota, self).__init__()
