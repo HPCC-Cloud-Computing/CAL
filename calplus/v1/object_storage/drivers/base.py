@@ -56,8 +56,9 @@ class BaseDriver(object):
 
         :param container: container name.
         :param obj: object name.
-        :param contents: object content.
-        :param content_length(int): content length.
+        :param contents: a string, a file-like object or an iterable
+                         to read object data from.
+        :param content_length(int): size of the contents in bytes.
         :param **kwargs(dict): extend args for specific driver.
         """
         pass
@@ -67,7 +68,7 @@ class BaseDriver(object):
         """Download object
 
         :param container: container name.
-        :param obj: object name/object instance.
+        :param obj: object name.
         :param **kwargs(dict): extend args for specific driver.
         """
         pass
@@ -77,7 +78,7 @@ class BaseDriver(object):
         """Stat object
 
         :params container: container name.
-        :params object: object name/object instance.
+        :params object: object name.
         """
         pass
 
@@ -86,7 +87,7 @@ class BaseDriver(object):
         """Delete object
 
         :param container: container name.
-        :param obj: object name/object instance.
+        :param obj: object name.
         :param **kwargs
         """
         pass
@@ -104,7 +105,7 @@ class BaseDriver(object):
         """Update object
 
         :param container(string): container name.
-        :param obj: object name/object instance.
+        :param obj: object name.
         :param headers(dict): additional headers to include in the request.
         """
         pass
@@ -114,7 +115,7 @@ class BaseDriver(object):
         """Copy object
 
         :param container: container name.
-        :param obj: object name/object instance.
+        :param obj: object name.
         :param destination: The container and object name of the destination
                             object in the form of /container/object; if None,
                             the copy will use the source as the destination.
