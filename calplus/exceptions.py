@@ -57,3 +57,8 @@ class ResourceInErrorState(Exception):
         if fault_msg:
             msg += "due to '%s'" % fault_msg
         self.message = "%s." % msg
+
+
+class DriverException(Exception):
+    """DriverException"""
+    pass
