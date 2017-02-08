@@ -65,16 +65,26 @@ class AmazonDriver(BaseDriver):
     def list_container_objects(self, container):
         return self.client.list_objects(Bucket=container)
 
-    def update_object(self, container, obj, headers, **kwargs):
-        pass
+    def update_object(self, container, obj, metadata=None, **kwargs):
+        _old_metadata = self.stat_object(container, obj)
+        destination = '/' + container + '/' + obj
+        _new_metadata = _old_metadata.update(metadata)
+        return self.copy_object(container, obj, metadata=_new_metadata,
+                                destination=destination, **kwargs)
 
-    def copy_object(self, container, obj, destination=None, **kwargs):
+    def copy_object(self, container, obj, metadata=None,
+                    destination=None, **kwargs):
         copysource = {
             'Bucket': container,
             'Key': obj
         }
 
-        return self.client.copy_object(Bucket=container, Key=destination,
+        if destination:
+            dst_container, dst_obj = destination.strip('/').split('/')
+        else:
+            dst_container, dst_obj = container, obj
+        return self.client.copy_object(Bucket=dst_container, Key=dst_obj,
+                                       Metadata=metadata,
                                        CopySource=copysource)
 
 

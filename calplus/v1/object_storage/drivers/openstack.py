@@ -57,8 +57,8 @@ class OpenStackDriver(BaseDriver):
     def stat_container(self, container):
         return self.client.head_container(container)
 
-    def update_container(self, container, headers, **kwargs):
-        return self.client.post_container(container, headers)
+    def update_container(self, container, metadata, **kwargs):
+        return self.client.post_container(container, metadata, **kwargs)
 
     def upload_object(self, container, obj, contents,
                       content_length=None, **kwargs):
@@ -77,11 +77,12 @@ class OpenStackDriver(BaseDriver):
     def list_container_objects(self, container):
         return self.client.get_container(container)
 
-    def update_object(self, container, obj, headers, **kwargs):
-        return self.client.post_object(container, obj, headers)
+    def update_object(self, container, obj, metadata, **kwargs):
+        return self.client.post_object(container, obj, metadata, **kwargs)
 
-    def copy_object(self, container, obj, destination=None, **kwargs):
-        return self.client.copy_object(container, obj,
+    def copy_object(self, container, obj, metadata=None,
+                    destination=None, **kwargs):
+        return self.client.copy_object(container, obj, headers=metadata,
                                        destination=destination, **kwargs)
 
 

@@ -40,11 +40,12 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def update_container(self, container, headers, **kwargs):
+    def update_container(self, container, metadata, **kwargs):
         """Update container
 
         :param container: container name.
-        :param headers(dict): additional headers to include in the request.
+        :param metadata(dict): additional metadata(headers)
+                               to include in the request.
         :param **kwargs: extend args for specific driver.
         """
         pass
@@ -101,24 +102,28 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def update_object(self, container, obj, headers, **kwargs):
+    def update_object(self, container, obj, metadata, **kwargs):
         """Update object
 
         :param container(string): container name.
         :param obj: object name.
-        :param headers(dict): additional headers to include in the request.
+        :param metadata(dict): additional metadata(headers)
+                               to include in the request.
         """
         pass
 
     @abc.abstractmethod
-    def copy_object(self, container, obj, destination=None, **kwargs):
+    def copy_object(self, container, obj, metadata=None,
+                    destination=None, **kwargs):
         """Copy object
 
-        :param container: container name.
-        :param obj: object name.
+        :param container: destination container name.
+        :param obj: destination object name.
         :param destination: The container and object name of the destination
                             object in the form of /container/object; if None,
                             the copy will use the source as the destination.
+        :param metadata(dict): additional metadata(headers)
+                               to include in the request
         :param **kwargs(dict): extend args for specific driver.
         """
         pass
