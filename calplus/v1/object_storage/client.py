@@ -56,15 +56,15 @@ class Client(BaseClient):
         LOG.debug('stat_container() with %s is success.', self.driver)
         return self.driver.stat_container(container)
 
-    def update_container(self, container, headers, **kwargs):
+    def update_container(self, container, metadata, **kwargs):
         """Update container metadata
 
         :param container: container name.
-        :param headers(dict): additional headers to include in the request.
+        :param metadata(dict): additional metadata to include in the request.
         :param **kwargs(dict): extend args for specific driver.
         """
         LOG.debug('update_object() with %s is success.', self.driver)
-        return self.driver.update_container(container, headers, **kwargs)
+        return self.driver.update_container(container, metadata, **kwargs)
 
     def upload_object(self, container, obj, contents,
                       content_length=None, **kwargs):
@@ -129,29 +129,38 @@ class Client(BaseClient):
         LOG.debug('list_container_objects() with %s is success.', self.driver)
         return self.driver.list_container_objects(container)
 
-    def update_object(self, container, obj, headers, **kwargs):
+    def update_object(self, container, obj, metadata, **kwargs):
         """Update object metadata
 
         :param container: container name.
         :param obj: object name.
-        :param headers(dict): additional headers to include in the request.
+        :param metadata(dict): additional metadata to include in the request.
         """
         try:
             LOG.debug('update_object() with %s is success.', self.driver)
-            return self.driver.update_object(container, obj, headers, **kwargs)
+            return self.driver.update_object(container, obj,
+                                             metadata, **kwargs)
         except DriverException as e:
             LOG.exception('copy_object() with %s raised\
                             an exception %s.', self.driver, e)
 
-    def copy_object(self, container, obj, **kwargs):
+    def copy_object(self, container, obj, metadata=None,
+                    destination=None, **kwargs):
         """Copy object
 
-        :param container: container name.
-        :param obj: object name.
+        :param container: destination container name.
+        :param obj: destination object name.
+        :param destination: The container and object name of the destination
+                            object in the form of /container/object; if None,
+                            the copy will use the source as the destination.
+        :param metadata(dict): additional metadata(headers)
+                               to include in the request
+        :param **kwargs(dict): extend args for specific driver.
         """
         try:
             LOG.debug('copy_object() with %s is success.', self.driver)
-            return self.driver.copy_object(container, obj, **kwargs)
+            return self.driver.copy_object(container, obj, metadata=metadata,
+                                           destination=destination, **kwargs)
         except DriverException as e:
             LOG.exception('copy_object() with %s raised\
                             an exception %s.', self.driver, e)
