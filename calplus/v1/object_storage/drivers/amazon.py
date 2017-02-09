@@ -66,6 +66,14 @@ class AmazonDriver(BaseDriver):
         return self.client.list_objects(Bucket=container)
 
     def update_object(self, container, obj, metadata=None, **kwargs):
+        # Format metadata key, because metadata key/name must
+        # begin with 'x-amz-'
+        metadata = {('x-amz-' + key.strip()).lower(): value
+                    for key, value in metadata.items()
+                    if key.strip().startswith('x-amz-')}
+        # Becasuse After you upload the object, you cannot
+        # modify object metadata. The only way to modify object
+        # metadata is to make a copy of the object and set the metadata.
         _old_metadata = self.stat_object(container, obj)
         destination = '/' + container + '/' + obj
         _new_metadata = _old_metadata.update(metadata)

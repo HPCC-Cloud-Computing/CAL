@@ -78,6 +78,10 @@ class OpenStackDriver(BaseDriver):
         return self.client.get_container(container)
 
     def update_object(self, container, obj, metadata, **kwargs):
+        # Format metedata key
+        metadata = {('x-object-meta-' + key.strip()).title(): value
+                    for key, value in metadata.items()
+                    if key.strip().startswith('x-object-meta-')}
         return self.client.post_object(container, obj, metadata, **kwargs)
 
     def copy_object(self, container, obj, metadata=None,
