@@ -78,3 +78,11 @@ class StandardLogging(fixtures.Fixture):
             # Don't log every single DB migration step
             std_logging.getLogger(
                 'migrate.versioning.api').setLevel(std_logging.WARNING)
+
+
+def copy_and_update_dict(src_dict, diffs):
+    """Returns a copy of src_dict, updated with the new key-value
+       pairs in diffs."""
+    dest_dict = dict(src_dict)
+    dest_dict.update(diffs)
+    return dest_dict
