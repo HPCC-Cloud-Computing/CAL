@@ -88,11 +88,16 @@ class AmazonDriver(BaseDriver):
         }
 
         if destination:
+            metadata_directive = 'COPY'
             dst_container, dst_obj = destination.strip('/').split('/')
         else:
+            metadata_directive = 'REPLACE'
             dst_container, dst_obj = container, obj
+        if not metadata:
+            metadata = {}
         return self.client.copy_object(Bucket=dst_container, Key=dst_obj,
                                        Metadata=metadata,
+                                       MetadataDirective=metadata_directive,
                                        CopySource=copysource)
 
 
