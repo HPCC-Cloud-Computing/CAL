@@ -52,17 +52,20 @@ class OpenStackDriver(BaseDriver):
         return self.client.delete_container(container)
 
     def list_containers(self):
-        return self.client.get_account()
+        return self.client.get_account()[1]
 
     def stat_container(self, container):
         return self.client.head_container(container)
 
     def update_container(self, container, metadata, **kwargs):
+        metadata = {('x-container-meta-' + key.strip()): value
+                    for key, value in metadata.items()
+                    if not key.strip().startswith('x-container-meta-')}
         return self.client.post_container(container, metadata, **kwargs)
 
     def upload_object(self, container, obj, contents,
                       content_length=None, **kwargs):
-        return self.client.put_object(container, contents=contents,
+        return self.client.put_object(container, obj, contents=contents,
                                       content_length=content_length, **kwargs)
 
     def download_object(self, container, obj, **kwargs):
@@ -79,9 +82,9 @@ class OpenStackDriver(BaseDriver):
 
     def update_object(self, container, obj, metadata, **kwargs):
         # Format metedata key
-        metadata = {('x-object-meta-' + key.strip()).title(): value
+        metadata = {('x-object-meta-' + key.strip()): value
                     for key, value in metadata.items()
-                    if key.strip().startswith('x-object-meta-')}
+                    if not key.strip().startswith('x-object-meta-')}
         return self.client.post_object(container, obj, metadata, **kwargs)
 
     def copy_object(self, container, obj, metadata=None,
