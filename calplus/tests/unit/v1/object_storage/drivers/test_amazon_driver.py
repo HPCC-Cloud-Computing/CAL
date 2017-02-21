@@ -64,6 +64,24 @@ fake_create_container_resp = {
     'ResponseMetadata': container_response_metadata
 }
 
+fake_list_containers_resp = {
+    'Owner': {
+        'DisplayName': 'admin:admin',
+        'ID': 'admin:admin'
+    },
+    'Buckets': [
+        {
+            'CreationDate': 'fake-datetime',
+            'Name': 'fake-container'
+        },
+        {
+            'CreationDate': 'fake-datetime',
+            'Name': 'fake-container-2'
+        }
+    ],
+    'ResponseMetadata': container_response_metadata,
+}
+
 fake_stat_container_resp = {
     'ResponseMetadata': container_response_metadata
 }
@@ -218,6 +236,28 @@ class AmazonDriverTest(base.TestCase):
         self.fake_driver.client.delete_bucket.assert_called_once_with(
             Bucket='fake-container')
 
+    def test_list_containers_successfully(self):
+        self.mock_object(
+            self.fake_driver.client, 'list_buckets',
+            mock.Mock(return_value=fake_list_containers_resp)
+        )
+
+        self.fake_driver.list_containers()
+        self.fake_driver.client.list_buckets.assert_called_once_with()
+
+    def test_list_containers_failed(self):
+        self.mock_object(
+            self.fake_driver.client, 'list_buckets',
+            mock.Mock(side_effect=ClientError(
+                fake_error_code_resp,
+                'ListContainers'
+            ))
+        )
+
+        self.assertRaises(ClientError,
+                          self.fake_driver.list_containers)
+        self.fake_driver.client.list_buckets.assert_called_once_with()
+
     def test_stat_container_successfully(self):
         self.mock_object(
             self.fake_driver.client, 'head_bucket',
@@ -233,7 +273,7 @@ class AmazonDriverTest(base.TestCase):
             self.fake_driver.client, 'head_bucket',
             mock.Mock(side_effect=ClientError(
                 fake_error_code_resp,
-                'HeadContainer33'
+                'HeadContainer'
             ))
         )
 
