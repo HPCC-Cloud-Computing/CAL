@@ -78,10 +78,10 @@ class Client(BaseClient):
         """
         try:
             LOG.debug('upload_object() with %s is success.', self.driver)
-            return self.driver.download_object(container, obj,
-                                               contents=contents,
-                                               content_length=content_length,
-                                               **kwargs)
+            return self.driver.upload_object(container, obj,
+                                             contents=contents,
+                                             content_length=content_length,
+                                             **kwargs)
         except DriverException as e:
             LOG.exception('upload_object() with %s raised\
                             an exception %s.', self.driver, e)
