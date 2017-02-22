@@ -9,7 +9,7 @@ import mock
 from swiftclient.exceptions import ClientException
 
 from calplus.tests import base
-from calplus.v1.object_storage.drivers.openstack import OpenStackDriver
+from calplus.v1.object_storage.drivers.openstack import OpenstackDriver
 
 fake_config_driver = {
     'os_auth_url': 'http://controller:5000/v2_0',
@@ -71,7 +71,7 @@ class OpenStackDriverTest(base.TestCase):
 
     def setUp(self):
         super(OpenStackDriverTest, self).setUp()
-        self.fake_driver = OpenStackDriver(fake_config_driver)
+        self.fake_driver = OpenstackDriver(fake_config_driver)
 
     def test_create_container_successfully(self):
         self.mock_object(self.fake_driver.client, 'put_container',
@@ -96,7 +96,19 @@ class OpenStackDriverTest(base.TestCase):
             'fake_container')
 
     def test_delete_container_failed(self):
-        pass
+        self.mock_object(
+            self.fake_driver.client,
+            'delete_container',
+            mock.Mock(side_effect=ClientException(
+                'Container DELETE failed'
+            ))
+        )
+
+        self.assertRaises(ClientException,
+                          self.fake_driver.delete_container,
+                          'invalid-container')
+        self.fake_driver.client.delete_container.\
+            assert_called_once_with('invalid-container')
 
     def test_stat_container_successfully(self):
         self.mock_object(self.fake_driver.client, 'head_container',
