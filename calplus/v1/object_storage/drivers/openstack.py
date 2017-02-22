@@ -12,11 +12,11 @@ from calplus.v1.object_storage.drivers.base import BaseDriver, BaseQuota
 PROVIDER = "OPENSTACK"
 
 
-class OpenStackDriver(BaseDriver):
+class OpenstackDriver(BaseDriver):
     """OpenStackDriver for Object Storage"""
 
     def __init__(self, cloud_config):
-        super(OpenStackDriver, self).__init__()
+        super(OpenstackDriver, self).__init__()
         self.auth_url = cloud_config['os_auth_url']
         self.project_name = cloud_config['os_project_name']
         self.username = cloud_config['os_username']
