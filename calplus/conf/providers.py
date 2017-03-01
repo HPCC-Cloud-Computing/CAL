@@ -29,7 +29,7 @@ openstack_opts = [
                default=''),
     cfg.StrOpt('os_novaclient_version',
                default='2.1'),
-    cfg.StrOpt('os_swiftclient_version',
+    cfg.StrOpt('os_auth_version',
                default='2'),
     cfg.DictOpt('limit',
                 default={

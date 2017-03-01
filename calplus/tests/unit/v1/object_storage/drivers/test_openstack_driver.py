@@ -21,7 +21,7 @@ fake_config_driver = {
     'os_project_domain_name': 'default',
     'os_user_domain_name': 'default',
     'tenant_id': 'fake_tenant_id',
-    'os_swiftclient_version': '2',
+    'os_auth_version': '2',
     'limit': {
     }
 }

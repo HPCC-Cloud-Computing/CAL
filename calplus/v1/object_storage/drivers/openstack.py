@@ -29,8 +29,8 @@ class OpenstackDriver(BaseDriver):
             cloud_config.get('driver_name', 'default')
         self.tenant_id = cloud_config.get('tenant_id', None)
         self.limit = cloud_config.get('limit', None)
-        self.client_version = \
-            cloud_config.get('os_swiftclient_version', '2')
+        self.auth_version = \
+            cloud_config.get('os_auth_version', '2')
         self._setup()
 
     def _setup(self):
@@ -41,7 +41,7 @@ class OpenstackDriver(BaseDriver):
                            project_domain_name=self.project_domain_name,
                            project_name=self.project_name)
         sess = session.Session(auth=auth)
-        self.client = Connection(self.client_version, session=sess)
+        self.client = Connection(auth_version=self.auth_version, session=sess)
         self.quota = OpenStackQuota(
             self.client, self.tenant_id, self.limit)
 
