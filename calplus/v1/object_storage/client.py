@@ -20,7 +20,8 @@ class Client(BaseClient):
     def create_container(self, container, **kwargs):
         """Create container
 
-        :param container(string): container name.
+        :param container(string): container name (Container is equivalent to
+                                  Bucket term in Amazon).
         :param **kwargs(dict): extend args for specific driver.
         """
         try:
@@ -33,7 +34,8 @@ class Client(BaseClient):
     def delete_container(self, container):
         """Delete container
 
-        :param container: container name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
         """
         try:
             LOG.debug('delete_container() with %s is success.', self.driver)
@@ -51,7 +53,8 @@ class Client(BaseClient):
     def stat_container(self, container):
         """Stat container metadata
 
-        :param container: container name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
         """
         LOG.debug('stat_container() with %s is success.', self.driver)
         return self.driver.stat_container(container)
@@ -59,7 +62,8 @@ class Client(BaseClient):
     def update_container(self, container, metadata, **kwargs):
         """Update container metadata
 
-        :param container: container name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
         :param metadata(dict): additional metadata to include in the request.
         :param **kwargs(dict): extend args for specific driver.
         """
@@ -70,8 +74,10 @@ class Client(BaseClient):
                       content_length=None, **kwargs):
         """Upload object
 
-        :param container: container name.
-        :param obj: object name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
+        :param obj: object name (Object is equivalent to
+                    Key term in Amazon).
         :param contents: object content.
         :param content_length(int): content length.
         :param **kwargs(dict): extend args for specific driver.
@@ -89,8 +95,10 @@ class Client(BaseClient):
     def download_object(self, container, obj, **kwargs):
         """Download specific object
 
-        :param container: container name.
-        :param obj: object name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
+        :param obj: object name (Object is equivalent to
+                    Key term in Amazon).
         """
         try:
             LOG.debug('download_object() with %s is success.', self.driver)
@@ -102,8 +110,10 @@ class Client(BaseClient):
     def stat_object(self, container, obj):
         """Stat object metadata
 
-        :param container: container name.
-        :param obj: object name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
+        :param obj: object name (Object is equivalent to
+                    Key term in Amazon).
         """
         LOG.debug('stat_object() with %s is success.', self.driver)
         return self.driver.stat_object(container, obj)
@@ -111,8 +121,10 @@ class Client(BaseClient):
     def delete_object(self, container, obj, **kwargs):
         """Delete object in container
 
-        :param container: container name.
-        :param obj: obj name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
+        :param obj: object name (Object is equivalent to
+                    Key term in Amazon).
         """
         try:
             LOG.debug('delete_object() with %s is success.', self.driver)
@@ -124,7 +136,8 @@ class Client(BaseClient):
     def list_container_objects(self, container):
         """List container objects
 
-        :param container: container name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
         """
         LOG.debug('list_container_objects() with %s is success.', self.driver)
         return self.driver.list_container_objects(container)
@@ -132,8 +145,10 @@ class Client(BaseClient):
     def update_object(self, container, obj, metadata, **kwargs):
         """Update object metadata
 
-        :param container: container name.
-        :param obj: object name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
+        :param obj: object name (Object is equivalent to
+                    Key term in Amazon).
         :param metadata(dict): additional metadata to include in the request.
         """
         try:
@@ -148,8 +163,10 @@ class Client(BaseClient):
                     destination=None, **kwargs):
         """Copy object
 
-        :param container: destination container name.
-        :param obj: destination object name.
+        :param container: container name (Container is equivalent to
+                          Bucket term in Amazon).
+        :param obj: object name (Object is equivalent to
+                    Key term in Amazon).
         :param destination: The container and object name of the destination
                             object in the form of /container/object; if None,
                             the copy will use the source as the destination.
