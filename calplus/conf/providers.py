@@ -4,7 +4,7 @@ from oslo_config import cfg
 
 # Openstack Authenticate Configuration.
 openstack_group = cfg.OptGroup('openstack',
-                         title='OpenStack Hosts')
+                               title='OpenStack Hosts')
 
 openstack_opts = [
     cfg.StrOpt('driver_name',
@@ -29,23 +29,25 @@ openstack_opts = [
                default=''),
     cfg.StrOpt('os_novaclient_version',
                default='2.1'),
+    cfg.StrOpt('os_auth_version',
+               default='2'),
     cfg.DictOpt('limit',
                 default={
-                     "subnet": 10,
-                     "network": 10,
-                     "floatingip": 50,
-                     "subnetpool": -1,
-                     "security_group_rule": 100,
-                     "security_group": 10,
-                     "router": 10,
-                     "rbac_policy": -1,
-                     "port": 50
+                    "subnet": 10,
+                    "network": 10,
+                    "floatingip": 50,
+                    "subnetpool": -1,
+                    "security_group_rule": 100,
+                    "security_group": 10,
+                    "router": 10,
+                    "rbac_policy": -1,
+                    "port": 50
                 })
 ]
 
 # Amazon Authenticate Configuration.
 amazon_group = cfg.OptGroup('amazon',
-                      title='Amazon Hosts')
+                            title='Amazon Hosts')
 
 amazon_opts = [
     cfg.StrOpt('driver_name',
@@ -72,7 +74,7 @@ amazon_opts = [
                 })
 ]
 
-#Provider Configuration
+# Provider Configuration
 provider_group = cfg.OptGroup('providers',
                               title='Supported Providers')
 
