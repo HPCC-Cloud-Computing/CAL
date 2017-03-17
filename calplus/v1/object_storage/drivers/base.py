@@ -94,10 +94,12 @@ class BaseDriver(object):
         pass
 
     @abc.abstractmethod
-    def list_container_objects(self, container):
+    def list_container_objects(self, container, prefix=None, delimiter=None):
         """List container objects
 
         :param container: container name.
+        :param prefix: prefix query
+        :param delimiter: string to delimit the queries on
         """
         pass
 

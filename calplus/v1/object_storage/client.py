@@ -133,14 +133,16 @@ class Client(BaseClient):
             LOG.exception('download_object() with %s raised\
                             an exception %s.', self.driver, e)
 
-    def list_container_objects(self, container):
+    def list_container_objects(self, container, prefix=None, delimiter=None):
         """List container objects
 
         :param container: container name (Container is equivalent to
                           Bucket term in Amazon).
+        :param prefix: prefix query
+        :param delimiter: string to delimit the queries on
         """
         LOG.debug('list_container_objects() with %s is success.', self.driver)
-        return self.driver.list_container_objects(container)
+        return self.driver.list_container_objects(container, prefix, delimiter)
 
     def update_object(self, container, obj, metadata, **kwargs):
         """Update object metadata

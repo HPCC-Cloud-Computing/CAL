@@ -420,9 +420,12 @@ class AmazonDriverTest(base.TestCase):
             mock.Mock(return_value=fake_list_container_objects_resp)
         )
 
-        self.fake_driver.list_container_objects('fake-container')
+        self.fake_driver.list_container_objects('fake-container',
+                                                prefix=None, delimiter=None)
         self.fake_driver.client.list_objects.assert_called_once_with(
-            Bucket='fake-container'
+            Bucket='fake-container',
+            Prefix=None,
+            Delimiter=None,
         )
 
     def test_list_container_objects_failed(self):
@@ -436,9 +439,13 @@ class AmazonDriverTest(base.TestCase):
 
         self.assertRaises(ClientError,
                           self.fake_driver.list_container_objects,
-                          'fake-container')
+                          'fake-container',
+                          prefix=None,
+                          delimiter=None)
         self.fake_driver.client.list_objects.assert_called_once_with(
-            Bucket='fake-container'
+            Bucket='fake-container',
+            Prefix=None,
+            Delimiter=None,
         )
 
     def test_copy_object_in_same_container_successfully(self):

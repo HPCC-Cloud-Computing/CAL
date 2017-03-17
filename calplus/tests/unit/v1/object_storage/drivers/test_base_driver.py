@@ -37,7 +37,7 @@ class RightFakeDriver(BaseDriver):
     def delete_object(self, container, obj, **kwargs):
         return 'fake_result'
 
-    def list_container_objects(self, container):
+    def list_container_objects(self, container, prefix=None, delimiter=None):
         return 'fake_result'
 
     def update_object(self, container, obj, headers, **kwargs):
