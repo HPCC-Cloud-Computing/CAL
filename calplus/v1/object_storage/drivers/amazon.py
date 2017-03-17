@@ -62,8 +62,9 @@ class AmazonDriver(BaseDriver):
         return self.client.delete_object(Bucket=container, Key=obj,
                                          **kwargs)
 
-    def list_container_objects(self, container):
-        return self.client.list_objects(Bucket=container)
+    def list_container_objects(self, container, prefix=None, delimiter=None):
+        return self.client.list_objects(Bucket=container, Prefix=prefix,
+                                        Delimiter=delimiter)
 
     def update_object(self, container, obj, metadata=None, **kwargs):
         # Format metadata key, because metadata key/name must

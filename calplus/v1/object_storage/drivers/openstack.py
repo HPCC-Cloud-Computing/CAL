@@ -77,8 +77,8 @@ class OpenstackDriver(BaseDriver):
     def delete_object(self, container, obj, **kwargs):
         return self.client.delete_object(container, obj, **kwargs)
 
-    def list_container_objects(self, container):
-        return self.client.get_container(container)[1]
+    def list_container_objects(self, container, prefix=None, delimiter=None):
+        return self.client.get_container(container, prefix, delimiter)[1]
 
     def update_object(self, container, obj, metadata, **kwargs):
         # Format metedata key
