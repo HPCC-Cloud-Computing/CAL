@@ -290,9 +290,12 @@ class AmazonDriverTest(base.TestCase):
         )
 
         self.fake_driver.upload_object('fake-container', 'fake-obj',
-                                       'fake-content', 10)
+                                       'fake-content',
+                                       metadata={'newkey': 'newvalue'},
+                                       content_length=10)
         self.fake_driver.client.put_object.assert_called_once_with(
             Bucket='fake-container', Key='fake-obj',
+            Metadata={'x-amz-newkey': 'newvalue'},
             ContentLength=10, Body='fake-content')
 
     def test_upload_object_without_specific_contentlength_successfully(self):
@@ -302,10 +305,14 @@ class AmazonDriverTest(base.TestCase):
         )
 
         self.fake_driver.upload_object('fake-container', 'fake-obj',
-                                       'fake-content')
+                                       'fake-content',
+                                       metadata={'newkey': 'newvalue'},
+                                       content_length=None)
         self.fake_driver.client.put_object.assert_called_once_with(
             Bucket='fake-container', Key='fake-obj',
-            ContentLength=None, Body='fake-content')
+            Body='fake-content',
+            Metadata={'x-amz-newkey': 'newvalue'},
+            ContentLength=None)
 
     def test_upload_object_failed(self):
         self.mock_object(
@@ -319,12 +326,14 @@ class AmazonDriverTest(base.TestCase):
         self.assertRaises(ClientError,
                           self.fake_driver.upload_object,
                           'fake-container', 'fake-obj',
-                          'fake-content')
+                          'fake-content', metadata={'newkey': 'newvalue'},
+                          content_length=None)
         self.fake_driver.client.put_object.assert_called_once_with(
             Bucket='fake-container',
             Key='fake-obj',
+            Body='fake-content',
             ContentLength=None,
-            Body='fake-content'
+            Metadata={'x-amz-newkey': 'newvalue'},
         )
 
     def test_download_object_successfully(self):

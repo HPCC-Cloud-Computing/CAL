@@ -47,10 +47,15 @@ class AmazonDriver(BaseDriver):
         pass
 
     def upload_object(self, container, obj, contents,
-                      content_length=None, **kwargs):
+                      content_length=None, metadata=None, **kwargs):
+        if metadata:
+            metadata = {('x-amz-' + key.strip()).lower(): value
+                        for key, value in metadata.items()
+                        if not key.strip().startswith('x-amz-')}
         return self.client.put_object(Bucket=container, Key=obj,
                                       ContentLength=content_length,
-                                      Body=contents)
+                                      Body=contents,
+                                      Metadata=metadata)
 
     def download_object(self, container, obj, **kwargs):
         return self.client.get_object(Bucket=container, Key=obj)
@@ -71,7 +76,7 @@ class AmazonDriver(BaseDriver):
         # begin with 'x-amz-'
         metadata = {('x-amz-' + key.strip()).lower(): value
                     for key, value in metadata.items()
-                    if key.strip().startswith('x-amz-')}
+                    if not key.strip().startswith('x-amz-')}
         # Becasuse After you upload the object, you cannot
         # modify object metadata. The only way to modify object
         # metadata is to make a copy of the object and set the metadata.

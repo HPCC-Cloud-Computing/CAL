@@ -64,9 +64,14 @@ class OpenstackDriver(BaseDriver):
         return self.client.post_container(container, metadata, **kwargs)
 
     def upload_object(self, container, obj, contents,
-                      content_length=None, **kwargs):
+                      content_length=None, metadata=None, **kwargs):
+        if metadata:
+            metadata = {('x-object-meta-' + key.strip()): value
+                        for key, value in metadata.items()
+                        if not key.strip().startswith('x-object-meta-')}
         return self.client.put_object(container, obj, contents=contents,
-                                      content_length=content_length, **kwargs)
+                                      content_length=content_length,
+                                      headers=metadata, **kwargs)
 
     def download_object(self, container, obj, **kwargs):
         return self.client.get_object(container, obj, **kwargs)

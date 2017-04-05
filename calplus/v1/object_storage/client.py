@@ -71,7 +71,7 @@ class Client(BaseClient):
         return self.driver.update_container(container, metadata, **kwargs)
 
     def upload_object(self, container, obj, contents,
-                      content_length=None, **kwargs):
+                      content_length=None, metadata=None, **kwargs):
         """Upload object
 
         :param container: container name (Container is equivalent to
@@ -80,6 +80,7 @@ class Client(BaseClient):
                     Key term in Amazon).
         :param contents: object content.
         :param content_length(int): content length.
+        :param metadata (dict): addition infomation.
         :param **kwargs(dict): extend args for specific driver.
         """
         try:
@@ -87,6 +88,7 @@ class Client(BaseClient):
             return self.driver.upload_object(container, obj,
                                              contents=contents,
                                              content_length=content_length,
+                                             metadata=metadata,
                                              **kwargs)
         except DriverException as e:
             LOG.exception('upload_object() with %s raised\

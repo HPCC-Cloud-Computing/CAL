@@ -52,7 +52,7 @@ class BaseDriver(object):
 
     @abc.abstractmethod
     def upload_object(self, container, obj, contents,
-                      content_length=None, **kwargs):
+                      content_length=None, metadata=None, **kwargs):
         """Upload object
 
         :param container: container name.
@@ -60,6 +60,7 @@ class BaseDriver(object):
         :param contents: a string, a file-like object or an iterable
                          to read object data from.
         :param content_length(int): size of the contents in bytes.
+        :param metadata (dict): addition infomation.
         :param **kwargs(dict): extend args for specific driver.
         """
         pass
