@@ -178,12 +178,14 @@ class OpenStackDriverTest(base.TestCase):
         self.fake_driver.upload_object('fake-container',
                                        'fake-obj',
                                        'Body',
-                                       content_length=None)
+                                       content_length=None,
+                                       metadata={'newkey': 'newvalue'})
         self.fake_driver.client.put_object.\
             assert_called_once_with(
                 'fake-container',
                 'fake-obj',
                 contents='Body',
+                headers={'x-object-meta-newkey': 'newvalue'},
                 content_length=None
             )
 
@@ -201,12 +203,14 @@ class OpenStackDriverTest(base.TestCase):
                           'invalid-container',
                           'invalid-obj',
                           'Body',
-                          content_length=None)
+                          content_length=None,
+                          metadata={'newkey': 'newvalue'})
         self.fake_driver.client.put_object.\
             assert_called_once_with(
                 'invalid-container',
                 'invalid-obj',
                 contents='Body',
+                headers={'x-object-meta-newkey': 'newvalue'},
                 content_length=None
             )
 

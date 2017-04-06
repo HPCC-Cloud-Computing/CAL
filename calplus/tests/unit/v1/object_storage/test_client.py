@@ -132,13 +132,15 @@ class TestClient(base.TestCase):
         self.fake_client.upload_object('fake-container',
                                        'fake-obj',
                                        'Body',
-                                       content_length=None)
+                                       content_length=None,
+                                       metadata=None)
         self.fake_client.driver.upload_object.\
             assert_called_once_with(
                 'fake-container',
                 'fake-obj',
                 contents='Body',
-                content_length=None
+                content_length=None,
+                metadata=None,
             )
 
     def test_upload_object_failed(self):
@@ -154,7 +156,8 @@ class TestClient(base.TestCase):
             'invalid-container',
             'invalid-obj',
             'Body',
-            content_length=None
+            content_length=None,
+            metadata=None,
         )
 
     def test_download_object_successfully(self):
