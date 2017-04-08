@@ -8,5 +8,5 @@ gunicorn
 python-neutronclient
 keystoneauth1
 boto3
-python-novaclient
+python-novaclient==7.0.0
 python-swiftclient>=3.1.0
